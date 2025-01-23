@@ -1,6 +1,6 @@
 ## **Variables**: 
 
-- **state**: Can have 3 possible states: 0: is a Number, 1: is a [[Variable]], 2: is an [[Operator]] or 3: is a [[SpecialFunction]]
+- **state**: Can have 4 possible states: 0: is a Number, 1: is a [[Variable]], 2: is an [[Operator]] or 3: is a [[SpecialFunction]]
 - **value**: Can be either a double or a string
 - [[EquationNode]] left and right (it's a binary tree)
 
