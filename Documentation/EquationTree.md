@@ -1,0 +1,1 @@
+This houses the root of the [[EquationNode]] binary-tree. It also stores the color, the resulting graph should have, which can be used for rendering. You can use it's calculate method to get the result for the entire graph.
