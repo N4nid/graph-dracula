@@ -1,6 +1,13 @@
-import java.awt.*;
+package com.example.graphdraculagui;
+import javafx.application.Application;
 
-public class EquationTree {
+import javafx.scene.paint.Color;
+
+
+import java.io.IOException;
+
+public class EquationTree{
+
     public EquationNode root;
     public Color GraphColor = Color.BLACK;
 

@@ -1,0 +1,41 @@
+.root{
+    -fx-background-color: #242424;
+}
+
+
+.border {
+    -fx-border-style: dashed;
+    -fx-border-width: 0.2em;
+    -fx-border-color: "white";
+}
+
+.black {
+    -fx-background-color: #242424;
+}
+
+.text {
+    -fx-font-size: 25;
+    -fx-text-fill: "white";
+    -fx-font-family: "source code pro"
+}
+
+
+.overlay-text {
+    -fx-font-size: 1;
+    -fx-text-fill: "white";
+    -fx-font-family: "source code pro";
+    -fx-background-color: #242424;
+}
+
+.color-picker {
+    -fx-background-radius: 40px;
+    -fx-min-width: 40px;
+    -fx-min-height: 40px;
+    -fx-max-width: 40px;
+    -fx-max-height: 40px;
+}
+
+@font-face {
+font-family: source code pro;
+src: url("SourceCodePro-Regular.ttf") format('truetype');
+}

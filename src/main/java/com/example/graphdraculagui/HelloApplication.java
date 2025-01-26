@@ -1,7 +1,32 @@
-public class Main {
-    public static void main(String[] args) {
+package com.example.graphdraculagui;
 
+
+import javafx.application.Application;
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.stage.Stage;
+
+import java.io.IOException;
+
+public class HelloApplication extends Application {
+    @Override
+    public void start(Stage stage) throws IOException {
+        Parent root = FXMLLoader.load(getClass().getResource("GraphDraculaUI.fxml"));
+        //FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("GraphDraculaUI.fxml"));
+        //Scene scene = new Scene(fxmlLoader.load(), 1920, 1080);
+        Scene scene = new Scene(root);
+        String css = this.getClass().getResource("application.css").toExternalForm();
+        scene.getStylesheets().add(css);
+        stage.setTitle("Hello!");
+        stage.setScene(scene);
+        stage.show();
     }
+
+
 
     public static EquationTree buildTestEquation() { // 2+4*4
         EquationNode root = new EquationNode((byte) 2,"+");
@@ -58,5 +83,7 @@ public class Main {
         return new EquationTree(root);
     }
 
-
+    public static void main(String[] args) {
+        launch();
+    }
 }

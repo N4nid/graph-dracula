@@ -1,3 +1,5 @@
+package com.example.graphdraculagui;
+
 public class EquationNode {
     private byte state; //0:IsNumber, 1:IsVariable, 2:IsOperator, 3:IsSpecialFunc;
     private Object value;
