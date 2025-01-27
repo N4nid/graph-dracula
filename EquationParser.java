@@ -8,6 +8,7 @@ public class EquationParser {
   // - figure out what todo with variables
 
   public EquationTree parseString(String input) {
+    input = "0+" + input; // FIXME workaround when equation starts with brackets (20-2)*2
     System.out.println(input);
     StringBuffer in = new StringBuffer(input); // The StringBuffer is mutable by refrence
                                                // so that i can manipulate the string in getNextNode
@@ -17,7 +18,7 @@ public class EquationParser {
     EquationNode lastOp = null;
     EquationNode root = null;
 
-    // System.out.println(opIsHigher("^", "*"));
+    // System.out.println(opIsHigher("-", "+"));
 
     while (currentNode != null) {
       Object val = currentNode.getValue();
@@ -33,19 +34,24 @@ public class EquationParser {
       } else if (state == -1) { // its a bracket
         if (val.equals("(")) {
           inBracket = true;
+          System.out.println("in klammer");
+        } else {
+          inBracket = false;
+          System.out.println("klammer ende");
         }
       } else if (state == 2) {
 
         if (lastOp != null) {
           if (inBracket) {
-
-            inBracket = false;
+            System.out.println("addBelow cuz klammer");
             addBelow(lastOp, currentNode);
           } else if (opIsHigher((String) lastOp.getValue(), (String) val)) { // F.e 2+2*2
             // add below
+            System.out.println("addBelow opIsHigher");
             addBelow(lastOp, currentNode);
 
           } else { // add current above. F.e 2*2+2
+            System.out.println("add above");
             currentNode.left = lastOp; // could blow up maybe?
 
             lastOp = currentNode; // only set lastOp if it is bigger (excluding brackets)
@@ -53,7 +59,6 @@ public class EquationParser {
           }
 
         } else {
-          System.out.println("added left");
           lastOp = currentNode;
           root = currentNode;
           currentNode.left = lastNode;
@@ -66,6 +71,7 @@ public class EquationParser {
     }
     root = lastOp;
     root.recursivePrint("");
+    System.out.println(root.calculate(0, 0, new Variable[1]));
 
     return new EquationTree();
   }
@@ -94,7 +100,7 @@ public class EquationParser {
       ind2 = ops2.indexOf(op2);
     }
 
-    return ind1 <= ind2;
+    return ind1 < ind2;
 
   }
 

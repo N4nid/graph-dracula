@@ -35,7 +35,8 @@ public class EquationNode {
 
   public double calculate(double x, double y, Variable[] parameters) {
     if (state == 0) {
-      return (double) value;
+      return Double.parseDouble((String) value);
+      // return (double) value;
     } else if (state == 1) {
       String varName = (String) value;
       if (varName.equals("x")) {
