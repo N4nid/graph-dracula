@@ -1,6 +1,6 @@
 public class EquationNode {
-  private byte state; // 0:IsNumber, 1:IsVariable, 2:IsOperator, 3:IsSpecialFunc;
-  private Object value;
+  public byte state; // 0:IsNumber, 1:IsVariable, 2:IsOperator, 3:IsSpecialFunc;
+  public Object value;
   public EquationNode left;
   public EquationNode right;
 
@@ -23,14 +23,6 @@ public class EquationNode {
       this.right.recursivePrint(helper + "r");
     }
 
-  }
-
-  public byte getState() {
-    return this.state;
-  }
-
-  public Object getValue() {
-    return this.value;
   }
 
   public double calculate(double x, double y, Variable[] parameters) {

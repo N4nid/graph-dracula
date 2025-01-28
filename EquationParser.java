@@ -21,13 +21,13 @@ public class EquationParser {
     // System.out.println(opIsHigher("-", "+"));
 
     while (currentNode != null) {
-      Object val = currentNode.getValue();
-      Byte state = currentNode.getState();
+      Object val = currentNode.value;
+      Byte state = currentNode.state;
       System.out.println(" " + val + " |state: " + state);
 
       if (state == 0 || state == 1) { // is either a num or variable
-        if (lastNode.getState() == 2) {
-          System.out.println("right " + val + " to: " + lastNode.getValue());
+        if (lastNode.state == 2) {
+          System.out.println("right " + val + " to: " + lastNode.value);
           lastNode.right = currentNode;
         }
         lastNode = currentNode;
@@ -45,7 +45,7 @@ public class EquationParser {
           if (inBracket) {
             System.out.println("addBelow cuz klammer");
             addBelow(lastOp, currentNode);
-          } else if (opIsHigher((String) lastOp.getValue(), (String) val)) { // F.e 2+2*2
+          } else if (opIsHigher((String) lastOp.value, (String) val)) { // F.e 2+2*2
             // add below
             System.out.println("addBelow opIsHigher");
             addBelow(lastOp, currentNode);
