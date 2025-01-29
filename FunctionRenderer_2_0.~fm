@@ -1,11 +1,11 @@
 object FunctionRenderer_2_0: TFXGuiForm
-  Left = 1168
-  Top = 114
+  Left = 1026
+  Top = 100
   BorderIcons = [biSystemMenu]
   Caption = 'function_renderer'
   ClientHeight = 684
   ClientWidth = 656
-  Color = clBtnFace
+  Color = 4210752
   ParentFont = True
   FormStyle = fsStayOnTop
   OldCreateOrder = True
@@ -17,10 +17,10 @@ object FunctionRenderer_2_0: TFXGuiForm
   OnMouseActivate = FormMouseActivate
   OnResize = FormResize
   FrameType = 8
-  Modified = False
+  Modified = True
   Resizable = True
   Undecorated = False
-  Background = clBtnFace
+  Background = 4210752
   showing = ''
   Title = 'function_renderer'
   X = 0

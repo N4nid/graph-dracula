@@ -1,16 +1,15 @@
-object FunctionRenderer_2_0: TFXGuiForm
-  Left = 1026
-  Top = 100
+object function_renderer: TFXGuiForm
+  Left = 1212
+  Top = 111
   BorderIcons = [biSystemMenu]
   Caption = 'function_renderer'
   ClientHeight = 684
   ClientWidth = 656
-  Color = 4210752
+  Color = clBtnFace
   ParentFont = True
   FormStyle = fsStayOnTop
   OldCreateOrder = True
   Position = poDesigned
-  ShowHint = True
   Visible = True
   OnClose = FormClose
   OnCloseQuery = FormCloseQuery
@@ -20,7 +19,7 @@ object FunctionRenderer_2_0: TFXGuiForm
   Modified = False
   Resizable = True
   Undecorated = False
-  Background = 4210752
+  Background = clBtnFace
   showing = ''
   Title = 'function_renderer'
   X = 0
@@ -89,7 +88,6 @@ object FunctionRenderer_2_0: TFXGuiForm
     Disable = False
     Cache = False
     dragOver = ''
-    mouseDragged = 'imageView1_MouseDragged'
     FitHeight = 596.00000000000000000
     FitWidth = 596.00000000000000000
     Image = '(Icon)'

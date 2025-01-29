@@ -10,6 +10,9 @@ import javafx.animation.AnimationTimer;
 import java.util.concurrent.TimeUnit;
 import javafx.scene.input.*;
 import javafx.util.*;
+import java.util.ArrayList;
+import javafx.geometry.Insets;
+import javafx.scene.layout.*;
 
 /**
  *
@@ -22,20 +25,29 @@ import javafx.util.*;
 public class FunctionRenderer_2_0 extends Application {
   // Anfang Attribute
   Pane root = new Pane();
-  Scene scene = new Scene(root, 656, 685);
   private Button bRender = new Button();
-  AnimationTimer timer;
-  boolean alreadyPushed = true;
+  //Interactiveness
+  int lastMouseX,lastMouseY;
+  //GUI
+  Color background = Color.rgb(40,40,40);
+  Color axes = Color.WHITE;
   int breite = 600;
   int hoehe = 600;
   int posX = 30;
   int posY = 80;
-  Pixel[][] render = new Pixel[breite][hoehe];
   WritableImage image = new WritableImage(breite, hoehe);
   private ImageView screen = new ImageView();
+  //The Math stuff
+  double scaling = 0.05;
+  int X0 = breite/2;
+  int Y0 = hoehe/2;
+  ArrayList<EquationTree> functions = new ArrayList<EquationTree>();
+  ArrayList<Boolean[][]> negPosMaps = new ArrayList<Boolean[][]>();
   // Ende Attribute
   
   public void start(Stage primaryStage) { 
+    root.setBackground(new Background(new BackgroundFill(Color.rgb(40,40,40), CornerRadii.EMPTY, Insets.EMPTY)));
+    Scene scene = new Scene(root, 656, 685);
     // Anfang Komponenten
     
     bRender.setLayoutX(27);
@@ -51,13 +63,14 @@ public class FunctionRenderer_2_0 extends Application {
     screen.setY(60);
     screen.setFitWidth(breite);
     screen.setFitHeight(hoehe);
-    root.getChildren().add(screen);    
+    root.getChildren().add(screen);
+    
+    screen.setOnMouseDragged(
+    (event) -> {screen_MouseDragged(event);} 
+    );    
     
     initialiseRender();
     drawImage(image);
-    screen.setOnMouseDragged(
-    (event) -> {screen_MouseDragged(event);} 
-    );
     // Ende Komponenten
     
     primaryStage.setOnCloseRequest(e -> System.exit(0));
@@ -72,11 +85,54 @@ public class FunctionRenderer_2_0 extends Application {
     launch(args);
   } // end of main
   
+  public void exampleFunctionInitialiser() {
+    Main functionTestStation = new Main();
+    
+    functions.add(functionTestStation.buildTestEquation());
+    functions.get(functions.size()-1).GraphColor = Color.LIGHTGRAY;
+    Boolean storage1[][] = new Boolean[breite][hoehe];
+    for (int x = 0; x < breite; x++) {
+      for (int y = 0; y < hoehe; y++) {
+        storage1[x][y] = (functions.get(functions.size()-1).calculate((x-X0)*scaling,-(y-Y0)*scaling,new Variable[0])>= 0) ? true : false;
+      }
+    }
+    negPosMaps.add(storage1);
+    
+    functions.add(functionTestStation.buildTestFunction());
+    functions.get(functions.size()-1).GraphColor = Color.RED;
+    Boolean storage2[][] = new Boolean[breite][hoehe];
+    for (int x = 0; x < breite; x++) {
+      for (int y = 0; y < hoehe; y++) {
+        storage2[x][y] = (functions.get(functions.size()-1).calculate((x-X0)*scaling,-(y-Y0)*scaling,new Variable[0])>= 0) ? true : false;
+      }
+    }
+    negPosMaps.add(storage2);
+    
+    functions.add(functionTestStation.buildComplicatedTestFunction());
+    functions.get(functions.size()-1).GraphColor = Color.LIME;
+    Boolean storage3[][] = new Boolean[breite][hoehe];
+    for (int x = 0; x < breite; x++) {
+      for (int y = 0; y < hoehe; y++) {
+        storage3[x][y] = (functions.get(functions.size()-1).calculate((x-X0)*scaling,-(y-Y0)*scaling,new Variable[0])>= 0) ? true : false;
+      }
+    }
+    negPosMaps.add(storage3);
+    
+    functions.add(functionTestStation.buildTestKreis());
+    functions.get(functions.size()-1).GraphColor = Color.BLUE;
+    Boolean storage4[][] = new Boolean[breite][hoehe];
+    for (int x = 0; x < breite; x++) {
+      for (int y = 0; y < hoehe; y++) {
+        storage4[x][y] = (functions.get(functions.size()-1).calculate((x-X0)*scaling,-(y-Y0)*scaling,new Variable[0])>= 0) ? true : false;
+      }
+    }
+    negPosMaps.add(storage4);      
+  }
+  
   public void initialiseRender() {
     for (int x = 0; x < breite; x++) {
       for (int y = 0; y < hoehe; y++) {
-        render[x][y] = new Pixel((1.0/20.0),x,y,breite/2,hoehe/2);
-        Color color = (x==0||y==0||x==breite-1||y==hoehe-1) ? Color.BLACK : ((render[x][y].y == 0 || render[x][y].x == 0) ? Color.BLACK : Color.WHITE);
+        Color color = (x==0||y==0||x==breite-1||y==hoehe-1||(x-X0)*scaling == 0||-(y-Y0)*scaling == 0) ? axes : background;
         image.getPixelWriter().setColor(x,y,color);
       }
     }
@@ -88,63 +144,42 @@ public class FunctionRenderer_2_0 extends Application {
     screen.setImage(image);
   }
   
-  public void writeImage (Pixel[][] pixelarray){
+  public void writeImage(){
     //schreibt Pixelarray in Image
-    Color color;
     for(int x=0; x < breite; x++) {
       for(int y=0; y < hoehe; y++) {
-        //Koordinatenachsen:
-        color = (x==0||y==0||x==breite-1||y==hoehe-1) ? Color.BLACK : ((render[x][y].y == 0 || render[x][y].x == 0) ? Color.BLACK : Color.WHITE);
-        color = (x==0||y==0||x==breite-1||y==hoehe-1) ? Color.BLACK : ((isPartOfFunction(x,y)) ? Color.BLACK : color);
-        //color = (x==0||y==0||x==breite-1||y==hoehe-1) ? Color.BLACK : ((render[x][y].sign) ? Color.RED : Color.ORANGE);
+        Color color = background;
+        if (x==0||y==0||x==breite-1||y==hoehe-1||(x-X0)*scaling == 0 || -(y-Y0)*scaling == 0) {
+          color = axes;
+        } else {
+          for (int i = 0; i < functions.size(); i++) {
+            if (isPartOfFunction(x,y,negPosMaps.get(i))) {
+              color = functions.get(i).GraphColor;
+            } // end of if
+          }
+        } // end of if-else
+        //color = (x==0||y==0||x==breite-1||y==hoehe-1) ? Color.BLACK : ((negPosMaps.get(0)[x][y]) ? Color.RED : Color.ORANGE);
         image.getPixelWriter().setColor(x,y,color);
       }
     } 
   }
   
-  public double testFunction(double x, double y) {
-    //return Math.pow(Math.E,x)-y;
-    //return Math.pow(x,2)-y;
-    //return Math.pow(x,3)-y;
-    return Math.pow(x,2)+Math.pow(y,2)-Math.pow(6,2);
-  }
-  
-  public void traceFunction() {
-    for (int x = 0; x < breite; x++) {
-      for (int y = 0; y < hoehe; y++) {
-        render[x][y].sign = (testFunction(render[x][y].x,render[x][y].y) >= 0) ? true : false;
-      }
-    }
-  }
-  
-  public boolean isPartOfFunction(int x,int y) {
-    return ((render[x][y].sign==render[x+1][y].sign)&&(render[x][y-1].sign==render[x+1][y-1].sign)&&(render[x][y].sign==render[x][y-1].sign)) ? false : true;
+  public boolean isPartOfFunction(int x,int y,Boolean[][] negPosMap) {
+    return ((negPosMap[x][y]==negPosMap[x+1][y])&&(negPosMap[x][y-1]==negPosMap[x+1][y-1])&&(negPosMap[x][y]==negPosMap[x][y-1])) ? false : true;
   }
   
   public void bRender_Action(Event evt) {
     // TODO hier Quelltext einfügen
-    if (alreadyPushed) {
-      timer = new AnimationTimer() {
-        @Override
-        public void handle(long now) {
-          traceFunction();
-          writeImage(render);
-        }
-      };
-      timer.start();
-      System.out.println("start");
-      alreadyPushed = false;
-    } else {
-      timer.stop();
-      System.out.println("stop");
-      alreadyPushed = true;
-    } // end of if-else
+    exampleFunctionInitialiser();
+    writeImage();
   } // end of bRender_Action
 
   public void screen_MouseDragged(MouseEvent evt) {
     // TODO hier Quelltext einfügen
-    System.out.println("X is: " + (evt.getX()));
-    System.out.println("Y is: " + (evt.getY()));
+    System.out.println("X is: " + (int)(evt.getX()-lastMouseX));
+    System.out.println("Y is: " + (int)-(evt.getY()-lastMouseY));
+    lastMouseX = (int)evt.getX();
+    lastMouseY = (int)evt.getY();
   } // end of imageView1_MouseDragged
 
   // Ende Methoden
