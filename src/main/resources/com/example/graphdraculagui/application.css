@@ -5,7 +5,7 @@
 
 .border {
     -fx-border-style: dashed;
-    -fx-border-width: 0.2em;
+    -fx-border-width: 3px;
     -fx-border-color: "white";
 }
 
@@ -19,10 +19,15 @@
     -fx-font-family: "source code pro"
 }
 
+.no-border {
+   -fx-border-width: 0px;
+   -fx-border: none;
+}
+
 
 .overlay-text {
     -fx-font-size: 1;
-    -fx-text-fill: "white";
+    -fx-text-fill: "gray";
     -fx-font-family: "source code pro";
     -fx-background-color: #242424;
 }

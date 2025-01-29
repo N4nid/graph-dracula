@@ -6,7 +6,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1080.0" prefWidth="1920.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.graphdraculagui.HelloController">
+<Pane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1080.0" prefWidth="1920.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.graphdraculagui.HelloController">
    <children>
       <Pane layoutX="61.0" layoutY="47.0" prefHeight="820.0" prefWidth="1368.0" styleClass="border">
          <children>
@@ -24,15 +24,15 @@
             <Button alignment="CENTER_RIGHT" layoutX="1565.0" layoutY="16.0" mnemonicParsing="false" prefHeight="51.0" prefWidth="55.0" styleClass="color-picker" />
          </children>
       </Pane>
-      <ScrollPane hbarPolicy="NEVER" layoutX="1479.0" layoutY="48.0" prefHeight="820.0" prefWidth="407.0" vbarPolicy="NEVER">
+      <ScrollPane fx:id="scrollPane" hbarPolicy="NEVER" layoutX="1488.0" layoutY="39.0" prefHeight="820.0" prefWidth="407.0" styleClass="no-border" vbarPolicy="NEVER">
          <content>
-            <Pane fx:id="equationList" prefHeight="827.0" prefWidth="403.0" styleClass="black" />
-         </content>
-         <styleClass>
-            <String fx:value="border" />
-            <String fx:value="black" />
-         </styleClass>
-      </ScrollPane>
+            <Pane fx:id="equationList" prefHeight="819.0" prefWidth="404.0">
+               <styleClass>
+                  <String fx:value="black" />
+                  <String fx:value="border" />
+               </styleClass>
+            </Pane>
+         </content></ScrollPane>
       <Button layoutX="1756.0" layoutY="910.0" minWidth="49.0" mnemonicParsing="false" onAction="#onAddButtonClick" prefHeight="73.0" prefWidth="76.0" text="+" textAlignment="CENTER" textOverrun="CENTER_ELLIPSIS" wrapText="true">
          <font>
             <Font name="Source Code Pro" size="27.0" />
