@@ -8,7 +8,8 @@ public class EquationParser {
   // - figure out what todo with variables
 
   public EquationTree parseString(String input) {
-    input = "0+" + input; // FIXME workaround when equation starts with brackets (20-2)*2
+    // FIXME workaround when equation starts with brackets (20-2)*2
+    // input = "0+" + input;
     System.out.println(input);
     StringBuffer in = new StringBuffer(input); // The StringBuffer is mutable by refrence
                                                // so that i can manipulate the string in getNextNode
@@ -49,27 +50,24 @@ public class EquationParser {
             // add below
             System.out.println("addBelow opIsHigher");
             addBelow(lastOp, currentNode);
-
           } else { // add current above. F.e 2*2+2
             System.out.println("add above");
             currentNode.left = lastOp; // could blow up maybe?
 
-            lastOp = currentNode; // only set lastOp if it is bigger (excluding brackets)
-                                  // since you always add above/below the "biggest" operator
+            root = currentNode;
           }
 
         } else {
-          lastOp = currentNode;
           root = currentNode;
           currentNode.left = lastNode;
         }
         lastNode = currentNode;
+        lastOp = currentNode;
 
       }
 
       currentNode = getNextNode(in);// might be null now, dont use after this line
     }
-    root = lastOp;
     root.recursivePrint("");
     System.out.println(root.calculate(0, 0, new Variable[1]));
 

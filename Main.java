@@ -2,7 +2,7 @@ public class Main {
   public static void main(String[] args) {
     EquationParser parser = new EquationParser();
     // String test = "0+sin(2+2)";
-    String test = "(25-2+2)*2";
+    String test = "2+3^(23-1/2)";
     // String test = "x^3+34/6.5-1/(a^(sin(56)))*3";
     parser.parseString(test);
   }
