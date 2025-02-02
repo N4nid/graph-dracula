@@ -112,11 +112,7 @@ public class RundColorPicker implements Hideble{
     }
 
     public void hide() {
-<<<<<<< Updated upstream
-        if (!colorPickerWindow.hoverProperty().getValue()) {
-=======
         if (!colorPickerWindow.hoverProperty().getValue() && !displayButton.hoverProperty().getValue()) {
->>>>>>> Stashed changes
             colorPickerWindow.setVisible(false);
             title.setVisible(false);
         }
