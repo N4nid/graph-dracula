@@ -41,7 +41,7 @@ public class EquationVisElement {
         funcDisplay.setLayoutX(labelX);
         funcDisplay.setLayoutY(labelY);
         funcDisplay.setText(equationText);
-        funcDisplay.getStyleClass().add("text");
+        funcDisplay.getStyleClass().add("normal-text");
 
         double absX = pane.getLayoutX() + scrollpane.getLayoutX();
         double absY = pane.getLayoutY() + scrollpane.getLayoutY();
