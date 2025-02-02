@@ -2,6 +2,10 @@
     -fx-background-color: #242424;
 }
 
+@font-face {
+    -fx-font-family: source code pro;
+    -fx-src: url("/resources/SourceCodePro-Regular.ttf");
+}
 
 .border {
     -fx-border-style: dashed;
@@ -9,14 +13,30 @@
     -fx-border-color: "white";
 }
 
+.close-button {
+    -fx-background-image: url('resources/closeX.png');
+    -fx-background-color: rgba(0,0,0,0);
+    -fx-background-size: 15px 15px;
+    -fx-background-repeat: no-repeat;
+    -fx-background-position: center;
+}
+
 .black {
     -fx-background-color: #242424;
 }
 
-.text {
-    -fx-font-size: 25;
+.overlay-tx {
+    -fx-font-size: 20px;
+    -fx-text-fill: "#ededed";
+    -fx-font-family: "source code pro";
+    -fx-background-color: #242424;
+}
+
+
+.normal-text {
+    -fx-font-size: 25px;
     -fx-text-fill: "white";
-    -fx-font-family: "source code pro"
+    -fx-font-family: "source code pro";
 }
 
 .no-border {
@@ -25,22 +45,10 @@
 }
 
 
-.overlay-text {
-    -fx-font-size: 1;
-    -fx-text-fill: "gray";
-    -fx-font-family: "source code pro";
-    -fx-background-color: #242424;
-}
-
 .color-picker {
     -fx-background-radius: 40px;
     -fx-min-width: 40px;
     -fx-min-height: 40px;
     -fx-max-width: 40px;
     -fx-max-height: 40px;
-}
-
-@font-face {
-font-family: source code pro;
-src: url("SourceCodePro-Regular.ttf") format('truetype');
 }

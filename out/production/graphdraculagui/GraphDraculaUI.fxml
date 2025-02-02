@@ -19,14 +19,14 @@
             <TextField fx:id="equationInput" layoutX="10.0" layoutY="8.0" prefHeight="57.0" prefWidth="1536.0" promptText="// Put in a function or an equation">
                <styleClass>
                   <String fx:value="black" />
-                  <String fx:value="text" />
+                  <String fx:value="normal-text" />
                </styleClass></TextField>
             <Button alignment="CENTER_RIGHT" layoutX="1565.0" layoutY="16.0" mnemonicParsing="false" prefHeight="51.0" prefWidth="55.0" styleClass="color-picker" />
          </children>
       </Pane>
-      <ScrollPane fx:id="scrollPane" hbarPolicy="NEVER" layoutX="1488.0" layoutY="39.0" prefHeight="820.0" prefWidth="407.0" styleClass="no-border" vbarPolicy="NEVER">
+      <ScrollPane fx:id="scrollPane" hbarPolicy="NEVER" layoutX="1488.0" layoutY="47.0" prefHeight="820.0" prefWidth="407.0" styleClass="no-border" vbarPolicy="NEVER">
          <content>
-            <Pane fx:id="equationList" prefHeight="819.0" prefWidth="404.0">
+            <Pane fx:id="equationList" prefHeight="820.0" prefWidth="404.0">
                <styleClass>
                   <String fx:value="black" />
                   <String fx:value="border" />
@@ -39,22 +39,22 @@
          </font>
          <styleClass>
             <String fx:value="black" />
-            <String fx:value="text" />
+            <String fx:value="normal-text" />
             <String fx:value="border" />
          </styleClass>
       </Button>
       <Button layoutX="32.0" layoutY="910.0" minWidth="49.0" mnemonicParsing="false" prefHeight="73.0" prefWidth="76.0" text="^" textAlignment="CENTER" textOverrun="CENTER_ELLIPSIS" wrapText="true">
          <styleClass>
             <String fx:value="black" />
-            <String fx:value="text" />
+            <String fx:value="normal-text" />
             <String fx:value="border" />
          </styleClass>
       </Button>
-      <Label blendMode="SRC_ATOP" layoutX="86.0" layoutY="29.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="40.0" prefWidth="188.0" styleClass="overlay-text" text="//graph-view" textFill="WHITE">
+      <Label blendMode="SRC_ATOP" layoutX="86.0" layoutY="36.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="overlay-tx" text="//graph-view" textFill="WHITE">
          <font>
-            <Font name="Source Code Pro" size="10.0" />
+            <Font name="Droid Sans Bold" size="78.0" />
          </font></Label>
-      <Label alignment="TOP_RIGHT" blendMode="SRC_ATOP" layoutX="1500.0" layoutY="29.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="40.0" prefWidth="227.0" styleClass="overlay-text" text="//equation-list" textAlignment="CENTER" textFill="WHITE">
+      <Label alignment="TOP_RIGHT" blendMode="SRC_ATOP" layoutX="1500.0" layoutY="36.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="overlay-tx" text="//equation-list" textFill="WHITE">
          <font>
             <Font name="Source Code Pro" size="10.0" />
          </font>
