@@ -13,10 +13,6 @@
     -fx-border-color: "white";
 }
 
-.yellow-border {
-    -fx-border-color: "#D9CD23";
-}
-
 .close-button {
     -fx-background-image: url('resources/closeX.png');
     -fx-background-color: rgba(0,0,0,0);

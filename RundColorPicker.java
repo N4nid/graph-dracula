@@ -37,15 +37,17 @@ public class RundColorPicker implements Hideble{
 
     private IntObj equationListSize;
 
-    public RundColorPicker(double xPos, double yPos, double absX, double absY, Color defaultColor, boolean isUp, Pane root, ScrollPane scrollPane, IntObj equationListSize) {
+    public RundColorPicker(double xPos, double yPos, double absX, double absY, int defaultColor, boolean isUp, Pane root, ScrollPane scrollPane, IntObj equationListSize) {
         //Setup of displayButton
+        setupColors();
         this.displayButton = new Button();
         this.displayButton.setLayoutX(xPos);
         this.displayButton.setLayoutY(yPos);
+        this.isUp = isUp;
         this.scrollPane = scrollPane;
         this.scene = root;
         displayButton.getStyleClass().add("color-picker");
-        colorValue = defaultColor;
+        colorValue = selectableColors[defaultColor];
         displayButton.setStyle("-fx-background-color: " + toRGBCode(colorValue));
         displayButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -111,6 +113,80 @@ public class RundColorPicker implements Hideble{
         this.equationListSize = equationListSize;
     }
 
+    public RundColorPicker(double xPos, double yPos, double absX, double absY, int defaultColor, boolean isUp, Pane root) {
+        //Setup of displayButton
+        setupColors();
+        this.displayButton = new Button();
+        this.displayButton.setLayoutX(xPos);
+        this.displayButton.setLayoutY(yPos);
+        this.isUp = isUp;
+        this.scene = root;
+        displayButton.getStyleClass().add("color-picker");
+        colorValue = selectableColors[defaultColor];
+        displayButton.setStyle("-fx-background-color: " + toRGBCode(colorValue));
+        displayButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                onClick();
+            }
+        });
+
+        //Setup of displayWindow pane
+        colorPickerWindow = new Pane();
+        colorPickerWindow.setPrefHeight(panelHeight);
+        colorPickerWindow.setPrefWidth(panelWidth);
+        TwoDVec<Double> panelPos = new TwoDVec<Double>();
+        if (isUp) { //The color selector window has to either pop up over the selector or left of it
+            panelPos.setPos(xPos - (panelWidth / 2), yPos - panelHeight - panelDistance);
+        }
+        else {
+            panelPos.setPos(xPos - panelWidth - panelDistance, yPos - (panelHeight / 2));
+        }
+        panelPos.setPos(panelPos.x + (int)absX, panelPos.y + (int)absY);
+        panelPos = limitPos(panelPos,root);
+        moveTo(panelPos,colorPickerWindow);
+        defaultPos = panelPos;
+        colorPickerWindow.getStyleClass().add("border");
+        colorPickerWindow.getStyleClass().add("black");
+        colorPickerWindow.setVisible(false);
+        root.getChildren().add(colorPickerWindow);
+
+        //Setup title and close Button
+        closeButton = new Button();
+        closeButton.setLayoutX(panelWidth - closeButtonSize + closeButtonOffset.x);
+        closeButton.setLayoutY(closeButtonOffset.y);
+        closeButton.setPrefHeight(closeButtonSize);
+        closeButton.setPrefWidth(closeButtonSize);
+        closeButton.getStyleClass().add("close-button");
+        colorPickerWindow.getChildren().add(closeButton);
+        closeButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                colorPickerWindow.setVisible(false);
+                title.setVisible(false);
+            }
+        });
+
+        title = new Label();
+        title.setText("//color-picker");
+        title.getStyleClass().add("overlay-tx");
+        TwoDVec<Double> titlePos = new TwoDVec<Double>(panelPos.x + titleOffset.x, panelPos.y + titleOffset.y);
+        moveTo(titlePos,title);
+        title.setVisible(false);
+        root.getChildren().add(title);
+
+        //Setup of ColorPickButtons
+        setupColors();
+        int colorCounter = 0;
+        for (int c = 0; c < colorChoiceColloms; c++) {
+            for (int r = 0; r < colorChoiceRows; r++) {
+                colorPickerWindow.getChildren().add(new ColorPickButton(colorChoiceWindowPadding.x+c*colorButtonDistance,colorChoiceWindowPadding.y+r*colorButtonDistance,selectableColors[colorCounter],this).displayButton);
+                colorCounter++;
+            }
+        }
+
+    }
+
     public void hide() {
         if (!colorPickerWindow.hoverProperty().getValue() && !displayButton.hoverProperty().getValue()) {
             colorPickerWindow.setVisible(false);
@@ -119,7 +195,7 @@ public class RundColorPicker implements Hideble{
     }
     private TwoDVec<Double> limitPos(TwoDVec<Double> input, Pane scene) {
         input.x = Math.max(0, input.x);
-        input.x = Math.min((int)scene.getWidth(), input.x);
+        input.x = Math.min((int)scene.getWidth()+160, input.x);
         input.y = Math.max(panelHeightPadding, input.y);
         input.y = Math.min((int)scene.getHeight(), input.y);
         return input;
@@ -131,10 +207,12 @@ public class RundColorPicker implements Hideble{
     }
 
     private void onClick() {
-        double scrollOffsetHeight = scrollPane.getVvalue() * Math.max(0, equationListSize.val - 8) * 100;
-        TwoDVec<Double> currentPanelPos = new TwoDVec<Double>(defaultPos.x, defaultPos.y - scrollOffsetHeight);
-        limitPos(currentPanelPos, scene);
-        moveTo(currentPanelPos,colorPickerWindow);
+        if (!isUp) {
+            double scrollOffsetHeight = scrollPane.getVvalue() * Math.max(0, equationListSize.val - 8) * 100;
+            TwoDVec<Double> currentPanelPos = new TwoDVec<Double>(defaultPos.x, defaultPos.y - scrollOffsetHeight);
+            limitPos(currentPanelPos, scene);
+            moveTo(currentPanelPos,colorPickerWindow);
+        }
         colorPickerWindow.setVisible(!colorPickerWindow.isVisible());
         title.setVisible(!title.isVisible());
     }
