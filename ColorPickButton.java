@@ -1,5 +1,3 @@
-//package com.example.graphdraculagui;
-
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.Button;
@@ -9,9 +7,10 @@ import javafx.scene.paint.Color;
 public class ColorPickButton{
     public Button displayButton;
     private Color colorValue;
+    private int colorIndex;
     private RundColorPicker pickerParent;
 
-    public ColorPickButton(int xPos, int yPos, Color color, RundColorPicker pickerParent) {
+    public ColorPickButton(int xPos, int yPos, Color color, RundColorPicker pickerParent, int colorIndex) {
         this.displayButton = new Button();
         this.displayButton.setLayoutX(xPos);
         this.displayButton.setLayoutY(yPos);
@@ -22,7 +21,7 @@ public class ColorPickButton{
         displayButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                pickerParent.pickColor(colorValue);
+                pickerParent.pickColor(colorIndex);
             }
         });
     }

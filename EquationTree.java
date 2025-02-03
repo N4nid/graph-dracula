@@ -1,4 +1,3 @@
-//package com.example.graphdraculagui;
 import javafx.application.Application;
 
 import javafx.scene.paint.Color;

@@ -1,5 +1,3 @@
-//package com.example.graphdraculagui;
-
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
@@ -12,7 +10,10 @@ import javafx.scene.paint.Color;
 public class RundColorPicker implements Hideble{
     public Button displayButton;
     private Button closeButton;
+
     public Color colorValue;
+    public int colorIndex;
+
     public Pane colorPickerWindow;
     private Label title;
     private ScrollPane scrollPane;
@@ -36,6 +37,8 @@ public class RundColorPicker implements Hideble{
     private static final TwoDVec<Double> titleOffset = new TwoDVec<Double>(15.0, -14.0);
 
     private IntObj equationListSize;
+
+    private HelloController controller;
 
     public RundColorPicker(double xPos, double yPos, double absX, double absY, int defaultColor, boolean isUp, Pane root, ScrollPane scrollPane, IntObj equationListSize) {
         //Setup of displayButton
@@ -105,15 +108,16 @@ public class RundColorPicker implements Hideble{
         int colorCounter = 0;
         for (int c = 0; c < colorChoiceColloms; c++) {
             for (int r = 0; r < colorChoiceRows; r++) {
-                colorPickerWindow.getChildren().add(new ColorPickButton(colorChoiceWindowPadding.x+c*colorButtonDistance,colorChoiceWindowPadding.y+r*colorButtonDistance,selectableColors[colorCounter],this).displayButton);
+                colorPickerWindow.getChildren().add(new ColorPickButton(colorChoiceWindowPadding.x+c*colorButtonDistance,colorChoiceWindowPadding.y+r*colorButtonDistance,selectableColors[colorCounter],this, colorCounter).displayButton);
                 colorCounter++;
             }
         }
 
         this.equationListSize = equationListSize;
+        this.colorIndex = defaultColor;
     }
 
-    public RundColorPicker(double xPos, double yPos, double absX, double absY, int defaultColor, boolean isUp, Pane root) {
+    public RundColorPicker(double xPos, double yPos, double absX, double absY, int defaultColor, boolean isUp, Pane root, HelloController controller) {
         //Setup of displayButton
         setupColors();
         this.displayButton = new Button();
@@ -180,11 +184,13 @@ public class RundColorPicker implements Hideble{
         int colorCounter = 0;
         for (int c = 0; c < colorChoiceColloms; c++) {
             for (int r = 0; r < colorChoiceRows; r++) {
-                colorPickerWindow.getChildren().add(new ColorPickButton(colorChoiceWindowPadding.x+c*colorButtonDistance,colorChoiceWindowPadding.y+r*colorButtonDistance,selectableColors[colorCounter],this).displayButton);
+                colorPickerWindow.getChildren().add(new ColorPickButton(colorChoiceWindowPadding.x+c*colorButtonDistance,colorChoiceWindowPadding.y+r*colorButtonDistance,selectableColors[colorCounter],this, colorCounter).displayButton);
                 colorCounter++;
             }
         }
 
+        this.colorIndex = defaultColor;
+        this.controller = controller;
     }
 
     public void hide() {
@@ -217,9 +223,13 @@ public class RundColorPicker implements Hideble{
         title.setVisible(!title.isVisible());
     }
 
-    public void pickColor(Color pickedColor) {
-        this.colorValue = pickedColor;
+    public void pickColor(int pickedColorIndex) {
+        this.colorValue = selectableColors[pickedColorIndex];
         displayButton.setStyle("-fx-background-color: " + toRGBCode(colorValue));
+        this.colorIndex = pickedColorIndex;
+        if(controller != null) {
+            controller.setInputBarColor(colorValue);
+        }
     }
 
     private static String toRGBCode( Color color )

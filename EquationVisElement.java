@@ -1,5 +1,3 @@
-//package com.example.graphdraculagui;
-
 import javafx.geometry.Bounds;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
@@ -26,7 +24,7 @@ public class EquationVisElement {
     private static final int colorX = 13;
     private static final int colorY = 14;
 
-    public EquationVisElement(EquationTree equation, String equationText, Pane parent, Pane root, ScrollPane scrollpane, int yPos, IntObj equationListSize) {
+    public EquationVisElement(EquationTree equation, String equationText, Pane parent, Pane root, ScrollPane scrollpane, int yPos, IntObj equationListSize, int defaultColor) {
         pane = new Pane();
         pane.setLayoutX(defaultXPos);
         pane.setLayoutY(yPos);
@@ -46,7 +44,7 @@ public class EquationVisElement {
         double absX = pane.getLayoutX() + scrollpane.getLayoutX();
         double absY = pane.getLayoutY() + scrollpane.getLayoutY();
         pane.getChildren().add(funcDisplay);
-        colorPicker = new RundColorPicker(colorX,colorY,absX,absY, 0, false,root,scrollpane,equationListSize);
+        colorPicker = new RundColorPicker(colorX,colorY,absX,absY, defaultColor, false,root,scrollpane,equationListSize);
         pane.getChildren().add(colorPicker.displayButton);
         parent.getChildren().add(pane);
     }

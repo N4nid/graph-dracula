@@ -1,5 +1,3 @@
-//package com.example.graphdraculagui;
-
 public class Variable {
     public String name;
     public double value;

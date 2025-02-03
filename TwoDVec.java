@@ -1,5 +1,3 @@
-//package com.example.graphdraculagui;
-
 public class TwoDVec<E> {
     public E x;
     public E y;

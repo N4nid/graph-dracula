@@ -17,7 +17,6 @@
       <Pane fx:id="equationInputPane" layoutX="118.0" layoutY="910.0" prefHeight="73.0" prefWidth="1710.0">
          <styleClass>
             <String fx:value="border" />
-            <String fx:value="yellow-border" />
          </styleClass>
          <children>
             <TextField fx:id="equationInput" layoutX="10.0" layoutY="8.0" prefHeight="57.0" prefWidth="1695.0" promptText="// Put in a function or an equation">
@@ -36,7 +35,7 @@
                </styleClass>
             </Pane>
          </content></ScrollPane>
-      <Button layoutX="1822.0" layoutY="910.0" minWidth="49.0" mnemonicParsing="false" onAction="#onAddButtonClick" prefHeight="73.0" prefWidth="73.0" text="+" textAlignment="CENTER" textOverrun="CENTER_ELLIPSIS" wrapText="true">
+      <Button fx:id="addButton" layoutX="1822.0" layoutY="910.0" minWidth="49.0" mnemonicParsing="false" onAction="#onAddButtonClick" prefHeight="73.0" prefWidth="73.0" text="+" textAlignment="CENTER" textOverrun="CENTER_ELLIPSIS" wrapText="true">
          <font>
             <Font name="Source Code Pro" size="27.0" />
          </font>
@@ -44,16 +43,14 @@
             <String fx:value="black" />
             <String fx:value="normal-text" />
             <String fx:value="border" />
-            <String fx:value="yellow-border" />
 
          </styleClass>
       </Button>
-      <Button layoutX="61.0" layoutY="910.0" minWidth="49.0" mnemonicParsing="false" prefHeight="73.0" prefWidth="73.0" text="^" textAlignment="CENTER" textOverrun="CENTER_ELLIPSIS" wrapText="true">
+      <Button fx:id="extraInputButton" layoutX="61.0" layoutY="910.0" minWidth="49.0" mnemonicParsing="false" prefHeight="73.0" prefWidth="73.0" text="^" textAlignment="CENTER" textOverrun="CENTER_ELLIPSIS" wrapText="true">
          <styleClass>
             <String fx:value="black" />
             <String fx:value="normal-text" />
             <String fx:value="border" />
-            <String fx:value="yellow-border" />
          </styleClass>
       </Button>
       <Label blendMode="SRC_ATOP" layoutX="86.0" layoutY="36.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="overlay-tx" text="//graph-view" textFill="WHITE">
