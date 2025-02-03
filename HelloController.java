@@ -36,7 +36,7 @@ public class HelloController {
         graphView.setImage(testImage);
         int len = listElements.size();
         listElements.add(new EquationVisElement(null,equationInput.getText(),equationList,root,scrollPane,30 + len*100,equationListSize));
-        hideOnClick.add(listElements.getLast().colorPicker);
+        hideOnClick.add(listElements.get(listElements.size() - 1).colorPicker);
         if (listElements.size() > 8) {
             equationList.setPrefHeight(equationList.getHeight() + 100);
         }
@@ -51,7 +51,7 @@ public class HelloController {
 
 
     public void hideRedundantElements() {
-        for (int i = 0; i < listElements.size(); i++) {
+        for (int i = 0; i < hideOnClick.size(); i++) {
             hideOnClick.get(i).hide();
         }
     }
