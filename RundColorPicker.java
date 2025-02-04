@@ -5,6 +5,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 
 public class RundColorPicker implements Hideble{
@@ -191,6 +192,10 @@ public class RundColorPicker implements Hideble{
 
         this.colorIndex = defaultColor;
         this.controller = controller;
+    }
+
+    private void recalcExtraPositions() {
+
     }
 
     public void hide() {

@@ -26,7 +26,7 @@
                </styleClass></TextField>
          </children>
       </Pane>
-      <ScrollPane fx:id="scrollPane" hbarPolicy="NEVER" layoutX="1488.0" layoutY="47.0" prefHeight="820.0" prefWidth="407.0" styleClass="no-border" vbarPolicy="NEVER">
+      <ScrollPane fx:id="scrollPane" hbarPolicy="NEVER" layoutX="1488.0" layoutY="47.0" prefHeight="820.0" prefWidth="404.0" styleClass="no-border" vbarPolicy="NEVER">
          <content>
             <Pane fx:id="equationList" prefHeight="820.0" prefWidth="404.0">
                <styleClass>
@@ -53,11 +53,11 @@
             <String fx:value="border" />
          </styleClass>
       </Button>
-      <Label blendMode="SRC_ATOP" layoutX="86.0" layoutY="36.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="overlay-tx" text="//graph-view" textFill="WHITE">
+      <Label fx:id="graphViewLabel" blendMode="SRC_ATOP" layoutX="86.0" layoutY="36.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="overlay-tx" text="//graph-view" textFill="WHITE">
          <font>
             <Font name="Droid Sans Bold" size="78.0" />
          </font></Label>
-      <Label alignment="TOP_RIGHT" blendMode="SRC_ATOP" layoutX="1500.0" layoutY="36.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="overlay-tx" text="//equation-list" textFill="WHITE">
+      <Label fx:id="equationListLabel" alignment="TOP_RIGHT" blendMode="SRC_ATOP" layoutX="1500.0" layoutY="36.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="overlay-tx" text="//equation-list" textFill="WHITE">
          <font>
             <Font name="Source Code Pro" size="10.0" />
          </font>

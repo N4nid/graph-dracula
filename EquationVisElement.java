@@ -6,8 +6,8 @@ import javafx.scene.paint.Color;
 
 public class EquationVisElement {
     //Javafx-Elements
-    private Pane pane;
-    private Label funcDisplay;
+    public Pane pane;
+    public Label funcDisplay;
     public RundColorPicker colorPicker;
 
     //Data

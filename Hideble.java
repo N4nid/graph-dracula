@@ -1,3 +1,1 @@
-public interface Hideble {
-    public void hide();
-}
+public interface Hideble {public void hide();}
