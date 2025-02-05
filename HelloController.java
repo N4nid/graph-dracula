@@ -30,16 +30,14 @@ public class HelloController {
   public Button addButton;
   public ScrollPane scrollPane;
   ArrayList<EquationVisElement> listElements = new ArrayList<EquationVisElement>();
-  public IntObj equationListSize  = new IntObj(0);
   public RundColorPicker mainColorPicker;
   public Scene scene;
-  
-  private static TwoDVec<Double> defaultAddButtonPos;
-  private static TwoDVec<Double> defaultExpandButtonPos;
+
+  public double minEquationListHeight = 0f;
+
   private static TwoDVec<Double> defaultGraphViewPanePos;
   private static TwoDVec<Double> defaultGraphViewPaneSize;
   private static TwoDVec<Double> defaultScrollPaneSize;
-  private static double defaultInputPaneLength;
   private static double viewListHorizontalRatio;
   private static double viewListHorizontalDist;
 
@@ -51,13 +49,13 @@ public class HelloController {
   
   @FXML
   protected void onAddButtonClick() {
-    equationListSize.increment();
     int len = listElements.size();
-    EquationVisElement newElement = new EquationVisElement(null,equationInput.getText(),equationList,root,scrollPane,30 + len*100,equationListSize,mainColorPicker.colorIndex);
+    EquationVisElement newElement = new EquationVisElement(null,equationInput.getText(),equationList,root,scrollPane,30 + len*100,this,mainColorPicker.colorIndex);
     listElements.add(newElement);
     hideOnClick.add(newElement.colorPicker);
-    if (listElements.size() > 8) {
-      equationList.setPrefHeight(equationList.getHeight() + 100);
+    minEquationListHeight += 100;
+    if (equationList.getPrefHeight() < minEquationListHeight) {
+      equationList.setPrefHeight(minEquationListHeight);
     }
     equationInput.setText("");
     mainColorPicker.pickColor(new Random().nextInt(15));
@@ -70,7 +68,7 @@ public class HelloController {
   
   public void setup() {
     TwoDVec<Double> colorPickPos = new TwoDVec<Double>(1650.0,15.0);
-    mainColorPicker = new RundColorPicker(colorPickPos.x,colorPickPos.y,equationInputPane.getLayoutX(),equationInputPane.getLayoutY(), 0,true,root,this);
+    mainColorPicker = new RundColorPicker(colorPickPos.x,colorPickPos.y,0,new Random().nextInt(15),true,root,this);
     equationInputPane.getChildren().add(mainColorPicker.displayButton);
     hideOnClick.add(mainColorPicker);
     
@@ -78,7 +76,12 @@ public class HelloController {
     calculateDefaultSizes();
     scene = equationInput.getScene();
 
-    anchors.add(new Anchor(equationInput,equationInputPane,new TwoDVec<Double>(-40.0,0.0),"scale",false,true));
+    anchors.add(new Anchor(extraInputButton,root,new TwoDVec<Double>(0.0,-138.0),"scale->pos",true,false));
+    anchors.add(new Anchor(addButton,root,new TwoDVec<Double>(-98.0,-138.0),"scale->pos"));
+    anchors.add(new Anchor(equationInputPane,root,new TwoDVec<Double>(-226.0,0.0),"scale",false,true));
+    anchors.add(new Anchor(equationInputPane,extraInputButton,new TwoDVec<Double>(defaultButtonSize,0.0),"pos"));
+    anchors.add(new Anchor(equationInput,equationInputPane,new TwoDVec<Double>(-50.0,0.0),"scale",false,true));
+    anchors.add(new Anchor(mainColorPicker.displayButton,equationInput,new TwoDVec<Double>(0.0,0.0),"scale->pos",false,true));
     anchors.add(new Anchor(equationList,scrollPane,new TwoDVec<Double>(0.0,0.0),"scale"));
     anchors.add(new Anchor(graphViewLabel,graphViewPane,new TwoDVec<Double>(15.0,-13.0),"pos"));
     anchors.add(new Anchor(equationListLabel,scrollPane,new TwoDVec<Double>(15.0,-13.0),"pos"));
@@ -91,12 +94,11 @@ public class HelloController {
     scene.heightProperty().addListener((obs, oldVal, newVal) -> {
       resize();
     });
+
+    scrollPane.setOnScroll(scrollEvent -> updateListElementTransform());
   }
   
   public void calculateDefaultSizes() {
-    defaultAddButtonPos = new TwoDVec<Double>(addButton.getLayoutX(), addButton.getLayoutY());
-    defaultExpandButtonPos = new TwoDVec<Double>(extraInputButton.getLayoutX(), extraInputButton.getLayoutY());
-    defaultInputPaneLength = equationInputPane.getWidth();
     defaultGraphViewPaneSize = new TwoDVec<Double>(graphViewPane.getWidth(),graphViewPane.getHeight());
     defaultGraphViewPanePos = new TwoDVec<Double>(graphViewPane.getLayoutX(),graphViewPane.getLayoutY());
     defaultScrollPaneSize = new TwoDVec<Double>(scrollPane.getWidth(),scrollPane.getHeight());
@@ -109,26 +111,35 @@ public class HelloController {
     double screenHeight = scene.getWindow().getHeight();
     double vertDiff =  defaultSceneHeight - screenHeight;
     double horzDiff = defaultSceneWidth - screenWidth;
-    
-    TwoDVec<Double> expandButtonPos = new TwoDVec<Double>(defaultExpandButtonPos.x, defaultExpandButtonPos.y - vertDiff);
-    TwoDVec<Double> addButtonPos = new TwoDVec<Double>(defaultAddButtonPos.x - horzDiff, defaultExpandButtonPos.y - vertDiff);
-    TwoDVec<Double> inputPanePos = new TwoDVec<Double>(expandButtonPos.x + defaultButtonSize, expandButtonPos.y);
+
+    root.setPrefWidth(root.getWidth());
+    root.setPrefHeight(root.getHeight());
+
     TwoDVec<Double> graphViewPaneSize = new TwoDVec<Double>(defaultGraphViewPaneSize.x - viewListHorizontalRatio * horzDiff, defaultGraphViewPaneSize.y - vertDiff);
     TwoDVec<Double> scrollPanePos = new TwoDVec<Double>(graphViewPane.getLayoutX() + graphViewPaneSize.x + viewListHorizontalDist, defaultGraphViewPanePos.y);
     TwoDVec<Double> scrollPaneSize = new TwoDVec<Double>(defaultScrollPaneSize.x - (1-viewListHorizontalRatio) * horzDiff,defaultScrollPaneSize.y - vertDiff);
-    double inputPaneLegth = defaultInputPaneLength - horzDiff;
-    
-    moveTo(expandButtonPos,extraInputButton);
-    moveTo(addButtonPos,addButton);
-    moveTo(inputPanePos,equationInputPane);
+
     moveTo(scrollPanePos,scrollPane);
-    equationInputPane.setPrefWidth(inputPaneLegth);
     graphViewPane.setPrefWidth(graphViewPaneSize.x);
     graphViewPane.setPrefHeight(graphViewPaneSize.y);
     scrollPane.setPrefWidth(scrollPaneSize.x);
     scrollPane.setPrefHeight(scrollPaneSize.y);
 
     Anchor.applyAnchors(anchors);
+    if (equationList.getPrefHeight() < minEquationListHeight) {
+      equationList.setPrefHeight(minEquationListHeight);
+    }
+
+    mainColorPicker.recalcExtraPositions();
+    for (int i = 0; i < listElements.size(); i++) {
+      listElements.get(i).updateTransform();
+    }
+  }
+
+  private void updateListElementTransform() {
+    for (int i = 0; i < listElements.size(); i++) {
+      listElements.get(i).updateTransform();
+    }
   }
   
   public void setInputBarColor(Color col) {
