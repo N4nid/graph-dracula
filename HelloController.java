@@ -77,9 +77,10 @@ public class HelloController {
 
     anchors.add(new Anchor(extraInputButton,root,new TwoDVec<Double>(0.0,-138.0),"scale->pos",true,false));
     anchors.add(new Anchor(addButton,root,new TwoDVec<Double>(-98.0,-138.0),"scale->pos"));
-    anchors.add(new Anchor(equationInputPane,root,new TwoDVec<Double>(-210.0,0.0),"scale",false,true));
+    anchors.add(new Anchor(equationInputPane,root,new TwoDVec<Double>(-250.0,0.0),"scale",false,true));
     anchors.add(new Anchor(equationInputPane,extraInputButton,new TwoDVec<Double>(defaultButtonSize,0.0),"pos"));
-    anchors.add(new Anchor(equationInput,equationInputPane,new TwoDVec<Double>(-40.0,0.0),"scale",false,true));
+    anchors.add(new Anchor(equationInput,equationInputPane,new TwoDVec<Double>(-50.0,0.0),"scale",false,true));
+    anchors.add(new Anchor(mainColorPicker.displayButton,equationInput,new TwoDVec<Double>(0.0,0.0),"scale->pos",false,true));
     anchors.add(new Anchor(equationList,scrollPane,new TwoDVec<Double>(0.0,0.0),"scale"));
     anchors.add(new Anchor(graphViewLabel,graphViewPane,new TwoDVec<Double>(15.0,-13.0),"pos"));
     anchors.add(new Anchor(equationListLabel,scrollPane,new TwoDVec<Double>(15.0,-13.0),"pos"));
