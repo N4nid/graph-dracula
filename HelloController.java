@@ -5,6 +5,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
@@ -71,6 +72,7 @@ public class HelloController {
     mainColorPicker = new RundColorPicker(colorPickPos.x,colorPickPos.y,0,new Random().nextInt(15),true,root,this);
     equationInputPane.getChildren().add(mainColorPicker.displayButton);
     hideOnClick.add(mainColorPicker);
+    graphView.setImage(new Image("/resources/GraphDraculaSampleGraph.png"));
     
     setInputBarColor(mainColorPicker.colorValue);
     calculateDefaultSizes();
@@ -93,6 +95,12 @@ public class HelloController {
     
     scene.heightProperty().addListener((obs, oldVal, newVal) -> {
       resize();
+    });
+
+    scene.setOnKeyPressed(e -> {
+      if (e.getCode() == KeyCode.ENTER && equationInput.isFocused()) {
+        onAddButtonClick();
+      }
     });
 
     scrollPane.setOnScroll(scrollEvent -> updateListElementTransform());
@@ -124,16 +132,15 @@ public class HelloController {
     graphViewPane.setPrefHeight(graphViewPaneSize.y);
     scrollPane.setPrefWidth(scrollPaneSize.x);
     scrollPane.setPrefHeight(scrollPaneSize.y);
+    graphView.setFitWidth(graphViewPaneSize.x - 6);
+    graphView.setFitHeight(graphViewPaneSize.y - 6);
 
     Anchor.applyAnchors(anchors);
     if (equationList.getPrefHeight() < minEquationListHeight) {
       equationList.setPrefHeight(minEquationListHeight);
     }
 
-    mainColorPicker.recalcExtraPositions();
-    for (int i = 0; i < listElements.size(); i++) {
-      listElements.get(i).updateTransform();
-    }
+    updateListElementTransform();
   }
 
   private void updateListElementTransform() {
