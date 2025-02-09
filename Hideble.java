@@ -1,1 +1,2 @@
-public interface Hideble {public void hide();}
+import javafx.scene.effect.ColorAdjust;
+public interface Hideble {public boolean hide();}

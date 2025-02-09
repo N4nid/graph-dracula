@@ -35,22 +35,24 @@
                </styleClass>
             </Pane>
          </content></ScrollPane>
-      <Button fx:id="addButton" layoutX="1822.0" layoutY="910.0" minWidth="49.0" mnemonicParsing="false" onAction="#onAddButtonClick" prefHeight="73.0" prefWidth="73.0" text="+" textAlignment="CENTER" textOverrun="CENTER_ELLIPSIS" wrapText="true">
+      <Button fx:id="addButton" layoutX="1822.0" layoutY="910.0" minWidth="49.0" mnemonicParsing="false" onAction="#onAddButtonClick" prefHeight="73.0" prefWidth="73.0" textAlignment="CENTER" textOverrun="CENTER_ELLIPSIS" wrapText="true">
          <font>
             <Font name="Source Code Pro" size="27.0" />
          </font>
          <styleClass>
-            <String fx:value="black" />
-            <String fx:value="normal-text" />
             <String fx:value="border" />
+            <String fx:value="image-button" />
+            <String fx:value="add-button" />
+            <String fx:value="black" />
 
          </styleClass>
       </Button>
-      <Button fx:id="extraInputButton" layoutX="61.0" layoutY="910.0" minWidth="49.0" mnemonicParsing="false" prefHeight="73.0" prefWidth="73.0" text="^" textAlignment="CENTER" textOverrun="CENTER_ELLIPSIS" wrapText="true">
+      <Button fx:id="extraInputButton" layoutX="61.0" layoutY="910.0" minWidth="49.0" mnemonicParsing="false" prefHeight="73.0" prefWidth="73.0" textAlignment="CENTER" textOverrun="CENTER_ELLIPSIS" wrapText="true">
          <styleClass>
-            <String fx:value="black" />
-            <String fx:value="normal-text" />
             <String fx:value="border" />
+            <String fx:value="image-button" />
+            <String fx:value="expand-button" />
+            <String fx:value="black" />
          </styleClass>
       </Button>
       <Label fx:id="graphViewLabel" blendMode="SRC_ATOP" layoutX="86.0" layoutY="36.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="overlay-tx" text="//graph-view" textFill="WHITE">

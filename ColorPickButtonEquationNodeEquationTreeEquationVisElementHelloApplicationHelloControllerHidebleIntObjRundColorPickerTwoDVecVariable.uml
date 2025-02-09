@@ -1,0 +1,161 @@
+﻿[Files]
+File0=Java\graph-dracula-MortySmith\ColorPickButton.java
+File1=Java\graph-dracula-MortySmith\EquationNode.java
+File2=Java\graph-dracula-MortySmith\EquationTree.java
+File3=Java\graph-dracula-MortySmith\EquationVisElement.java
+File4=Java\graph-dracula-MortySmith\HelloApplication.java
+File5=Java\graph-dracula-MortySmith\HelloController.java
+File6=Java\graph-dracula-MortySmith\Hideble.java
+File7=Java\graph-dracula-MortySmith\IntObj.java
+File8=Java\graph-dracula-MortySmith\RoundColorPicker.java
+File9=Java\graph-dracula-MortySmith\TwoDVec.java
+File10=Java\graph-dracula-MortySmith\Variable.java
+
+[Box:  - Anchor]
+X=360
+Y=962
+MinVis=0
+ShowParameter=4
+SortOrder=0
+ShowIcons=1
+FontSize=6
+FontName=Segoe UI
+
+[Box:  - ColorPickButton]
+X=748
+Y=80
+MinVis=0
+ShowParameter=4
+SortOrder=0
+ShowIcons=1
+FontSize=6
+FontName=Segoe UI
+
+[Box:  - EquationNode]
+X=2241
+Y=1656
+MinVis=0
+ShowParameter=4
+SortOrder=0
+ShowIcons=1
+FontSize=6
+FontName=Segoe UI
+
+[Box:  - EquationTree]
+X=2274
+Y=1403
+MinVis=0
+ShowParameter=4
+SortOrder=0
+ShowIcons=1
+FontSize=6
+FontName=Segoe UI
+
+[Box:  - EquationVisElement]
+X=1912
+Y=962
+MinVis=0
+ShowParameter=4
+SortOrder=0
+ShowIcons=1
+FontSize=6
+FontName=Segoe UI
+
+[Box:  - HelloApplication]
+X=80
+Y=80
+MinVis=0
+ShowParameter=4
+SortOrder=0
+ShowIcons=1
+FontSize=6
+FontName=Segoe UI
+
+[Box:  - HelloController]
+X=1512
+Y=80
+MinVis=0
+ShowParameter=4
+SortOrder=0
+ShowIcons=1
+FontSize=6
+FontName=Segoe UI
+
+[Box:  - Hideble]
+X=1101
+Y=1864
+MinVis=0
+ShowParameter=4
+SortOrder=0
+ShowIcons=0
+FontSize=6
+FontName=Segoe UI
+
+[Box:  - IntObj]
+X=80
+Y=2222
+MinVis=0
+ShowParameter=4
+SortOrder=0
+ShowIcons=1
+FontSize=6
+FontName=Segoe UI
+
+[Box:  - RoundColorPicker]
+X=1113
+Y=1403
+MinVis=0
+ShowParameter=4
+SortOrder=0
+ShowIcons=1
+FontSize=6
+FontName=Segoe UI
+
+[Box:  - TwoDVec<E>]
+X=509
+Y=80
+MinVis=0
+ShowParameter=4
+SortOrder=0
+ShowIcons=1
+FontSize=6
+FontName=Segoe UI
+
+[Box:  - Variable]
+X=747
+Y=1403
+MinVis=0
+ShowParameter=4
+SortOrder=0
+ShowIcons=1
+FontSize=6
+FontName=Segoe UI
+
+[Diagram]
+comments=0
+OffsetX=0
+OffsetY=385
+Visibility=0
+ShowParameter=4
+SortOrder=0
+ShowIcons=1
+ShowConnections=0
+Fontname=Segoe UI
+Fontsize=6
+ShowObjectDiagram=0
+
+[Connections]
+V0=ColorPickButton#RoundColorPicker#AssociationDirected####0#0#0###0#0
+V1=EquationNode#EquationNode#AssociationBidirectional####1#0#0###0#0
+V2=EquationTree#EquationNode#AssociationDirected####0#0#0###0#0
+V3=EquationVisElement#RoundColorPicker#AssociationDirected####0#0#0###0#0
+V4=EquationVisElement#EquationTree#AssociationDirected####0#0#0###0#0
+V5=HelloController#Hideble#Aggregation####0#0#0###0#0
+V6=HelloController#EquationVisElement#Aggregation####0#0#0###0#0
+V7=HelloController#RoundColorPicker#AssociationBidirectional####0#0#0###0#0
+V8=HelloController#Anchor#Aggregation####0#0#0###0#0
+V9=RoundColorPicker#Hideble#Implements####0#0#0###0#0
+
+[Interactive]
+I0=
+

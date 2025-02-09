@@ -1,18 +1,17 @@
-import javafx.geometry.Bounds;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.Pane;
-import javafx.scene.paint.Color;
 
-public class EquationVisElement {
+public class EquationVisElement implements MenuHaver{
     //Javafx-Elements
     public Pane pane;
     public Label funcDisplay;
-    public RundColorPicker colorPicker;
+    public RoundColorPicker colorPicker;
 
     //Data
     public EquationTree equation;
-    private String equationText;
+    public String equationText;
+    private HelloController controller;
 
     //Default-Values
     private static final int defaultXPos = 23;
@@ -25,6 +24,10 @@ public class EquationVisElement {
     private static final int colorY = 14;
 
     public EquationVisElement(EquationTree equation, String equationText, Pane parent, Pane root, ScrollPane scrollpane, int yPos, HelloController controller, int defaultColor) {
+        this.controller = controller;
+        this.equation = equation;
+        this.equationText = equationText;
+
         pane = new Pane();
         pane.setLayoutX(defaultXPos);
         pane.setLayoutY(yPos);
@@ -44,12 +47,24 @@ public class EquationVisElement {
         double absX = pane.getLayoutX() + scrollpane.getLayoutX();
         double absY = pane.getLayoutY() + scrollpane.getLayoutY();
         pane.getChildren().add(funcDisplay);
-        colorPicker = new RundColorPicker(colorX,colorY,yPos, defaultColor, false,root,controller);
+        colorPicker = new RoundColorPicker(colorX,colorY,yPos, defaultColor, false,root,controller);
         pane.getChildren().add(colorPicker.displayButton);
         parent.getChildren().add(pane);
     }
 
     public void updateTransform() {
         colorPicker.recalcExtraPositions();
+    }
+    public void executeMenuOption(String option) {
+        if(option.equals("Edit")) {
+            controller.editEquation(this);
+        }
+        if (option.equals("Delete")) {
+            controller.deleteEquation(this);
+        }
+    }
+    public void setEquationText(String text) {
+        this.equationText = text;
+        this.funcDisplay.setText(text);
     }
 }

@@ -10,7 +10,7 @@ public class EquationVisElement {
     //Javafx-Elements
     private Pane pane;
     private Label funcDisplay;
-    private RundColorPicker colorPicker;
+    private RoundColorPicker colorPicker;
 
     //Data
     public EquationTree equation;
@@ -45,7 +45,7 @@ public class EquationVisElement {
         double absX = pane.getLayoutX() + scrollpane.getLayoutX();
         double absY = pane.getLayoutY() + scrollpane.getLayoutY();
         pane.getChildren().add(funcDisplay);
-        colorPicker = new RundColorPicker(colorX,colorY,absX,absY, Color.ANTIQUEWHITE, false,root);
+        colorPicker = new RoundColorPicker(colorX,colorY,absX,absY, Color.ANTIQUEWHITE, false,root);
         pane.getChildren().add(colorPicker.displayButton);
         root.getChildren().add(colorPicker.colorPickerWindow);
         parent.getChildren().add(pane);

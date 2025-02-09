@@ -60,6 +60,7 @@ public class RoundColorPicker implements Hideble{
         onClick();
       }
     });
+    Effects.addDefaultHoverEffect(displayButton);
     
     //Setup of displayWindow pane
     colorPickerWindow = new Pane();
@@ -86,6 +87,7 @@ public class RoundColorPicker implements Hideble{
     closeButton.setPrefHeight(closeButtonSize);
     closeButton.setPrefWidth(closeButtonSize);
     closeButton.getStyleClass().add("close-button");
+    closeButton.getStyleClass().add("image-button");
     colorPickerWindow.getChildren().add(closeButton);
     closeButton.setOnAction(new EventHandler<ActionEvent>() {
       @Override
@@ -133,12 +135,15 @@ public class RoundColorPicker implements Hideble{
     }
   }
   
-  public void hide() {
+  public boolean hide() {
     if (!colorPickerWindow.hoverProperty().getValue() && !displayButton.hoverProperty().getValue()) {
       colorPickerWindow.setVisible(false);
       title.setVisible(false);
+      return true;
     }
+    return false;
   }
+
   private TwoDVec<Double> limitPos(TwoDVec<Double> input, Pane scene) {
     input.x = Math.max(0, input.x);
     input.x = Math.min((int)scene.getWidth()+160, input.x);
