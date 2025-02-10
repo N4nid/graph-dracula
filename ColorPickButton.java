@@ -6,14 +6,11 @@ import javafx.scene.paint.Color;
 public class ColorPickButton{
   public Button displayButton;
   private Color colorValue;
-  private int colorIndex;
-  private RoundColorPicker pickerParent;
   
   public ColorPickButton(int xPos, int yPos, Color color, RoundColorPicker pickerParent, int colorIndex) {
     this.displayButton = new Button();
     this.displayButton.setLayoutX(xPos);
     this.displayButton.setLayoutY(yPos);
-    this.pickerParent = pickerParent;
     displayButton.getStyleClass().add("color-picker");
     colorValue = color;
     displayButton.setStyle("-fx-background-color: " + toRGBCode(colorValue));

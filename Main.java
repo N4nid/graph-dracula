@@ -11,12 +11,12 @@ import java.io.IOException;
 public class Main extends Application {
     @Override
     public void start(Stage stage) throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("GraphDraculaUI.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/resources/GraphDraculaUI.fxml"));
         Parent root = loader.load();
         //Scene scene = new Scene(fxmlLoader.load(), 1920, 1080);
-        ApplicationController controller = loader.getController();
+        HelloController controller = loader.getController();
         Scene scene = new Scene(root);
-        String css = this.getClass().getResource("application.css").toExternalForm();
+        String css = this.getClass().getResource("/resources/application.css").toExternalForm();
         scene.getStylesheets().add(css);
 
         scene.addEventFilter(MouseEvent.MOUSE_PRESSED, new EventHandler<MouseEvent>() {
@@ -26,7 +26,7 @@ public class Main extends Application {
             }
         });
 
-        stage.setTitle("graph-dracula!");
+        stage.setTitle("Hello!");
         stage.setScene(scene);
         stage.show();
         controller.setup();

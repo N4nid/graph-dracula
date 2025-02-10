@@ -6,6 +6,7 @@
 <body>
 
 <h1>ApplicationController</h1>
+<p>This class is the core of the UI, it can access and controll all UI elements.</p>
 <h2>Variables</h2>
     <ul>
         <li><h3>public UI-elements from the <a href = "https://docs.oracle.com/javase/8/javafx/api/javafx/fxml/doc-files/introduction_to_fxml.html"> fxml-file</a></h3></li>
@@ -13,7 +14,7 @@
         <li><h3>listElements</h3></li>
             <ul><p>Contains all <a href = "EquationVisElement.html"> EquationVisElements</a>, that represent all functions, the user has put in. Theese objects are displayed in the ScrollPane on the right.</p></ul>
         <li><h3>mainColorPicker</h3></li>
-            <ul><p>Represents the color picker on the bottom right of the equationInput. It automatically changes the color of the input field.</p></ul>
+            <ul><p>Represents the <a href = "RoundColorPicker.html"> RoundColorPicker</a> on the bottom right of the equationInput. It automatically changes the color of the input field.</p></ul>
         <li><h3>minEquationListHeight</h3></li>
             <ul><p>Stores the height, the Pane inside of the ScrollPane must have at minimum, to be able to display all EquationListElements.</p></ul>
         <li><h3>editIndex</h3></li>
@@ -48,7 +49,7 @@
         <li><h3>moveTo()</h3></li>
             <ul><p>Moves a given Node to the position of a given TwoDVec.</p></ul>
         <li><h3>toRGBCode()</h3></li>
-            <ul><p>Converts a given javafx Color to a hexRGB code</p></ul>
+            <ul><p>Converts a given javafx Color to a String of it's hexRGB code</p></ul>
     </ul>
     </ul>
 

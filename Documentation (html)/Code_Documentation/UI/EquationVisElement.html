@@ -7,19 +7,35 @@
 
 <h1>EquationVisElement</h1>
 
-<p>This class is instantiated inside the main ScrollPane, every time you add an eqution. It displays the equation, has a RoundColorPicker to change the color and you can right click it to delete or edit it.</p>
+<p>This class is instantiated inside the main ScrollPane, every time you add an eqution. 
+    It displays the equation, has a <a href = "RoundColorPicker.html"> RoundColorPicker </a> 
+    to change the color and you can right click it to delete or edit it.</p>
 
 <h2>Variables</h2>
     <ul>
-        <li><h3>I am a <a href = "path/file.html"> Variable </a></h3></li>
-            <ul><p>I explain, what it does!</p></ul>
-        <li><h3>Main UI elemts/a></h3></li>
+        <li><h3>main UI elemts</h3></li>
             <ul><p>Stores the required UI Elements</p></ul>
+        <li><h3>equation</h3></li>
+            <ul><p>Stores the EquationTree, which represents the equation from the equationText.</p></ul>
+        <li><h3>equationText</h3></li>
+            <ul><p>Stores the text of the equation, which is displayed visually.</p></ul>
+        <li><h3>controller</h3></li>
+            <ul><p>Stores a refrence to the <a href = "ApplicationController.html"> ApplicationController </a>.</p></ul>
     </ul>
 <h2>Methods</h2>
     <ul>
-        <li><h3>I am a method!</h3></li>
-            <ul><p>I explain, what it does!</p></ul>
+        <li><h3>Constructor</h3></li>
+            <ul><p>Sets up the main UI and assigns some inputed variables.</p></ul>
+        <li><h3>updateTransform()</h3></li>
+            <ul><p>Calls recalcExtraPostions() of <a href = "RoundColorPicker.html"> RoundColorPicker </a>. 
+            This get's called, when UI is rescaled or you scroll on the ScrollPane and enshures, 
+            the colorPickerWindows of the associated Color pickers are always at the right positon.</p></ul>
+        <li><h3>executeMenuOption()</h3></li>
+            <ul><p>Gets called, when you choose something in the right click menu of the 
+                 <a href = "EquationVisElement.html"> EquationVisElement </a>. This function is part of
+                the <a href = "MenuHaver.html"> MenuHaver</a> interface.</p></ul>
+            <li><h3>setEquationText()</h3></li>
+                <ul><p>Sets EquationText String value and updates the Label. This is called, when you apply an edit to a function.</p></ul>
     </ul>
 
 </body>

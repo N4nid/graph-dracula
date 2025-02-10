@@ -11,7 +11,7 @@ public class EquationVisElement implements MenuHaver{
     //Data
     public EquationTree equation;
     public String equationText;
-    private ApplicationController controller;
+    private HelloController controller;
 
     //Default-Values
     private static final int defaultXPos = 23;
@@ -23,7 +23,7 @@ public class EquationVisElement implements MenuHaver{
     private static final int colorX = 13;
     private static final int colorY = 14;
 
-    public EquationVisElement(EquationTree equation, String equationText, Pane parent, Pane root, ScrollPane scrollpane, int yPos, ApplicationController controller, int defaultColor) {
+    public EquationVisElement(EquationTree equation, String equationText, Pane parent, Pane root, ScrollPane scrollpane, int yPos, HelloController controller, int defaultColor) {
         this.controller = controller;
         this.equation = equation;
         this.equationText = equationText;

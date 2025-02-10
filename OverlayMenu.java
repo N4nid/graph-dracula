@@ -16,10 +16,6 @@ public class OverlayMenu implements Hideble{
         return false;
     }
 
-    public void show() {
-        window.setVisible(true);
-    }
-
     public OverlayMenu(MenuHaver menuHaver, String menuPreset, TwoDVec<Double> position, Pane root) {
         this.menuHaver = menuHaver;
         window = new Pane();
