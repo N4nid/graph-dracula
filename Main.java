@@ -14,7 +14,7 @@ public class Main extends Application {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/resources/GraphDraculaUI.fxml"));
         Parent root = loader.load();
         //Scene scene = new Scene(fxmlLoader.load(), 1920, 1080);
-        HelloController controller = loader.getController();
+        ApplicationController controller = loader.getController();
         Scene scene = new Scene(root);
         String css = this.getClass().getResource("/resources/application.css").toExternalForm();
         scene.getStylesheets().add(css);

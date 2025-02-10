@@ -39,9 +39,9 @@ public class RoundColorPicker implements Hideble{
   private static final TwoDVec<Double> titleOffset = new TwoDVec<Double>(15.0, -14.0);
 
 
-  private HelloController controller;
+  private ApplicationController controller;
 
-  public RoundColorPicker(double xPos, double yPos, double yOffset, int defaultColor, boolean isUp, Pane root, HelloController controller) {
+  public RoundColorPicker(double xPos, double yPos, double yOffset, int defaultColor, boolean isUp, Pane root, ApplicationController controller) {
     //Setup of displayButton
     this.controller = controller;
     this.scrollPane = controller.scrollPane;
