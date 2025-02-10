@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>OverlayMenu</title>
+</head>
+<body>
+
+<h1>OverlayMenu</h1>
+<p>This class represents a sub-menu with different options. It hides, when you click somewhere else.
+    It executes the selected option via the <a href = "MenuHaver.html"> menuHaver</a> interface.<br>
+</p>
+<h2>Relevant Variables</h2>
+    <ul>
+        <li><h3>options</a></h3></li>
+            <ul><p>Stores available MenuOptions of the OverlayMenu.<p></ul>
+        <li><h3><a href = "MenuHaver.html"> menuHaver</a></h3></li>
+            <ul><p>This stores a refrence to any object, that can execute options from this menu.<p></ul>
+        <li><h3>offsetVec</a></h3></li>
+            <ul><p>This defines the difference between the baseObject and the relateToObject.<p></ul>
+        <li><h3>optionDimentions</a></h3></li>
+            <ul><p>This variable stores the length and height, one option in the menu should have.<p></ul>
+    </ul>
+<h2>Methods</h2>
+    <ul>
+        <li><h3>hide()</h3></li>
+            <ul><p>This hides this menu, if you click somewhere else. 
+            <br>This function is part of the <a href = "Hideble.html"> Hideble</a> interface.</p></ul>
+        <li><h3>setMenuPreset()</h3></li>
+            <ul><p>This initializes the MenuOptions for different default menus.
+            <br><b> Available Presets:</b>
+            <br> <b>euqationElement</b>: This is the default OverlayMenu for <a href = "EquationVisElement.html"> EquationVisElements</a>.
+            <br> It has the options edit or delete, which are executed from the  <a href = "ApplicationController.html"> ApplicationController</a> class.
+            </p></ul>
+    </ul>
+
+</body>
+</html>

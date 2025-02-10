@@ -1,7 +1,38 @@
-public class Main {
-    public static void main(String[] args) {
+import javafx.application.Application;
+import javafx.event.EventHandler;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.input.MouseEvent;
+import javafx.stage.Stage;
 
+import java.io.IOException;
+
+public class Main extends Application {
+    @Override
+    public void start(Stage stage) throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/resources/GraphDraculaUI.fxml"));
+        Parent root = loader.load();
+        //Scene scene = new Scene(fxmlLoader.load(), 1920, 1080);
+        HelloController controller = loader.getController();
+        Scene scene = new Scene(root);
+        String css = this.getClass().getResource("/resources/application.css").toExternalForm();
+        scene.getStylesheets().add(css);
+
+        scene.addEventFilter(MouseEvent.MOUSE_PRESSED, new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                controller.hideRedundantElements();
+            }
+        });
+
+        stage.setTitle("Hello!");
+        stage.setScene(scene);
+        stage.show();
+        controller.setup();
     }
+
+
 
     public static EquationTree buildTestEquation() { // 2+4*4
         EquationNode root = new EquationNode((byte) 2,"+");
@@ -58,5 +89,7 @@ public class Main {
         return new EquationTree(root);
     }
 
-
+    public static void main(String[] args) {
+        launch();
+    }
 }
