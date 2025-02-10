@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>ApplicationController</title>
+</head>
+<body>
+
+<h1>ApplicationController</h1>
+<h2>Variables</h2>
+    <ul>
+        <li><h3>public UI-elements from the <a href = "https://docs.oracle.com/javase/8/javafx/api/javafx/fxml/doc-files/introduction_to_fxml.html"> fxml-file</a></h3></li>
+            <ul><p>Theese variables are automatically assigned at the start and make the base UI elements from the <a href = "https://docs.oracle.com/javase/8/javafx/api/javafx/fxml/doc-files/introduction_to_fxml.html"> fxml-file</a> accessible and usable from the codebase.</p></ul>
+        <li><h3>listElements</h3></li>
+            <ul><p>Contains all EquationVisElements, that represent all functions, the user has put in. Theese objects are displayed in the ScrollPane on the right.</p></ul>
+        <li><h3>mainColorPicker</h3></li>
+            <ul><p>Represents the color picker on the bottom right of the equationInput. It automatically changes the color of the input field.</p></ul>
+        <li><h3>minEquationListHeight</h3></li>
+            <ul><p>Stores the height, the Pane inside of the ScrollPane must have at minimum, to be able to display all EquationListElements.</p></ul>
+        <li><h3>editIndex</h3></li>
+            <ul><p>Stores the index (from the listElements list) of the EquationVisElement, wich is currently edited. When no EquationListElement is currently edited, it has the value of -1.</p></ul>
+        <li><h3>Default size values of the scene elements</h3></li>
+            <ul><p>Theese are some values, that are relevant to be able to dynamically resize the pane</p></ul>
+    </ul>
+<h2>Methods</h2>
+    <ul>
+        <li><h3>OnAddButtonCLick()</h3></li>
+            <ul><p>This method is called, when a function is added or an edit of an exsiting function is confirmed. If no function is currently being edited (then editIndex would be -1), it adds a new EquationVisElement to the ScrollPane. Otherwise it changes the EquationVisElement at the given index.</p></ul>
+        <li><h3>setup()</h3></li>
+            <ul><p>This method is called from the <a href = "Main.html"> Main</a> class in it's start method. It sets up some basics for the UI to work, inculuding the Anchors, required to make the UI resizable. It also adds event listners for when the window is resized, when the enter key is pressed, for when you right click on an EquationVisElement an for when you scroll on the ScrollPane</p></ul>
+        <li><h3>getHoverdEquationVisElement()</h3></li>
+            <ul><p>This method is called, when you right click. It checks and returns, if you right clicked on an EquationVisElement, otherwise it returns null.</p></ul>
+        <li><h3>calculateDefaultSizes()</h3></li>
+            <ul><p>This method is called at the start, to store the default positioning of some UI-elements (required for resizing).</p></ul>
+        li><h3>resize()</h3></li>
+            <ul><p>This method is called when the window is resized and scales and moves all UI elements based on their Anchor. The equationList and graphView are scaled based on a specified precentage, they take up of the window length.</p></ul>
+        li><h3>updateListElementTransform()</h3></li>
+            <ul><p>This method makes shure, that EquationListElements are moved up, when the element over them is deleted and call their updateTransform() method,that moves the panel and title of their RoundColorPicker, when it is open while resizing.</p></ul>
+    </ul>
+    </ul>
+
+</body>
+</html>

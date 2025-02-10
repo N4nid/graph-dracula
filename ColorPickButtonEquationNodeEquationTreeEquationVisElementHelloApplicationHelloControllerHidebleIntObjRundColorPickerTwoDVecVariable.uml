@@ -3,8 +3,8 @@ File0=Java\graph-dracula-MortySmith\ColorPickButton.java
 File1=Java\graph-dracula-MortySmith\EquationNode.java
 File2=Java\graph-dracula-MortySmith\EquationTree.java
 File3=Java\graph-dracula-MortySmith\EquationVisElement.java
-File4=Java\graph-dracula-MortySmith\HelloApplication.java
-File5=Java\graph-dracula-MortySmith\HelloController.java
+File4=Java\graph-dracula-MortySmith\Main.java
+File5=Java\graph-dracula-MortySmith\ApplicationController.java
 File6=Java\graph-dracula-MortySmith\Hideble.java
 File7=Java\graph-dracula-MortySmith\IntObj.java
 File8=Java\graph-dracula-MortySmith\RoundColorPicker.java
@@ -61,7 +61,7 @@ ShowIcons=1
 FontSize=6
 FontName=Segoe UI
 
-[Box:  - HelloApplication]
+[Box:  - Main]
 X=80
 Y=80
 MinVis=0
@@ -71,7 +71,7 @@ ShowIcons=1
 FontSize=6
 FontName=Segoe UI
 
-[Box:  - HelloController]
+[Box:  - ApplicationController]
 X=1512
 Y=80
 MinVis=0
@@ -150,10 +150,10 @@ V1=EquationNode#EquationNode#AssociationBidirectional####1#0#0###0#0
 V2=EquationTree#EquationNode#AssociationDirected####0#0#0###0#0
 V3=EquationVisElement#RoundColorPicker#AssociationDirected####0#0#0###0#0
 V4=EquationVisElement#EquationTree#AssociationDirected####0#0#0###0#0
-V5=HelloController#Hideble#Aggregation####0#0#0###0#0
-V6=HelloController#EquationVisElement#Aggregation####0#0#0###0#0
-V7=HelloController#RoundColorPicker#AssociationBidirectional####0#0#0###0#0
-V8=HelloController#Anchor#Aggregation####0#0#0###0#0
+V5=ApplicationController#Hideble#Aggregation####0#0#0###0#0
+V6=ApplicationController#EquationVisElement#Aggregation####0#0#0###0#0
+V7=ApplicationController#RoundColorPicker#AssociationBidirectional####0#0#0###0#0
+V8=ApplicationController#Anchor#Aggregation####0#0#0###0#0
 V9=RoundColorPicker#Hideble#Implements####0#0#0###0#0
 
 [Interactive]

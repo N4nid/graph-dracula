@@ -1,7 +1,7 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="HelloApplication" type="Application" factoryName="Application" nameIsGenerated="true">
+  <configuration default="false" name="Main" type="Application" factoryName="Application" nameIsGenerated="true">
     <option name="ALTERNATIVE_JRE_PATH" value="jbr-21" />
-    <option name="MAIN_CLASS_NAME" value="HelloApplication" />
+    <option name="MAIN_CLASS_NAME" value="Main" />
     <module name="graphdraculagui" />
     <option name="VM_PARAMETERS" value="--module-path ${PATH_TO_FX} --add-modules=javafx.controls,javafx.fxml" />
     <method v="2">

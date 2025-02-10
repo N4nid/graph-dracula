@@ -12,7 +12,7 @@ import javafx.scene.paint.Color;
 import java.util.ArrayList;
 import java.util.Random;
 
-public class HelloController {
+public class ApplicationController {
   public ArrayList<Hideble> hideOnClick = new ArrayList<Hideble>();
   public Label welcomeText;
   public ImageView graphView;

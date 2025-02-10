@@ -1,25 +1,20 @@
 import javafx.application.Application;
 import javafx.event.EventHandler;
-import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.Pane;
-import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
 import java.io.IOException;
 
-public class HelloApplication extends Application {
+public class Main extends Application {
     @Override
     public void start(Stage stage) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("GraphDraculaUI.fxml"));
         Parent root = loader.load();
         //Scene scene = new Scene(fxmlLoader.load(), 1920, 1080);
-        HelloController controller = loader.getController();
+        ApplicationController controller = loader.getController();
         Scene scene = new Scene(root);
         String css = this.getClass().getResource("application.css").toExternalForm();
         scene.getStylesheets().add(css);
@@ -31,7 +26,7 @@ public class HelloApplication extends Application {
             }
         });
 
-        stage.setTitle("Hello!");
+        stage.setTitle("graph-dracula!");
         stage.setScene(scene);
         stage.show();
         controller.setup();

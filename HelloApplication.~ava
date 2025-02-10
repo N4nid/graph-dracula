@@ -12,11 +12,11 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 
-public class HelloApplication extends Application {
+public class Main extends Application {
     @Override
     public void start(Stage stage) throws IOException {
         Parent root = FXMLLoader.load(getClass().getResource("GraphDraculaUI.fxml"));
-        //FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("GraphDraculaUI.fxml"));
+        //FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("GraphDraculaUI.fxml"));
         //Scene scene = new Scene(fxmlLoader.load(), 1920, 1080);
         Scene scene = new Scene(root);
         //String css = this.getClass().getResource("application.css").toExternalForm();
