@@ -1,6 +1,8 @@
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -8,6 +10,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.ArcType;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -26,6 +29,7 @@ public class ApplicationController {
   public Button extraInputButton;
   public Button addButton;
   public ScrollPane scrollPane;
+  public Canvas test;
   ArrayList<EquationVisElement> listElements = new ArrayList<EquationVisElement>();
   public RoundColorPicker mainColorPicker;
   public Scene scene;
@@ -122,6 +126,35 @@ public class ApplicationController {
     });
 
     scrollPane.setOnScroll(scrollEvent -> updateListElementTransform());
+
+    Canvas canvas = new Canvas(300, 250);
+    GraphicsContext gc = canvas.getGraphicsContext2D();
+    gc.setFill(Color.BLACK);
+    drawShapes(gc);
+    root.getChildren().add(canvas);
+  }
+
+  private void drawShapes(GraphicsContext gc) {
+    gc.setFill(Color.GREEN);
+    gc.setStroke(Color.BLUE);
+    gc.setLineWidth(5);
+    gc.strokeLine(40, 10, 10, 40);
+    gc.fillOval(10, 60, 30, 30);
+    gc.strokeOval(60, 60, 30, 30);
+    gc.fillRoundRect(110, 60, 30, 30, 10, 10);
+    gc.strokeRoundRect(160, 60, 30, 30, 10, 10);
+    gc.fillArc(10, 110, 30, 30, 45, 240, ArcType.OPEN);
+    gc.fillArc(60, 110, 30, 30, 45, 240, ArcType.CHORD);
+    gc.fillArc(110, 110, 30, 30, 45, 240, ArcType.ROUND);
+    gc.strokeArc(10, 160, 30, 30, 45, 240, ArcType.OPEN);
+    gc.strokeArc(60, 160, 30, 30, 45, 240, ArcType.CHORD);
+    gc.strokeArc(110, 160, 30, 30, 45, 240, ArcType.ROUND);
+    gc.fillPolygon(new double[]{10, 40, 10, 40},
+            new double[]{210, 210, 240, 240}, 4);
+    gc.strokePolygon(new double[]{60, 90, 60, 90},
+            new double[]{210, 210, 240, 240}, 4);
+    gc.strokePolyline(new double[]{110, 140, 110, 140},
+            new double[]{210, 210, 240, 240}, 4);
   }
 
   public EquationVisElement getHoveredEquationVisElement() {
@@ -150,6 +183,7 @@ public class ApplicationController {
     root.setPrefWidth(root.getWidth());
     root.setPrefHeight(root.getHeight());
 
+
     TwoDVec<Double> graphViewPaneSize = new TwoDVec<Double>(defaultGraphViewPaneSize.x - viewListHorizontalRatio * horzDiff, defaultGraphViewPaneSize.y - vertDiff);
     TwoDVec<Double> scrollPanePos = new TwoDVec<Double>(graphViewPane.getLayoutX() + graphViewPaneSize.x + viewListHorizontalDist, defaultGraphViewPanePos.y);
     TwoDVec<Double> scrollPaneSize = new TwoDVec<Double>(defaultScrollPaneSize.x - (1-viewListHorizontalRatio) * horzDiff,defaultScrollPaneSize.y - vertDiff);
@@ -161,6 +195,10 @@ public class ApplicationController {
     scrollPane.setPrefHeight(scrollPaneSize.y);
     graphView.setFitWidth(graphViewPaneSize.x - 6);
     graphView.setFitHeight(graphViewPaneSize.y - 6);
+    /*test.setWidth(graphView.getFitWidth());
+    test.setHeight(graphView.getFitHeight());
+    test.getGraphicsContext2D().setFill(Color.GREEN);
+    moveTo(new TwoDVec<Double>(graphView.getLayoutX(),graphView.getLayoutY()),test);*/
 
     Anchor.applyAnchors(anchors);
     if (equationList.getPrefHeight() < minEquationListHeight) {
