@@ -18,7 +18,6 @@ import java.util.Random;
 public class ApplicationController {
   public ArrayList<Hideble> hideOnClick = new ArrayList<Hideble>();
   public Label welcomeText;
-  public ImageView graphView;
   public Pane graphViewPane;
   public TextField equationInput;
   public Pane equationList;
@@ -29,7 +28,7 @@ public class ApplicationController {
   public Button extraInputButton;
   public Button addButton;
   public ScrollPane scrollPane;
-  public Canvas test;
+  public Canvas mainCanvas;
   ArrayList<EquationVisElement> listElements = new ArrayList<EquationVisElement>();
   public RoundColorPicker mainColorPicker;
   public Scene scene;
@@ -81,7 +80,6 @@ public class ApplicationController {
     mainColorPicker = new RoundColorPicker(colorPickPos.x,colorPickPos.y,0,new Random().nextInt(15),true,root,this);
     equationInputPane.getChildren().add(mainColorPicker.displayButton);
     hideOnClick.add(mainColorPicker);
-    graphView.setImage(new Image("/resources/GraphDraculaSampleGraph.png"));
     
     Effects.addDefaultHoverEffect(addButton);
     Effects.addDefaultHoverEffect(extraInputButton);
@@ -98,6 +96,12 @@ public class ApplicationController {
     anchors.add(new Anchor(equationList,scrollPane,new TwoDVec<Double>(0.0,0.0),"scale"));
     anchors.add(new Anchor(graphViewLabel,graphViewPane,new TwoDVec<Double>(15.0,-13.0),"pos"));
     anchors.add(new Anchor(equationListLabel,scrollPane,new TwoDVec<Double>(15.0,-13.0),"pos"));
+
+    mainCanvas = new Canvas(graphViewPane.getPrefWidth(), graphViewPane.getPrefHeight());
+    mainCanvas.relocate(graphViewPane.getLayoutX(),graphViewPane.getLayoutY());
+    GraphicsContext gc = mainCanvas.getGraphicsContext2D();
+    gc.setFill(Color.BLACK);
+    root.getChildren().add(mainCanvas);
 
     resize();
     scene.widthProperty().addListener((obs, oldVal, newVal) -> {
@@ -126,35 +130,6 @@ public class ApplicationController {
     });
 
     scrollPane.setOnScroll(scrollEvent -> updateListElementTransform());
-
-    Canvas canvas = new Canvas(300, 250);
-    GraphicsContext gc = canvas.getGraphicsContext2D();
-    gc.setFill(Color.BLACK);
-    drawShapes(gc);
-    root.getChildren().add(canvas);
-  }
-
-  private void drawShapes(GraphicsContext gc) {
-    gc.setFill(Color.GREEN);
-    gc.setStroke(Color.BLUE);
-    gc.setLineWidth(5);
-    gc.strokeLine(40, 10, 10, 40);
-    gc.fillOval(10, 60, 30, 30);
-    gc.strokeOval(60, 60, 30, 30);
-    gc.fillRoundRect(110, 60, 30, 30, 10, 10);
-    gc.strokeRoundRect(160, 60, 30, 30, 10, 10);
-    gc.fillArc(10, 110, 30, 30, 45, 240, ArcType.OPEN);
-    gc.fillArc(60, 110, 30, 30, 45, 240, ArcType.CHORD);
-    gc.fillArc(110, 110, 30, 30, 45, 240, ArcType.ROUND);
-    gc.strokeArc(10, 160, 30, 30, 45, 240, ArcType.OPEN);
-    gc.strokeArc(60, 160, 30, 30, 45, 240, ArcType.CHORD);
-    gc.strokeArc(110, 160, 30, 30, 45, 240, ArcType.ROUND);
-    gc.fillPolygon(new double[]{10, 40, 10, 40},
-            new double[]{210, 210, 240, 240}, 4);
-    gc.strokePolygon(new double[]{60, 90, 60, 90},
-            new double[]{210, 210, 240, 240}, 4);
-    gc.strokePolyline(new double[]{110, 140, 110, 140},
-            new double[]{210, 210, 240, 240}, 4);
   }
 
   public EquationVisElement getHoveredEquationVisElement() {
@@ -193,13 +168,14 @@ public class ApplicationController {
     graphViewPane.setPrefHeight(graphViewPaneSize.y);
     scrollPane.setPrefWidth(scrollPaneSize.x);
     scrollPane.setPrefHeight(scrollPaneSize.y);
-    graphView.setFitWidth(graphViewPaneSize.x - 6);
-    graphView.setFitHeight(graphViewPaneSize.y - 6);
-    /*test.setWidth(graphView.getFitWidth());
-    test.setHeight(graphView.getFitHeight());
-    test.getGraphicsContext2D().setFill(Color.GREEN);
-    moveTo(new TwoDVec<Double>(graphView.getLayoutX(),graphView.getLayoutY()),test);*/
-
+    mainCanvas.setWidth(graphViewPane.getPrefWidth());
+    mainCanvas.setHeight(graphViewPane.getPrefHeight());
+    mainCanvas.relocate(graphViewPane.getLayoutX(),graphViewPane.getLayoutY());
+    RealFunctionDrawer drawer = new RealFunctionDrawer();
+    TwoDVec<Integer> res = new TwoDVec<Integer>((int)mainCanvas.getWidth(),(int)mainCanvas.getHeight());
+    double[] funcValues = drawer.calculateFunctionValues(res,new TwoDVec<Double>(0.01,0.01),new TwoDVec<Double>(0.0,0.0),Main.buildTestFunction());
+    System.out.println(funcValues[200]);
+    drawer.drawFunction(mainCanvas.getGraphicsContext2D(),funcValues,Color.WHITE);
     Anchor.applyAnchors(anchors);
     if (equationList.getPrefHeight() < minEquationListHeight) {
       equationList.setPrefHeight(minEquationListHeight);
