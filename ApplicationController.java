@@ -171,11 +171,15 @@ public class ApplicationController {
     mainCanvas.setWidth(graphViewPane.getPrefWidth());
     mainCanvas.setHeight(graphViewPane.getPrefHeight());
     mainCanvas.relocate(graphViewPane.getLayoutX(),graphViewPane.getLayoutY());
-    RealFunctionDrawer drawer = new RealFunctionDrawer();
     TwoDVec<Integer> res = new TwoDVec<Integer>((int)mainCanvas.getWidth(),(int)mainCanvas.getHeight());
-    double[] funcValues = drawer.calculateFunctionValues(res,new TwoDVec<Double>(0.01,0.01),new TwoDVec<Double>(0.0,0.0),Main.buildTestFunction());
-    System.out.println(funcValues[200]);
-    drawer.drawFunction(mainCanvas.getGraphicsContext2D(),funcValues,Color.WHITE);
+    double[] funcValues1 = RealFunctionDrawer.calculateFunctionValues(res,new TwoDVec<Double>(0.01,0.01),new TwoDVec<Double>(0.0,0.0),Main.buildTestFunction());
+    double[] funcValues2 = RealFunctionDrawer.calculateFunctionValues(res,new TwoDVec<Double>(0.01,0.01),new TwoDVec<Double>(0.0,0.0),Main.buildComplicatedTestFunction());
+    double[] xs = new double[funcValues1.length];
+    for (int i = 0; i < funcValues1.length; i++) {
+      xs[i] = i;
+    }
+    double[][] funcValues = {funcValues1, funcValues2};
+    RealFunctionDrawer.drawFunctions(mainCanvas.getGraphicsContext2D(),xs, funcValues,Color.WHITE);
     Anchor.applyAnchors(anchors);
     if (equationList.getPrefHeight() < minEquationListHeight) {
       equationList.setPrefHeight(minEquationListHeight);
