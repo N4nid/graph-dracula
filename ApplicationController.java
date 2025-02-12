@@ -172,14 +172,15 @@ public class ApplicationController {
     mainCanvas.setHeight(graphViewPane.getPrefHeight());
     mainCanvas.relocate(graphViewPane.getLayoutX(),graphViewPane.getLayoutY());
     TwoDVec<Integer> res = new TwoDVec<Integer>((int)mainCanvas.getWidth(),(int)mainCanvas.getHeight());
+    long startTime = System.nanoTime();
     double[] funcValues1 = RealFunctionDrawer.calculateFunctionValues(res,new TwoDVec<Double>(0.01,0.01),new TwoDVec<Double>(0.0,0.0),Main.buildTestFunction());
     double[] funcValues2 = RealFunctionDrawer.calculateFunctionValues(res,new TwoDVec<Double>(0.01,0.01),new TwoDVec<Double>(0.0,0.0),Main.buildComplicatedTestFunction());
-    double[] xs = new double[funcValues1.length];
-    for (int i = 0; i < funcValues1.length; i++) {
-      xs[i] = i;
-    }
     double[][] funcValues = {funcValues1, funcValues2};
-    RealFunctionDrawer.drawFunctions(mainCanvas.getGraphicsContext2D(),xs, funcValues,Color.WHITE);
+    double[] xValues = RealFunctionDrawer.getXArray(res.x);
+    RealFunctionDrawer.drawFunctions(mainCanvas.getGraphicsContext2D(),xValues, funcValues,new Color[]{Color.BLUEVIOLET,Color.YELLOW});
+    long endTime   = System.nanoTime();
+    long totalTime = endTime - startTime;
+    System.out.println(totalTime);
     Anchor.applyAnchors(anchors);
     if (equationList.getPrefHeight() < minEquationListHeight) {
       equationList.setPrefHeight(minEquationListHeight);
