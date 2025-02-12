@@ -1,17 +1,17 @@
-object FunctionRenderer_2_0: TFXGuiForm
-  Left = 1026
-  Top = 100
+object FGUIForm: TFXGuiForm
+  Left = 1120
+  Top = 105
   BorderIcons = [biSystemMenu]
   Caption = 'function_renderer'
-  ClientHeight = 684
-  ClientWidth = 656
+  ClientHeight = 646
+  ClientWidth = 640
   Color = 4210752
   ParentFont = True
   FormStyle = fsStayOnTop
-  OldCreateOrder = True
   Position = poDesigned
   ShowHint = True
   Visible = True
+  OnCanResize = FormCanResize
   OnClose = FormClose
   OnCloseQuery = FormCloseQuery
   OnMouseActivate = FormMouseActivate
@@ -21,7 +21,6 @@ object FunctionRenderer_2_0: TFXGuiForm
   Resizable = True
   Undecorated = False
   Background = 4210752
-  showing = ''
   Title = 'function_renderer'
   X = 0
   Y = 0
@@ -32,8 +31,9 @@ object FunctionRenderer_2_0: TFXGuiForm
   MaxWidth = 0
   MinHeight = 0
   MinWidth = 0
-  PixelsPerInch = 96
-  TextHeight = 13
+  showing = ''
+  PixelsPerInch = 0
+  TextHeight = 15
   object bRender: TFXButton
     Tag = 105
     Left = 27
@@ -48,6 +48,7 @@ object FunctionRenderer_2_0: TFXGuiForm
     Font.Style = []
     Foreground = clBlack
     Background = clBtnFace
+    JavaType = 'Button'
     LayoutX = 27
     LayoutY = 17
     Disable = False
@@ -84,6 +85,7 @@ object FunctionRenderer_2_0: TFXGuiForm
     Font.Style = []
     Foreground = clBlack
     Background = clBtnFace
+    JavaType = 'ImageView'
     LayoutX = 27
     LayoutY = 60
     Disable = False

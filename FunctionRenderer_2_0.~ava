@@ -31,18 +31,17 @@ public class FunctionRenderer_2_0 extends Application {
   //GUI
   Color background = Color.rgb(40,40,40);
   Color axes = Color.WHITE;
-  int breite = 600;
-  int hoehe = 600;
+  int breite = 1800;
+  int hoehe = 900;
   int posX = 30;
   int posY = 80;
   WritableImage image = new WritableImage(breite, hoehe);
   private ImageView screen = new ImageView();
   //The Math stuff
-  double scaling = 0.05;
+  double scaling = 0.01;
   int X0 = breite/2;
   int Y0 = hoehe/2;
   ArrayList<EquationTree> functions = new ArrayList<EquationTree>();
-  ArrayList<Boolean[][]> negPosMaps = new ArrayList<Boolean[][]>();
   // Ende Attribute
   
   public void start(Stage primaryStage) { 
@@ -85,48 +84,60 @@ public class FunctionRenderer_2_0 extends Application {
     launch(args);
   } // end of main
   
+  public class MyThread extends Thread {
+    boolean[][][] storage;
+    int i;
+    public MyThread(boolean[][][] storage, int index) {
+      this.storage = storage;
+      this.i = index;
+    }
+    public void run() {
+      for (int x = 0; x < breite; x++) {
+        for (int y = 0; y < hoehe; y++) {
+          storage[i][x][y] = (functions.get(i).calculate((x-X0)*scaling, -(y-Y0)*scaling,new Variable[0]) >= 0) ? true : false;
+        }
+      }
+    }
+  }
+  
   public void exampleFunctionInitialiser() {
     Main functionTestStation = new Main();
     
     functions.add(functionTestStation.buildTestEquation());
     functions.get(functions.size()-1).GraphColor = Color.LIGHTGRAY;
-    Boolean storage1[][] = new Boolean[breite][hoehe];
-    for (int x = 0; x < breite; x++) {
-      for (int y = 0; y < hoehe; y++) {
-        storage1[x][y] = (functions.get(functions.size()-1).calculate((x-X0)*scaling,-(y-Y0)*scaling,new Variable[0])>= 0) ? true : false;
-      }
-    }
-    negPosMaps.add(storage1);
     
     functions.add(functionTestStation.buildTestFunction());
     functions.get(functions.size()-1).GraphColor = Color.RED;
-    Boolean storage2[][] = new Boolean[breite][hoehe];
-    for (int x = 0; x < breite; x++) {
-      for (int y = 0; y < hoehe; y++) {
-        storage2[x][y] = (functions.get(functions.size()-1).calculate((x-X0)*scaling,-(y-Y0)*scaling,new Variable[0])>= 0) ? true : false;
-      }
-    }
-    negPosMaps.add(storage2);
     
     functions.add(functionTestStation.buildComplicatedTestFunction());
     functions.get(functions.size()-1).GraphColor = Color.LIME;
-    Boolean storage3[][] = new Boolean[breite][hoehe];
-    for (int x = 0; x < breite; x++) {
-      for (int y = 0; y < hoehe; y++) {
-        storage3[x][y] = (functions.get(functions.size()-1).calculate((x-X0)*scaling,-(y-Y0)*scaling,new Variable[0])>= 0) ? true : false;
-      }
-    }
-    negPosMaps.add(storage3);
     
     functions.add(functionTestStation.buildTestKreis());
     functions.get(functions.size()-1).GraphColor = Color.BLUE;
-    Boolean storage4[][] = new Boolean[breite][hoehe];
-    for (int x = 0; x < breite; x++) {
-      for (int y = 0; y < hoehe; y++) {
-        storage4[x][y] = (functions.get(functions.size()-1).calculate((x-X0)*scaling,-(y-Y0)*scaling,new Variable[0])>= 0) ? true : false;
-      }
+    
+    functions.add(functionTestStation.buildTestSinusFunction());
+    functions.get(functions.size()-1).GraphColor = Color.GREEN;
+    
+    long startTime = System.nanoTime();
+    
+    boolean[][][] negPosMaps = new boolean[functions.size()][breite][hoehe];
+    for (int i = 0; i < functions.size(); i++) {
+      MyThread thread = new MyThread(negPosMaps,i);
+      thread.start();
+      if (i == functions.size()-1) {
+        try {
+          thread.join();
+        } catch(Exception e) {
+          System.out.println("Alarrrrm");
+        }
+      } // end of if
     }
-    negPosMaps.add(storage4);      
+    
+    long endTime = System.nanoTime();
+    
+    long duration = (endTime - startTime)/1000000;  //divide by 1000000 to get milliseconds.
+    System.out.println(""+duration);
+    writeImage(negPosMaps);
   }
   
   public void initialiseRender() {
@@ -144,7 +155,7 @@ public class FunctionRenderer_2_0 extends Application {
     screen.setImage(image);
   }
   
-  public void writeImage(){
+  public void writeImage(boolean[][][] negPosMaps){
     //schreibt Pixelarray in Image
     for(int x=0; x < breite; x++) {
       for(int y=0; y < hoehe; y++) {
@@ -153,7 +164,7 @@ public class FunctionRenderer_2_0 extends Application {
           color = axes;
         } else {
           for (int i = 0; i < functions.size(); i++) {
-            if (isPartOfFunction(x,y,negPosMaps.get(i))) {
+            if (isPartOfFunction(x,y,negPosMaps,i)) {
               color = functions.get(i).GraphColor;
             } // end of if
           }
@@ -164,20 +175,21 @@ public class FunctionRenderer_2_0 extends Application {
     } 
   }
   
-  public boolean isPartOfFunction(int x,int y,Boolean[][] negPosMap) {
-    return ((negPosMap[x][y]==negPosMap[x+1][y])&&(negPosMap[x][y-1]==negPosMap[x+1][y-1])&&(negPosMap[x][y]==negPosMap[x][y-1])) ? false : true;
+  public boolean isPartOfFunction(int x,int y,boolean[][][] negPosMap, int i) {
+    return ((negPosMap[i][x][y]==negPosMap[i][x+1][y])&&(negPosMap[i][x][y-1]==negPosMap[i][x+1][y-1])&&(negPosMap[i][x][y]==negPosMap[i][x][y-1])) ? false : true;
   }
   
   public void bRender_Action(Event evt) {
-    // TODO hier Quelltext einfügen
+    // TODO hier Quelltext einfÃ¼gen
     exampleFunctionInitialiser();
-    writeImage();
   } // end of bRender_Action
 
   public void screen_MouseDragged(MouseEvent evt) {
-    // TODO hier Quelltext einfügen
-    System.out.println("X is: " + (int)(evt.getX()-lastMouseX));
-    System.out.println("Y is: " + (int)-(evt.getY()-lastMouseY));
+    // TODO hier Quelltext einfÃ¼gen
+    if (evt.getX() >= posX && evt.getX() <= posX+breite && evt.getY() >= posY && evt.getY() <= posY+hoehe) {
+      System.out.println("X is: " + (int)(evt.getX()-lastMouseX));
+      System.out.println("Y is: " + (int)-(evt.getY()-lastMouseY));
+    } // end of if
     lastMouseX = (int)evt.getX();
     lastMouseY = (int)evt.getY();
   } // end of imageView1_MouseDragged
