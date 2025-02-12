@@ -3,6 +3,9 @@ public class EquationNode {
   public Object value;
   public EquationNode left;
   public EquationNode right;
+  public int bracketDepth;
+  public byte opLevel; // to sort operators easier later. -1 if not a operator
+  public EquationNode above;
 
   public EquationNode(byte state, String value) {
     this.state = state;
@@ -59,9 +62,9 @@ public class EquationNode {
       } else {
         System.out.println("Invalid Operator!");
       }
-    } else if (state == 3 && left != null) {
+    } else if (state == 3 && right != null) {
       String op = (String) value;
-      double calVal = left.calculate(x, y, parameters);
+      double calVal = right.calculate(x, y, parameters);
       if (op.equals("sin")) {
         return Math.sin(calVal);
       } else if (op.equals("cos")) {

@@ -1,10 +1,90 @@
+import java.util.Scanner;
+
 public class Main {
   public static void main(String[] args) {
+    Main programm = new Main();
+    if (args.length >= 1) {
+      System.out.println("--- MODE: " + args[0]);
+      switch (args[0]) {
+        case "test":
+          programm.testParser();
+          break;
+
+        case "demo":
+          programm.interactiveDemo();
+          break;
+        case "debug":
+          programm.quickDebug();
+          break;
+
+        default:
+          System.out.println("Use one of the following args: test, demo, debug");
+          break;
+      }
+    }
+  }
+
+  public void quickDebug() {
     EquationParser parser = new EquationParser();
-    // String test = "0+sin(2+2)";
-    String test = "2+3^(23-1/2)";
+    // String test = "1+3*3-1";
+    // String test = "1+3*3^2";
+    // String test = "cos(sin(1-1)*2.4)";
+    String test = "4*4^5+cos(4^2)-1/2*sin(4)+1/4*(4+1)";
+    // String test = "sin(((4^(3))/32)-2*cos(16/31+108/31-4))+42";
+    // String test = "(1-1)+2*(3^(2-1))";
+    // String test = "1+2*(1+3*3+1)";
+    // String test = "cos(sin(1/3)+1)";
+    // String test = "3^(cos(sin(1/3)+1))*(1/2)";
+    // String test = "3^(3+3)*2";
+    // String test = "2+3^(23-1/2)";
     // String test = "x^3+34/6.5-1/(a^(sin(56)))*3";
     parser.parseString(test);
+  }
+
+  public void interactiveDemo() {
+    EquationParser parser = new EquationParser();
+    String inp = "";
+    Scanner scanner = new Scanner(System.in);
+    System.out.println("Welcome to the StringParser. Available commads:");
+    System.out.println("exit, clear");
+
+    while (!inp.contains("exit")) {
+      System.out.println("Enter equation: ");
+      inp = scanner.nextLine();
+      if (inp.contains("clear")) {
+        System.out.print("\033\143");
+      } else if (!inp.contains("exit")) {
+        try {
+          parser.parseString(inp);
+        } catch (Exception e) {
+          System.out.println("whopsies");
+        }
+      } else {
+        break;
+      }
+
+    }
+    scanner.close();
+  }
+
+  public void testParser() { // todo
+    EquationParser parser = new EquationParser();
+    // brackets
+    String test[] = { "3*2^2+1", "1+2*3^2", "2*3^sin(0)+1", "1+sin(0)*2",
+        "1+1^3*3+1", "1+2*(3-1)", "(2*2+1)^2", "sin(1-1)+2*(3^(2-1))", "1+2*(1+3*3+1)",
+        "3^(sin(2*cos(1/3*3-1)-2)+2)*(1/2)", "cos(sin(1-1)*2)", "sin(2*sin(2-2))", "sin(2*sin(22*0))" };
+    double results[] = { 13, 19, 3, 1, 5, 5, 25, 6, 23, 4.5, 1, 0, 0 };
+    for (int i = 0; i < test.length; i++) {
+      System.out.println("-----------------");
+      EquationTree root = parser.parseString(test[i]);
+      double res = root.calculate(0, 0, new Variable[1]);
+      System.out.println("calc:" + res + "  - should: " + results[i]);
+      if (res == results[i]) {
+        System.out.println("### TEST PASSED ###");
+      } else {
+        System.out.println("--- TEST FAILED ---");
+      }
+    }
   }
 
   public static EquationTree buildTestEquation() { // 2+4*4
