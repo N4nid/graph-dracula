@@ -47,6 +47,7 @@ public class ApplicationController {
   private static final double defaultButtonSize = 70;
 
   private ArrayList<Anchor> anchors = new ArrayList<Anchor>();
+  private RealFunctionDrawer funcDrawer = new RealFunctionDrawer(new TwoDVec<Integer>(1920,1080),new TwoDVec<Double>(0.02,0.02),new TwoDVec<Double>(0.0,0.0));
   
   @FXML
   protected void onAddButtonClick() {
@@ -100,7 +101,6 @@ public class ApplicationController {
     mainCanvas = new Canvas(graphViewPane.getPrefWidth(), graphViewPane.getPrefHeight());
     mainCanvas.relocate(graphViewPane.getLayoutX(),graphViewPane.getLayoutY());
     GraphicsContext gc = mainCanvas.getGraphicsContext2D();
-    gc.setFill(Color.BLACK);
     root.getChildren().add(mainCanvas);
 
     resize();
@@ -130,6 +130,15 @@ public class ApplicationController {
     });
 
     scrollPane.setOnScroll(scrollEvent -> updateListElementTransform());
+
+    mainCanvas.setOnMouseDragged(e -> {
+      //System.out.println(e.getX());
+      //funcDrawer.midpoint.setPos(funcDrawer.midpoint.x + funcDrawer.zoom.x * e.get);
+    });
+    mainCanvas.setOnDragDetected(e -> {
+      //System.out.println(e.getX());
+      //funcDrawer.midpoint.setPos(funcDrawer.midpoint.x + funcDrawer.zoom.x * e.get);
+    });
   }
 
   public EquationVisElement getHoveredEquationVisElement() {
@@ -173,11 +182,8 @@ public class ApplicationController {
     mainCanvas.relocate(graphViewPane.getLayoutX(),graphViewPane.getLayoutY());
     TwoDVec<Integer> res = new TwoDVec<Integer>((int)mainCanvas.getWidth(),(int)mainCanvas.getHeight());
     long startTime = System.nanoTime();
-    double[] funcValues1 = RealFunctionDrawer.calculateFunctionValues(res,new TwoDVec<Double>(0.01,0.01),new TwoDVec<Double>(0.0,0.0),Main.buildTestFunction());
-    double[] funcValues2 = RealFunctionDrawer.calculateFunctionValues(res,new TwoDVec<Double>(0.01,0.01),new TwoDVec<Double>(0.0,0.0),Main.buildComplicatedTestFunction());
-    double[][] funcValues = {funcValues1, funcValues2};
-    double[] xValues = RealFunctionDrawer.getXArray(res.x);
-    RealFunctionDrawer.drawFunctions(mainCanvas.getGraphicsContext2D(),xValues, funcValues,new Color[]{Color.BLUEVIOLET,Color.YELLOW});
+    funcDrawer.resolution = res;
+    funcDrawer.drawFunctions(mainCanvas.getGraphicsContext2D(),new Color[]{Color.BLUEVIOLET,Color.YELLOW},new EquationTree[]{Main.buildTestFunction(),Main.buildComplicatedTestFunction()});
     long endTime   = System.nanoTime();
     long totalTime = endTime - startTime;
     System.out.println(totalTime);
