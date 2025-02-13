@@ -48,22 +48,12 @@ public class ApplicationController {
 
   private ArrayList<Anchor> anchors = new ArrayList<Anchor>();
   private RealFunctionDrawer funcDrawer = new RealFunctionDrawer(new TwoDVec<Integer>(1920,1080),new TwoDVec<Double>(0.02,0.02),new TwoDVec<Double>(0.0,0.0));
+  private static  TwoDVec<Double> mouseMindpointOffset;
   
   @FXML
   protected void onAddButtonClick() {
     if (editIndex == -1) {
-      int len = listElements.size();
-      EquationVisElement newElement = new EquationVisElement(null,equationInput.getText(),equationList,root,scrollPane,30 + len*100,this,mainColorPicker.colorIndex);
-      listElements.add(newElement);
-      hideOnClick.add(newElement.colorPicker);
-      minEquationListHeight += 100;
-      if (equationList.getPrefHeight() < minEquationListHeight) {
-        equationList.setPrefHeight(minEquationListHeight);
-      }
-      anchors.add(new Anchor(newElement.pane,scrollPane,new TwoDVec<Double>(-46.0,0.0),"scale",false,true));
-      anchors.get(anchors.size() - 1).applyAnchor();
-      anchors.add(new Anchor(newElement.funcDisplay,newElement.pane,new TwoDVec<Double>(-76.0,0.0),"scale",false,true));
-      anchors.get(anchors.size() - 1).applyAnchor();
+      addEquation(null,equationInput.getText(),mainColorPicker.colorIndex);
     }
     else {
       listElements.get(editIndex).setEquationText(equationInput.getText());
@@ -74,6 +64,21 @@ public class ApplicationController {
     equationInput.setText("");
     mainColorPicker.pickColor(new Random().nextInt(15));
     setInputBarColor(mainColorPicker.colorValue);
+  }
+
+  public void addEquation(EquationTree equation, String equationText, int colorIndex) {
+    int len = listElements.size();
+    EquationVisElement newElement = new EquationVisElement(equation,equationText,equationList,root,scrollPane,30 + len*100,this,colorIndex);
+    listElements.add(newElement);
+    hideOnClick.add(newElement.colorPicker);
+    minEquationListHeight += 100;
+    if (equationList.getPrefHeight() < minEquationListHeight) {
+      equationList.setPrefHeight(minEquationListHeight);
+    }
+    anchors.add(new Anchor(newElement.pane,scrollPane,new TwoDVec<Double>(-46.0,0.0),"scale",false,true));
+    anchors.get(anchors.size() - 1).applyAnchor();
+    anchors.add(new Anchor(newElement.funcDisplay,newElement.pane,new TwoDVec<Double>(-76.0,0.0),"scale",false,true));
+    anchors.get(anchors.size() - 1).applyAnchor();
   }
   
   public void setup() {
@@ -102,6 +107,9 @@ public class ApplicationController {
     mainCanvas.relocate(graphViewPane.getLayoutX(),graphViewPane.getLayoutY());
     GraphicsContext gc = mainCanvas.getGraphicsContext2D();
     root.getChildren().add(mainCanvas);
+    mouseMindpointOffset = new TwoDVec<Double>(0.0,0.0);
+    addEquation(Main.buildTestFunction(),"f(x) = x²",12);
+    addEquation(Main.buildComplicatedTestFunction(),"g(x) = ln(sin(sqrt(2x))",13);
 
     resize();
     scene.widthProperty().addListener((obs, oldVal, newVal) -> {
@@ -131,13 +139,15 @@ public class ApplicationController {
 
     scrollPane.setOnScroll(scrollEvent -> updateListElementTransform());
 
-    mainCanvas.setOnMouseDragged(e -> {
-      //System.out.println(e.getX());
-      //funcDrawer.midpoint.setPos(funcDrawer.midpoint.x + funcDrawer.zoom.x * e.get);
-    });
     mainCanvas.setOnDragDetected(e -> {
-      //System.out.println(e.getX());
-      //funcDrawer.midpoint.setPos(funcDrawer.midpoint.x + funcDrawer.zoom.x * e.get);
+      TwoDVec<Double> midpointPixelPos = funcDrawer.realCoordToPixel(funcDrawer.midpoint);
+      System.out.println(midpointPixelPos.y);
+      mouseMindpointOffset = new TwoDVec<Double>((e.getX() - midpointPixelPos.x), e.getY() - midpointPixelPos.y);
+      System.out.println(mouseMindpointOffset.x + "," + mouseMindpointOffset.y);
+    });
+    mainCanvas.setOnMouseDragged(e -> {
+      funcDrawer.midpoint.setPos(e.getX() - mouseMindpointOffset.x,e.getY() + mouseMindpointOffset.y);
+      updateRenderCanvas();
     });
   }
 
@@ -177,22 +187,34 @@ public class ApplicationController {
     graphViewPane.setPrefHeight(graphViewPaneSize.y);
     scrollPane.setPrefWidth(scrollPaneSize.x);
     scrollPane.setPrefHeight(scrollPaneSize.y);
-    mainCanvas.setWidth(graphViewPane.getPrefWidth());
-    mainCanvas.setHeight(graphViewPane.getPrefHeight());
-    mainCanvas.relocate(graphViewPane.getLayoutX(),graphViewPane.getLayoutY());
-    TwoDVec<Integer> res = new TwoDVec<Integer>((int)mainCanvas.getWidth(),(int)mainCanvas.getHeight());
-    long startTime = System.nanoTime();
-    funcDrawer.resolution = res;
-    funcDrawer.drawFunctions(mainCanvas.getGraphicsContext2D(),new Color[]{Color.BLUEVIOLET,Color.YELLOW},new EquationTree[]{Main.buildTestFunction(),Main.buildComplicatedTestFunction()});
-    long endTime   = System.nanoTime();
-    long totalTime = endTime - startTime;
-    System.out.println(totalTime);
+    updateRenderCanvas();
     Anchor.applyAnchors(anchors);
     if (equationList.getPrefHeight() < minEquationListHeight) {
       equationList.setPrefHeight(minEquationListHeight);
     }
 
     updateListElementTransform();
+  }
+
+  public void updateRenderCanvas() {
+    mainCanvas.setWidth(graphViewPane.getPrefWidth());
+    mainCanvas.setHeight(graphViewPane.getPrefHeight());
+    mainCanvas.relocate(graphViewPane.getLayoutX(),graphViewPane.getLayoutY());
+    TwoDVec<Integer> res = new TwoDVec<Integer>((int)mainCanvas.getWidth(),(int)mainCanvas.getHeight());
+    long startTime = System.nanoTime();
+    funcDrawer.resolution = res;
+
+    Color[] colors = new Color[listElements.size()];
+    EquationTree[] equations = new EquationTree[listElements.size()];
+    for(int i = 0; i < listElements.size();i++) {
+      colors[i] = listElements.get(i).colorPicker.colorValue;
+      equations[i] = listElements.get(i).equation;
+    }
+
+    funcDrawer.drawFunctions(mainCanvas.getGraphicsContext2D(),colors,equations);
+    long endTime   = System.nanoTime();
+    long totalTime = endTime - startTime;
+    //System.out.println(totalTime);
   }
 
   private void updateListElementTransform() {

@@ -88,7 +88,6 @@ public class RealFunctionDrawer{
     gc.setFont(defaultFont);
     drawXCoords(gc,unitDistanceX,midpointPixelCoord);
     drawYCoords(gc,unitDistanceY,midpointPixelCoord);
-    System.out.println(gc.getFont().getFamily());
   }
 
   private void drawXCoords(GraphicsContext gc, double unitDistanceX, TwoDVec<Double> midpointPixelCoord) {
@@ -138,7 +137,12 @@ public class RealFunctionDrawer{
   }
 
   public TwoDVec<Double> realCoordToPixel(TwoDVec<Double> realCoord) {
-    TwoDVec<Double> pixelCoord = new TwoDVec<Double>((realCoord.x - midpoint.x) / zoom.x + resolution.x / 2, (-realCoord.y - midpoint.y) / zoom.y + resolution.y / 2);
+    TwoDVec<Double> pixelCoord = new TwoDVec<Double>((realCoord.x - midpoint.x) / zoom.x + resolution.x / 2, (realCoord.y + midpoint.y) / zoom.y + resolution.y / 2);
+    return pixelCoord;
+  }
+
+  public TwoDVec<Double> PixelCordToReal(TwoDVec<Double> pixelCoord) {
+    TwoDVec<Double> realCord = new TwoDVec<Double>((pixelCoord.x - resolution.x / 2) * zoom.x + - midpoint.x, (resolution.y-pixelCoord.y) * zoom.y - midpoint.y);
     return pixelCoord;
   }
 }
