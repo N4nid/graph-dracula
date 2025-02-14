@@ -146,7 +146,8 @@ public class ApplicationController {
       System.out.println(mouseMindpointOffset.x + "," + mouseMindpointOffset.y);
     });
     mainCanvas.setOnMouseDragged(e -> {
-      funcDrawer.midpoint.setPos(e.getX() - mouseMindpointOffset.x,e.getY() + mouseMindpointOffset.y);
+      TwoDVec<Double> newPos = new TwoDVec<Double>((e.getX() + mouseMindpointOffset.x) * funcDrawer.zoom.x,(e.getY() + mouseMindpointOffset.y) * funcDrawer.zoom.y);
+      funcDrawer.midpoint.setPos(newPos.x,newPos.y);
       updateRenderCanvas();
     });
   }

@@ -141,7 +141,7 @@ public class RealFunctionDrawer{
     return pixelCoord;
   }
 
-  public TwoDVec<Double> PixelCordToReal(TwoDVec<Double> pixelCoord) {
+  public TwoDVec<Double> pixelCordToReal(TwoDVec<Double> pixelCoord) {
     TwoDVec<Double> realCord = new TwoDVec<Double>((pixelCoord.x - resolution.x / 2) * zoom.x + - midpoint.x, (resolution.y-pixelCoord.y) * zoom.y - midpoint.y);
     return pixelCoord;
   }
