@@ -4,13 +4,10 @@ import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.ArcType;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -49,21 +46,28 @@ public class ApplicationController {
   private ArrayList<Anchor> anchors = new ArrayList<Anchor>();
   private RealFunctionDrawer funcDrawer = new RealFunctionDrawer(new TwoDVec<Integer>(1920,1080),new TwoDVec<Double>(0.02,0.02),new TwoDVec<Double>(0.0,0.0));
   private static  TwoDVec<Double> mouseMindpointOffset;
+  boolean firstDrag = true;
   
   @FXML
   protected void onAddButtonClick() {
+    EquationTree inputEquation = EquationParser.parseString(equationInput.getText());
+    if (inputEquation.root == null) {
+      System.out.println("Invalid equation! Please try again.");
+      return;
+    }
     if (editIndex == -1) {
-      addEquation(null,equationInput.getText(),mainColorPicker.colorIndex);
+        addEquation(inputEquation,equationInput.getText(),mainColorPicker.colorIndex);
     }
     else {
       listElements.get(editIndex).setEquationText(equationInput.getText());
-      listElements.get(editIndex).equation = null;
+      listElements.get(editIndex).equation = inputEquation;
       listElements.get(editIndex).colorPicker.pickColor(mainColorPicker.colorIndex);
       editIndex = -1;
     }
     equationInput.setText("");
     mainColorPicker.pickColor(new Random().nextInt(15));
-    setInputBarColor(mainColorPicker.colorValue);
+    updateInputBarColor();
+    updateRenderCanvas();
   }
 
   public void addEquation(EquationTree equation, String equationText, int colorIndex) {
@@ -79,6 +83,8 @@ public class ApplicationController {
     anchors.get(anchors.size() - 1).applyAnchor();
     anchors.add(new Anchor(newElement.funcDisplay,newElement.pane,new TwoDVec<Double>(-76.0,0.0),"scale",false,true));
     anchors.get(anchors.size() - 1).applyAnchor();
+
+
   }
   
   public void setup() {
@@ -89,7 +95,7 @@ public class ApplicationController {
     
     Effects.addDefaultHoverEffect(addButton);
     Effects.addDefaultHoverEffect(extraInputButton);
-    setInputBarColor(mainColorPicker.colorValue);
+    updateInputBarColor();
     calculateDefaultSizes();
     scene = equationInput.getScene();
 
@@ -108,10 +114,11 @@ public class ApplicationController {
     GraphicsContext gc = mainCanvas.getGraphicsContext2D();
     root.getChildren().add(mainCanvas);
     mouseMindpointOffset = new TwoDVec<Double>(0.0,0.0);
-    addEquation(Main.buildTestFunction(),"f(x) = x²",12);
-    addEquation(Main.buildComplicatedTestFunction(),"g(x) = ln(sin(sqrt(2x))",13);
+
 
     resize();
+    funcDrawer.centerCoordinateSystem();
+    updateRenderCanvas();
     scene.widthProperty().addListener((obs, oldVal, newVal) -> {
       resize();
     });
@@ -137,16 +144,19 @@ public class ApplicationController {
       }
     });
 
+
     scrollPane.setOnScroll(scrollEvent -> updateListElementTransform());
 
-    mainCanvas.setOnDragDetected(e -> {
-      TwoDVec<Double> midpointPixelPos = funcDrawer.realCoordToPixel(funcDrawer.midpoint);
-      System.out.println(midpointPixelPos.y);
-      mouseMindpointOffset = new TwoDVec<Double>((e.getX() - midpointPixelPos.x), e.getY() - midpointPixelPos.y);
-      System.out.println(mouseMindpointOffset.x + "," + mouseMindpointOffset.y);
+
+    mainCanvas.setOnMouseReleased(e -> {
+      firstDrag = true;
     });
     mainCanvas.setOnMouseDragged(e -> {
-      TwoDVec<Double> newPos = new TwoDVec<Double>((e.getX() + mouseMindpointOffset.x) * funcDrawer.zoom.x,(e.getY() + mouseMindpointOffset.y) * funcDrawer.zoom.y);
+      if (firstDrag) {
+        mouseMindpointOffset = new TwoDVec<Double>((e.getX() - funcDrawer.midpoint.x), e.getY() - funcDrawer.midpoint.y);
+        firstDrag = false;
+      }
+      TwoDVec<Double> newPos = new TwoDVec<Double>((e.getX() - mouseMindpointOffset.x),(e.getY() - mouseMindpointOffset.y));
       funcDrawer.midpoint.setPos(newPos.x,newPos.y);
       updateRenderCanvas();
     });
@@ -211,7 +221,6 @@ public class ApplicationController {
       colors[i] = listElements.get(i).colorPicker.colorValue;
       equations[i] = listElements.get(i).equation;
     }
-
     funcDrawer.drawFunctions(mainCanvas.getGraphicsContext2D(),colors,equations);
     long endTime   = System.nanoTime();
     long totalTime = endTime - startTime;
@@ -239,8 +248,7 @@ public class ApplicationController {
     editIndex = listElements.indexOf(equation);
   }
   
-  public void setInputBarColor(Color col) {
-    String rgbCode = toRGBCode(col);
+  public void updateInputBarColor() {
     equationInputPane.setStyle("-fx-border-color: " + toRGBCode(mainColorPicker.colorValue));
     addButton.setStyle("-fx-border-color: " + toRGBCode(mainColorPicker.colorValue));
     extraInputButton.setStyle("-fx-border-color: " + toRGBCode(mainColorPicker.colorValue));

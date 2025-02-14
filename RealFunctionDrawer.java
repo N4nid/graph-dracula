@@ -19,12 +19,10 @@ public class RealFunctionDrawer{
   }
 
   public double[] calculateFunctionValues(EquationTree equation) {
-    double offsetX = ((double)resolution.x / (double)2);
-    double offsetY = ((double)resolution.y / (double)2);
     double[] returnValues = new double[resolution.x];
     for (int i = 0; i < resolution.x; i++) {
-      double yValue = equation.calculate(pixelXtoRealX(i, midpoint.x,offsetX,zoom.x),0,null);
-      returnValues[i] = realYToPixelY(yValue, midpoint.y,offsetY, zoom.y);
+      double yValue = equation.calculate(pixelXtoRealX(i, midpoint.x,zoom.x),0,null);
+      returnValues[i] = realYToPixelY(yValue, midpoint.y, zoom.y);
     }
     return returnValues;
   }
@@ -35,6 +33,10 @@ public class RealFunctionDrawer{
       xs[i] = i;
     }
     return xs;
+  }
+
+  public void centerCoordinateSystem() {
+    midpoint.setPos((double)(resolution.x / 2), (double)(resolution.y / 2));
   }
 
   public void drawFunctions(GraphicsContext gc, Color[] colors, EquationTree[] functions) {
@@ -49,6 +51,7 @@ public class RealFunctionDrawer{
 
   public void drawFunction(GraphicsContext gc, double[] xValues, double[] functionValues, Color color) {
     gc.setStroke(color);
+    gc.setLineWidth(2);
     fixNans(functionValues);
     gc.strokePolyline(xValues,functionValues, xValues.length);
   }
@@ -78,71 +81,71 @@ public class RealFunctionDrawer{
   public void drawCoordinateSystem(GraphicsContext gc) {
     double unitDistanceX = 1 / zoom.x;
     double unitDistanceY = 1 / zoom.y;
-    TwoDVec<Double> midpointPixelCoord = realCoordToPixel(new TwoDVec<Double>(0.0,0.0));
 
     gc.setStroke(Color.WHITE);
-    gc.strokeLine(0,midpointPixelCoord.y, resolution.x,midpointPixelCoord.y);
-    gc.strokeLine(midpointPixelCoord.x,0,midpointPixelCoord.x,resolution.y);
+    gc.setLineWidth(1);
+    gc.strokeLine(0,midpoint.y, resolution.x,midpoint.y);
+    gc.strokeLine(midpoint.x,0,midpoint.x,resolution.y);
 
     gc.setStroke(Effects.changeBrightness(Color.WHITE,0.3));
     gc.setFont(defaultFont);
-    drawXCoords(gc,unitDistanceX,midpointPixelCoord);
-    drawYCoords(gc,unitDistanceY,midpointPixelCoord);
+    drawXCoords(gc,unitDistanceX);
+    drawYCoords(gc,unitDistanceY);
   }
 
-  private void drawXCoords(GraphicsContext gc, double unitDistanceX, TwoDVec<Double> midpointPixelCoord) {
-    double currentX = midpointPixelCoord.x + unitDistanceX;
-    int iterator = 1;
-    double mirroredX;
+  private void drawXCoords(GraphicsContext gc, double unitDistanceX) {
+    int startNumb = (int)Math.round((- midpoint.x) * zoom.x) - 1;
+    //System.out.println(startNumb);
+    int endNumb = (int)Math.round((- midpoint.x + resolution.x) * zoom.x)  + 1;
+    //System.out.println(endNumb);
+    double currentX = startNumb * unitDistanceX + midpoint.x;
+    int iterator = startNumb;
     gc.setFill(Color.WHITE);
 
-    while (currentX <= resolution.x) {
-      gc.strokeLine(currentX,0,currentX,resolution.y);
-      mirroredX = currentX-2*iterator*unitDistanceX;
-      gc.strokeLine(mirroredX,0,mirroredX,resolution.y);
+    while (iterator <= endNumb) {
+      if (iterator != 0) {
+        gc.strokeLine(currentX, 0, currentX, resolution.y);
 
-      int stringLenght = ("" + iterator).length();
-      gc.fillText("" + iterator, currentX - 0.3 * defaultFontSize * stringLenght,midpointPixelCoord.y + 1.2 * defaultFontSize);
-      gc.fillText("-" + iterator, mirroredX - 0.3 * defaultFontSize * (stringLenght + 1),midpointPixelCoord.y + 1.2 * defaultFontSize);
-
+        int stringLenght = ("" + iterator).length();
+        gc.fillText("" + iterator, currentX - 0.3 * defaultFontSize * stringLenght, midpoint.y + 1.2 * defaultFontSize);
+      }
       currentX += unitDistanceX;
       iterator++;
     }
   }
 
-  private void drawYCoords(GraphicsContext gc, double unitDistanceY, TwoDVec<Double> midpointPixelCoord) {
-    double currentY = midpointPixelCoord.y - unitDistanceY;
-    int iterator = 1;
-    double mirroredY;
+  private void drawYCoords(GraphicsContext gc, double unitDistanceY) {
+    int startNumb = (int)Math.round((midpoint.y - resolution.y) * zoom.y) - 1;
+    int endNumb = (int)Math.round(midpoint.y * zoom.y) + 1;
+    double currentY = - startNumb * unitDistanceY + midpoint.y;
+    int iterator = startNumb;
     gc.setFill(Color.WHITE);
-    while (currentY >= 0) {
-      gc.strokeLine(0,currentY,resolution.x,currentY);
-      mirroredY = currentY+2*iterator*unitDistanceY;
-      gc.strokeLine(0,mirroredY,resolution.x,mirroredY);
+    while (iterator <= endNumb) {
+      if (iterator != 0) {
+        gc.strokeLine(0, currentY, resolution.x, currentY);
 
-      int stringLenght = ("" + iterator).length();
-      gc.fillText("" + iterator, midpointPixelCoord.x - (0.2 + stringLenght) * defaultFontSize,currentY + 0.3 * defaultFontSize);
-      gc.fillText("-" + iterator, midpointPixelCoord.x - (0.2 + stringLenght + 1) * defaultFontSize,mirroredY + 0.3 * defaultFontSize);
-
+        int stringLenght = ("" + iterator).length();
+        gc.fillText("" + iterator, midpoint.x - (0.2 + stringLenght) * defaultFontSize, currentY + 0.3 * defaultFontSize);
+      }
       currentY -= unitDistanceY;
       iterator++;
     }
   }
 
-  private static double pixelXtoRealX(int pixelX, double midX, double offsetX, double zoomX) {
-    return (pixelX - offsetX) * zoomX - midX;
+  private static double pixelXtoRealX(int pixelX, double midX, double zoomX) {
+    return (pixelX - midX) * zoomX;
   }
-  private static double realYToPixelY(double realY, double midY, double offsetY, double zoomY) {
-    return (- realY - midY) / zoomY + offsetY;
+  private static double realYToPixelY(double realY, double midY, double zoomY) {
+    return - realY / zoomY + midY;
   }
 
   public TwoDVec<Double> realCoordToPixel(TwoDVec<Double> realCoord) {
-    TwoDVec<Double> pixelCoord = new TwoDVec<Double>((realCoord.x - midpoint.x) / zoom.x + resolution.x / 2, (realCoord.y + midpoint.y) / zoom.y + resolution.y / 2);
+    TwoDVec<Double> pixelCoord = new TwoDVec<Double>(realCoord.x / zoom.x +  midpoint.x, (realCoord.y) / -zoom.y + midpoint.y);
     return pixelCoord;
   }
 
   public TwoDVec<Double> pixelCordToReal(TwoDVec<Double> pixelCoord) {
-    TwoDVec<Double> realCord = new TwoDVec<Double>((pixelCoord.x - resolution.x / 2) * zoom.x + - midpoint.x, (resolution.y-pixelCoord.y) * zoom.y - midpoint.y);
-    return pixelCoord;
+    TwoDVec<Double> realCord = new TwoDVec<Double>((pixelCoord.x - midpoint.x)* zoom.x, (-pixelCoord.y- midpoint.y) * zoom.y);
+    return realCord;
   }
 }

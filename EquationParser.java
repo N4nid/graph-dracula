@@ -6,7 +6,7 @@ public class EquationParser {
   // - Deal with brackets and sings
   // - figure out what todo with variables
   // - special functions
-  public EquationTree parseString(String input) {
+  public static EquationTree parseString(String input) {
     // FIXME workaround when equation starts with brackets (20-2)*2
     char first = input.charAt(0);
     if (getState(first) == -1) {
@@ -104,7 +104,7 @@ public class EquationParser {
     // root = operators.getRoot();
 
     // fix workaround
-    if (root.left != null) {
+    if (root != null && root.left != null) {
       // System.out.println("root.left: " + root.left.value);
       if (root.left.state == 0) {
         if (Double.parseDouble((String) root.left.value) == 0) {
@@ -115,20 +115,20 @@ public class EquationParser {
     }
 
     operators.printStack();
-    root.recursivePrint("");
-    System.out.println(root.calculate(0, 0, new Variable[1]));
+    //root.recursivePrint(""); //For debugging
+    //System.out.println(root.calculate(0, 0, new Variable[1])); //also for debugging
 
     return new EquationTree(root);
   }
 
-  private void addBelow(EquationNode lastNode, EquationNode currentNode) {
+  private static void addBelow(EquationNode lastNode, EquationNode currentNode) {
     EquationNode lastRight = lastNode.right;
     lastNode.right = currentNode;
     currentNode.left = lastRight;
     currentNode.above = lastNode;
   }
 
-  private EquationNode getNextNode(StringBuffer input) {
+  private static EquationNode getNextNode(StringBuffer input) {
     if (input.length() == 0) {
       // System.out.println("autch");
       return null;
@@ -187,7 +187,7 @@ public class EquationParser {
     return result;
   }
 
-  private byte getOpLevel(String op) {
+  private static byte getOpLevel(String op) {
     String ops1 = "+*^";
     String ops2 = "-/^";
     byte ind = -1; // the index represents the level
@@ -200,7 +200,7 @@ public class EquationParser {
     return ind;
   }
 
-  private byte getState(char c) {
+  private static byte getState(char c) {
     String info = Character.toString(c);
     String nums = ".0123456789";
     String operators = "+-*/^";

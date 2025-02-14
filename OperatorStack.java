@@ -71,28 +71,6 @@ public class OperatorStack {
       newTop.next = top;
       top = newTop;
 
-      // sorted
-      // if (top.elem.bracketDepth < depth || elem.opLevel <= top.elem.opLevel) {
-      // // add above top
-      // newTop.next = top;
-      // top = newTop;
-      // } else {
-      // // add sorted below top
-      // OperatorStackElement looker = top;
-      // while (looker.elem.bracketDepth == depth) {
-      // if (looker.next != null) {
-      // if (looker.next.elem.bracketDepth < depth
-      // || elem.opLevel <= looker.next.elem.opLevel) {
-      // break;
-      // }
-      // } else {
-      // break;
-      // }
-      // looker = looker.next;
-      // }
-      // newTop.next = looker.next;
-      // looker.next = newTop;
-      // }
     } else {
       top = newTop;
     }

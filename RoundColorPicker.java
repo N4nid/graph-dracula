@@ -168,7 +168,10 @@ public class RoundColorPicker implements Hideble{
     displayButton.setStyle("-fx-background-color: " + toRGBCode(colorValue));
     this.colorIndex = pickedColorIndex;
     if(controller != null) {
-      controller.setInputBarColor(colorValue);
+      controller.updateInputBarColor();
+      if (!isUp) {
+        controller.updateRenderCanvas();
+      }
     }
   }
 
