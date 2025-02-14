@@ -1,0 +1,86 @@
+--- MODE: debug
+4*4^5+cos(4^2)-1/2*sin(4)+1/4*(4+1)
+current: * | 0
+> root: *
+current: ^ | 0
+last: *
+addBelow *
+current: + | 0
+found last: *
+add above *
+YOOOOOO
+current: cos | 0
+last: +
+addBelow +
+current: ^ | 1
+last: cos
+addBelow cos
+current: - | 0
+-- rm: ^
+found last: +
+add above +
+YOOOOOO
+current: / | 0
+last: -
+addBelow -
+current: * | 0
+last: /
+add above /
+-#- below: -
+current: sin | 0
+last: *
+addBelow *
+current: + | 0
+found last: *
+add above *
+-#- below: -
+current: / | 0
+last: +
+addBelow +
+current: * | 0
+last: /
+add above /
+-#- below: +
+current: + | 1
+last: *
+addBelow *
+------ top
++ | 1 | 0
+* | 0 | 1
+/ | 0 | 1
++ | 0 | 0
+sin | 0 | 3
+* | 0 | 1
+/ | 0 | 1
+- | 0 | 0
+cos | 0 | 3
++ | 0 | 0
+^ | 0 | 2
+* | 0 | 1
+--- bottom
+   -
+l   +
+ll   *
+lll   4
+llr   ^
+llrl   4
+llrr   5
+lr   cos
+lrr   ^
+lrrl   4
+lrrr   2
+r   +
+rl   *
+rll   /
+rlll   1
+rllr   2
+rlr   sin
+rlrr   4
+rr   *
+rrl   /
+rrll   1
+rrlr   4
+rrr   +
+rrrl   4
+rrrr   1
+4094.1707417673306
