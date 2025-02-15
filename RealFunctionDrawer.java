@@ -1,7 +1,8 @@
-import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
+
+import java.util.ArrayList;
 
 public class RealFunctionDrawer{
   public TwoDVec<Integer> resolution;
@@ -10,6 +11,9 @@ public class RealFunctionDrawer{
 
   private Font defaultFont;
   private static final double defaultFontSize = 17;
+  private static final double slopeBreakThreshhold = 400;
+
+  private ArrayList<RenderBreakpoints> equationBreakpoints = new ArrayList<RenderBreakpoints>();
 
   public RealFunctionDrawer(TwoDVec<Integer> resolution, TwoDVec<Double> zoom, TwoDVec<Double> midpoint) {
     this.resolution = resolution;
@@ -45,19 +49,35 @@ public class RealFunctionDrawer{
     double[] xValues = getXArray(); 
     for (int i = 0; i < functions.length; i++) {
       double[] functionValues = calculateFunctionValues(functions[i]);
-      drawFunction(gc,xValues,functionValues,colors[i]);
+      fixValues(functionValues, functions[i]);
+      drawFunction(gc,xValues,functionValues,colors[i],functions[i]);
     }
   }
 
-  public void drawFunction(GraphicsContext gc, double[] xValues, double[] functionValues, Color color) {
+  public void drawFunction(GraphicsContext gc, double[] xValues, double[] functionValues, Color color,EquationTree function) {
     gc.setStroke(color);
     gc.setLineWidth(2);
-    fixNans(functionValues);
+    RenderBreakpoints associatedBreakpoints = RenderBreakpoints.findFunctionBreakpoints(equationBreakpoints,function);
+    if (associatedBreakpoints!=null){
+    }
     gc.strokePolyline(xValues,functionValues, xValues.length);
   }
 
-  private void fixNans(double[] fixableValues) {
+  private void fixValues(double[] fixableValues, EquationTree fixableFunction) {
     for (int i = 2; i < fixableValues.length - 2; i++) {
+      if (!Double.isNaN(fixableValues[i]) && Double.isNaN(fixableValues[i+1])){
+        if (Math.abs(fixableValues[i] - fixableValues[i+1]) > slopeBreakThreshhold) {
+          RenderBreakpoints associatedBreakpoints = RenderBreakpoints.findFunctionBreakpoints(equationBreakpoints,fixableFunction);
+          if (associatedBreakpoints != null) {
+            if (!associatedBreakpoints.breakpoints.contains((double)i)) {
+              associatedBreakpoints.breakpoints.add((double)i);
+            }
+          }
+          else {
+            equationBreakpoints.add(new RenderBreakpoints(fixableFunction,(double)i));
+          }
+        }
+      }
       if (Double.isNaN(fixableValues[i]) && !Double.isNaN(fixableValues[i+1]) && !Double.isNaN(fixableValues[i+2])) {
         if (fixableValues[i + 2] - fixableValues[i + 1] < 0) {
           fixableValues[i] = resolution.y;
@@ -68,10 +88,10 @@ public class RealFunctionDrawer{
       }
       else if (Double.isNaN(fixableValues[i]) && !Double.isNaN(fixableValues[i-1]) && !Double.isNaN(fixableValues[i-2])) {
         if (fixableValues[i -1] - fixableValues[i -2] < 0) {
-          fixableValues[i] = -5;
+          fixableValues[i] = resolution.y;
         }
         else {
-          fixableValues[i] = resolution.y;
+          fixableValues[i] = -5;
         }
         i+=2;
       }
@@ -147,5 +167,24 @@ public class RealFunctionDrawer{
   public TwoDVec<Double> pixelCordToReal(TwoDVec<Double> pixelCoord) {
     TwoDVec<Double> realCord = new TwoDVec<Double>((pixelCoord.x - midpoint.x)* zoom.x, (-pixelCoord.y- midpoint.y) * zoom.y);
     return realCord;
+  }
+}
+
+class RenderBreakpoints {
+  public EquationTree brokenFunction;
+  public ArrayList<Double> breakpoints;
+  public RenderBreakpoints(EquationTree brokenFunction, double initBreakpoint) {
+    this.brokenFunction = brokenFunction;
+    this.breakpoints = new ArrayList<Double>();
+    this.breakpoints.add(initBreakpoint);
+  }
+
+  public static RenderBreakpoints findFunctionBreakpoints(ArrayList<RenderBreakpoints> brokenFunctions, EquationTree function){
+    for (int i = 0; i < brokenFunctions.size(); i++) {
+      if (brokenFunctions.get(i).brokenFunction==function) {
+        return brokenFunctions.get(i);
+      }
+    }
+    return null;
   }
 }
