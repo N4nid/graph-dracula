@@ -1,4 +1,6 @@
 public class EquationParser {
+  static boolean debug = false; // all debugging prints will be removed when there are no issues anymore
+
   // this code could also be in Main.java
   // TODO
   // - Sanitize String
@@ -13,7 +15,8 @@ public class EquationParser {
       input = "0+" + input;
     }
 
-    System.out.println(input);
+    if (debug)
+      System.out.println(input);
     StringBuffer in = new StringBuffer(input); // The StringBuffer is mutable by refrence
                                                // so that i can manipulate the string in getNextNode
     EquationNode currentNode = getNextNode(in);
@@ -26,26 +29,26 @@ public class EquationParser {
       Object val = currentNode.value;
       Byte state = currentNode.state;
       Byte opLevel = currentNode.opLevel;
-      // System.out.println(" " + val + " |state: " + state);
 
       if (state == 0 || state == 1) { // is either a num or variable
         if (lastNode.state >= 2) {
-          // System.out.println("right " + val + " to: " + lastNode.value);
           lastNode.right = currentNode;
         }
         lastNode = currentNode;
       } else if (state == 3) {
-        System.out.println("current: " + val + " | " + bracketDepth);
+        if (debug)
+          System.out.println("current: " + val + " | " + bracketDepth);
         OperatorStackElement stackTop = operators.getLast(bracketDepth, opLevel);
         if (stackTop != null) {
           EquationNode lastOp = stackTop.elem;
           lastOp.right = currentNode;
           currentNode.above = lastOp;
-          System.out.println("addBelow " + lastOp.value);
-          // System.out.println("add beleow yo");
+          if (debug)
+            System.out.println("addBelow " + lastOp.value);
         } else {
           root = currentNode;
-          System.out.println("setin rooot");
+          if (debug)
+            System.out.println("setin rooot");
         }
         lastNode = currentNode;
         operators.add(currentNode, bracketDepth);
@@ -53,13 +56,12 @@ public class EquationParser {
       } else if (state == -1) { // its a bracket
         if (val.equals("(")) {
           bracketDepth++;
-          // System.out.println("in klammer");
         } else {
           bracketDepth--;
-          // System.out.println("klammer ende");
         }
       } else if (state == 2) {
-        System.out.println("current: " + val + " | " + bracketDepth);
+        if (debug)
+          System.out.println("current: " + val + " | " + bracketDepth);
         OperatorStackElement stackTop = operators.getLast(bracketDepth, opLevel);
 
         if (stackTop != null) {
@@ -69,21 +71,25 @@ public class EquationParser {
           if (bracketDepth > lastDepth
               || (lastOp.state == 2 && lastOp.opLevel < opLevel)) {
             // Either in brackets or operator is Higher
-            System.out.println("addBelow " + lastOp.value);
+            if (debug)
+              System.out.println("addBelow " + lastOp.value);
             addBelow(lastOp, currentNode);
           } else { // add current above. F.e 2*2+2
             EquationNode above = lastOp.above;
-            System.out.println("add above " + lastOp.value);
+            if (debug)
+              System.out.println("add above " + lastOp.value);
             currentNode.left = lastOp;
             lastOp.above = currentNode;
 
             if (lastOp == root) {
-              System.out.println("YOOOOOO");
+              if (debug)
+                System.out.println("YOOOOOO");
               root = currentNode;
             }
 
             if (above != null) {
-              System.out.println("-#- below: " + above.value);
+              if (debug)
+                System.out.println("-#- below: " + above.value);
               // above.right
               above.right = currentNode;
               currentNode.above = above;
@@ -92,7 +98,8 @@ public class EquationParser {
 
         } else {
           root = currentNode;
-          System.out.println("> root: " + root.value);
+          if (debug)
+            System.out.println("> root: " + root.value);
           currentNode.left = lastNode;
         }
         operators.add(currentNode, bracketDepth);
@@ -105,18 +112,17 @@ public class EquationParser {
 
     // fix workaround
     if (root != null && root.left != null) {
-      // System.out.println("root.left: " + root.left.value);
       if (root.left.state == 0) {
         if (Double.parseDouble((String) root.left.value) == 0) {
-          // System.out.println("fixin ye");
           root = root.right;
         }
       }
     }
 
-    operators.printStack();
-    root.recursivePrint(""); // For debugging
-    // System.out.println(root.calculate(0, 0, new Variable[1])); //also for
+    if (debug) {
+      operators.printStack();
+      root.recursivePrint(""); // For debugging
+    }
     // debugging
 
     return new EquationTree(root);
@@ -131,7 +137,6 @@ public class EquationParser {
 
   private static EquationNode getNextNode(StringBuffer input) {
     if (input.length() == 0) {
-      // System.out.println("autch");
       return null;
     }
     int counter = 0;

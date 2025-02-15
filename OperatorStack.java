@@ -11,7 +11,7 @@ public class OperatorStack {
     OperatorStackElement looker = top;
     int levelDiff = looker.elem.opLevel - lvl;
     if (levelDiff <= 1) {
-      System.out.println("last: " + looker.elem.value);
+      // System.out.println("last: " + looker.elem.value);
       return looker;
     }
     while (looker != null) {
@@ -22,7 +22,7 @@ public class OperatorStack {
         // System.out.println(" --- right depth");
         levelDiff = looker.elem.opLevel - lvl;
         if (levelDiff <= 1) {
-          System.out.println("found last: " + looker.elem.value);
+          // System.out.println("found last: " + looker.elem.value);
           return looker;
         }
       } else { // this is also for in brackets, might change later FIXME maybe ?
@@ -34,7 +34,7 @@ public class OperatorStack {
         break;
       }
     }
-    System.out.println("notfound last: " + top.elem.value);
+    // System.out.println("notfound last: " + top.elem.value);
     return top; // XXX MIGHT BLOW UP !?
   }
 
@@ -88,7 +88,7 @@ public class OperatorStack {
 
   public void pop() {
     if (top != null) {
-      System.out.println("-- rm: " + top.elem.value);
+      // System.out.println("-- rm: " + top.elem.value);
       top = top.next;
     }
   }
