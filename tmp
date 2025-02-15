@@ -1,5 +1,6 @@
---- MODE: debug
-4*4^5+cos(4^2)-1/2*sin(4)+1/4*(4+1)
+--- MODE: test
+-----------------
+3*2^2+1
 current: * | 0
 > root: *
 current: ^ | 0
@@ -9,78 +10,407 @@ current: + | 0
 found last: *
 add above *
 YOOOOOO
-current: cos | 0
-last: +
-addBelow +
-current: ^ | 1
-last: cos
-addBelow cos
-current: - | 0
--- rm: ^
-found last: +
-add above +
-YOOOOOO
-current: / | 0
-last: -
-addBelow -
-current: * | 0
-last: /
-add above /
--#- below: -
-current: sin | 0
-last: *
-addBelow *
-current: + | 0
-found last: *
-add above *
--#- below: -
-current: / | 0
-last: +
-addBelow +
-current: * | 0
-last: /
-add above /
--#- below: +
-current: + | 1
-last: *
-addBelow *
 ------ top
-+ | 1 | 0
-* | 0 | 1
-/ | 0 | 1
-+ | 0 | 0
-sin | 0 | 3
-* | 0 | 1
-/ | 0 | 1
-- | 0 | 0
-cos | 0 | 3
 + | 0 | 0
 ^ | 0 | 2
 * | 0 | 1
 --- bottom
-   -
-l   +
-ll   *
-lll   4
-llr   ^
-llrl   4
-llrr   5
-lr   cos
-lrr   ^
-lrrl   4
-lrrr   2
+   +
+l   *
+ll   3
+lr   ^
+lrl   2
+lrr   2
+r   1
+calc:13.0  - should: 13.0
+### TEST PASSED ###
+-----------------
+1+2*3^2
+current: + | 0
+> root: +
+current: * | 0
+last: +
+addBelow +
+current: ^ | 0
+last: *
+addBelow *
+------ top
+^ | 0 | 2
+* | 0 | 1
++ | 0 | 0
+--- bottom
+   +
+l   1
+r   *
+rl   2
+rr   ^
+rrl   3
+rrr   2
+calc:19.0  - should: 19.0
+### TEST PASSED ###
+-----------------
+2*3^sin(0)+1
+current: * | 0
+> root: *
+current: ^ | 0
+last: *
+addBelow *
+current: sin | 0
+last: ^
+addBelow ^
+current: + | 0
+found last: *
+add above *
+YOOOOOO
+------ top
++ | 0 | 0
+sin | 0 | 3
+^ | 0 | 2
+* | 0 | 1
+--- bottom
+   +
+l   *
+ll   2
+lr   ^
+lrl   3
+lrr   sin
+lrrr   0
+r   1
+calc:3.0  - should: 3.0
+### TEST PASSED ###
+-----------------
+1+sin(0)*2
+current: + | 0
+> root: +
+current: sin | 0
+last: +
+addBelow +
+current: * | 0
+found last: +
+addBelow +
+------ top
+* | 0 | 1
+sin | 0 | 3
++ | 0 | 0
+--- bottom
+   +
+l   1
+r   *
+rl   sin
+rlr   0
+rr   2
+calc:1.0  - should: 1.0
+### TEST PASSED ###
+-----------------
+1+1^3*3+1
+current: + | 0
+> root: +
+current: ^ | 0
+last: +
+addBelow +
+current: * | 0
+last: ^
+add above ^
+-#- below: +
+current: + | 0
+last: *
+add above *
+-#- below: +
+------ top
++ | 0 | 0
+* | 0 | 1
+^ | 0 | 2
++ | 0 | 0
+--- bottom
+   +
+l   1
 r   +
 rl   *
-rll   /
+rll   ^
 rlll   1
-rllr   2
-rlr   sin
-rlrr   4
-rr   *
-rrl   /
-rrll   1
-rrlr   4
-rrr   +
-rrrl   4
+rllr   3
+rlr   3
+rr   1
+calc:5.0  - should: 5.0
+### TEST PASSED ###
+-----------------
+1+2*(3-1)
+current: + | 0
+> root: +
+current: * | 0
+last: +
+addBelow +
+current: - | 1
+last: *
+addBelow *
+------ top
+- | 1 | 0
+* | 0 | 1
++ | 0 | 0
+--- bottom
+   +
+l   1
+r   *
+rl   2
+rr   -
+rrl   3
+rrr   1
+calc:5.0  - should: 5.0
+### TEST PASSED ###
+-----------------
+0+(2*2+1)^2
+current: + | 0
+> root: +
+current: * | 1
+last: +
+addBelow +
+current: + | 1
+last: *
+add above *
+-#- below: +
+current: ^ | 0
+-- rm: +
+-- rm: *
+last: +
+addBelow +
+------ top
+^ | 0 | 2
++ | 0 | 0
+--- bottom
+   ^
+l   +
+ll   *
+lll   2
+llr   2
+lr   1
+r   2
+calc:25.0  - should: 25.0
+### TEST PASSED ###
+-----------------
+sin(1-1)+2*(3^(2-1))
+current: sin | 0
+setin rooot
+current: - | 1
+addBelow sin
+current: + | 0
+-- rm: -
+notfound last: sin
+add above sin
+YOOOOOO
+current: * | 0
+last: +
+addBelow +
+current: ^ | 1
+last: *
+addBelow *
+current: - | 2
+addBelow ^
+------ top
+- | 2 | 0
+^ | 1 | 2
+* | 0 | 1
++ | 0 | 0
+sin | 0 | 3
+--- bottom
+   +
+l   sin
+lr   -
+lrl   1
+lrr   1
+r   *
+rl   2
+rr   ^
+rrl   3
+rrr   -
+rrrl   2
 rrrr   1
-4094.1707417673306
+calc:6.0  - should: 6.0
+### TEST PASSED ###
+-----------------
+1+2*(1+3*3+1)
+current: + | 0
+> root: +
+current: * | 0
+last: +
+addBelow +
+current: + | 1
+last: *
+addBelow *
+current: * | 1
+last: +
+addBelow +
+current: + | 1
+last: *
+add above *
+-#- below: +
+------ top
++ | 1 | 0
+* | 1 | 1
++ | 1 | 0
+* | 0 | 1
++ | 0 | 0
+--- bottom
+   +
+l   1
+r   *
+rl   2
+rr   +
+rrl   1
+rrr   +
+rrrl   *
+rrrll   3
+rrrlr   3
+rrrr   1
+calc:23.0  - should: 23.0
+### TEST PASSED ###
+-----------------
+3^(sin(2*cos(1/3*3-1)-2)+2)*(1/2)
+current: ^ | 0
+> root: ^
+current: sin | 1
+last: ^
+addBelow ^
+current: * | 2
+addBelow sin
+current: cos | 2
+last: *
+addBelow *
+current: / | 3
+addBelow cos
+current: * | 3
+last: /
+add above /
+-#- below: cos
+current: - | 3
+last: *
+add above *
+-#- below: cos
+current: - | 2
+-- rm: -
+-- rm: *
+-- rm: /
+found last: *
+add above *
+-#- below: sin
+current: + | 1
+-- rm: -
+-- rm: cos
+-- rm: *
+add above sin
+-#- below: ^
+current: * | 0
+-- rm: +
+-- rm: sin
+last: ^
+add above ^
+YOOOOOO
+current: / | 1
+last: *
+addBelow *
+------ top
+/ | 1 | 1
+* | 0 | 1
+^ | 0 | 2
+--- bottom
+   *
+l   ^
+ll   3
+lr   +
+lrl   sin
+lrlr   -
+lrlrl   *
+lrlrll   2
+lrlrlr   cos
+lrlrlrr   -
+lrlrlrrl   *
+lrlrlrrll   /
+lrlrlrrlll   1
+lrlrlrrllr   3
+lrlrlrrlr   3
+lrlrlrrr   1
+lrlrr   2
+lrr   2
+r   /
+rl   1
+rr   2
+calc:4.5  - should: 4.5
+### TEST PASSED ###
+-----------------
+cos(sin(1-1)*2)
+current: cos | 0
+setin rooot
+current: sin | 1
+last: cos
+addBelow cos
+current: - | 2
+addBelow sin
+current: * | 1
+-- rm: -
+add above sin
+-#- below: cos
+------ top
+* | 1 | 1
+sin | 1 | 3
+cos | 0 | 3
+--- bottom
+   cos
+r   *
+rl   sin
+rlr   -
+rlrl   1
+rlrr   1
+rr   2
+calc:1.0  - should: 1.0
+### TEST PASSED ###
+-----------------
+sin(2*sin(2-2))
+current: sin | 0
+setin rooot
+current: * | 1
+addBelow sin
+current: sin | 1
+last: *
+addBelow *
+current: - | 2
+addBelow sin
+------ top
+- | 2 | 0
+sin | 1 | 3
+* | 1 | 1
+sin | 0 | 3
+--- bottom
+   sin
+r   *
+rl   2
+rr   sin
+rrr   -
+rrrl   2
+rrrr   2
+calc:0.0  - should: 0.0
+### TEST PASSED ###
+-----------------
+sin(2*sin(22*0))
+current: sin | 0
+setin rooot
+current: * | 1
+addBelow sin
+current: sin | 1
+last: *
+addBelow *
+current: * | 2
+addBelow sin
+------ top
+* | 2 | 1
+sin | 1 | 3
+* | 1 | 1
+sin | 0 | 3
+--- bottom
+   sin
+r   *
+rl   2
+rr   sin
+rrr   *
+rrrl   22
+rrrr   0
+calc:0.0  - should: 0.0
+### TEST PASSED ###

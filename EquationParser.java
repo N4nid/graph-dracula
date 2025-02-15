@@ -115,8 +115,9 @@ public class EquationParser {
     }
 
     operators.printStack();
-    //root.recursivePrint(""); //For debugging
-    //System.out.println(root.calculate(0, 0, new Variable[1])); //also for debugging
+    root.recursivePrint(""); // For debugging
+    // System.out.println(root.calculate(0, 0, new Variable[1])); //also for
+    // debugging
 
     return new EquationTree(root);
   }
