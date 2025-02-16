@@ -44,8 +44,6 @@ public class EquationVisElement implements MenuHaver{
         funcDisplay.setText(equationText);
         funcDisplay.getStyleClass().add("normal-text");
 
-        double absX = pane.getLayoutX() + scrollpane.getLayoutX();
-        double absY = pane.getLayoutY() + scrollpane.getLayoutY();
         pane.getChildren().add(funcDisplay);
         colorPicker = new RoundColorPicker(colorX,colorY,yPos, defaultColor, false,root,controller);
         pane.getChildren().add(colorPicker.displayButton);
@@ -56,10 +54,10 @@ public class EquationVisElement implements MenuHaver{
         colorPicker.recalcExtraPositions();
     }
     public void executeMenuOption(String option) {
-        if(option.equals("Edit")) {
+        if(option.equals("edit")) {
             controller.editEquation(this);
         }
-        if (option.equals("Delete")) {
+        if (option.equals("delete")) {
             controller.deleteEquation(this);
         }
     }
