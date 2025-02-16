@@ -78,10 +78,10 @@ public class Main extends Application {
   }
 
   public static void quickDebug() {
-    // String test = "1+3*3-1";
+    String test = "(1+3)*3-1";
     // String test = "1+3*3^2";
     // String test = "cos(sin(1-1)*2.4)";
-    String test = "4*4^5+cos(4^2)-1/2*sin(4)+1/4*(4+1)";
+    // String test = "4*4^5+cos(4^2)-1/2*sin(4)+1/4*(4+1)";
     // String test = "sin(((4^(3))/32)-2*cos(16/31+108/31-4))+42";
     // String test = "(1-1)+2*(3^(2-1))";
     // String test = "1+2*(1+3*3+1)";
@@ -108,7 +108,7 @@ public class Main extends Application {
         try {
           EquationParser.parseString(inp);
         } catch (Exception e) {
-          System.out.println("whopsies");
+          System.out.println("whopsies: " + e);
         }
       } else {
         break;

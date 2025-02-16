@@ -1,5 +1,5 @@
 public class EquationParser {
-  static boolean debug = false; // all debugging prints will be removed when there are no issues anymore
+  static boolean debug = true; // all debugging prints will be removed when there are no issues anymore
 
   // this code could also be in Main.java
   // TODO
@@ -11,8 +11,10 @@ public class EquationParser {
   public static EquationTree parseString(String input) {
     // FIXME workaround when equation starts with brackets (20-2)*2
     char first = input.charAt(0);
-    if (getState(first) == -1) {
+    if (first == '(') {
       input = "0+" + input;
+    } else if (first == '-') {
+      input = "0" + input;
     }
 
     if (debug)
@@ -65,6 +67,13 @@ public class EquationParser {
         OperatorStackElement stackTop = operators.getLast(bracketDepth, opLevel);
 
         if (stackTop != null) {
+
+          if (lastNode.state >= 2 && val.equals("-")) { // so that negative numbers work
+            if (debug)
+              System.out.println("neg. number fix " + lastNode.value);
+            lastNode.right = new EquationNode((byte) 0, "0");
+          }
+
           EquationNode lastOp = stackTop.elem;
           int lastDepth = lastOp.bracketDepth;
 
@@ -111,9 +120,9 @@ public class EquationParser {
     // root = operators.getRoot();
 
     // fix workaround
-    if (root != null && root.left != null) {
+    if (root != null && !root.value.equals("-") && root.left != null) {
       if (root.left.state == 0) {
-        if (Double.parseDouble((String) root.left.value) == 0) {
+        if (root.left.value.equals("0")) {
           root = root.right;
         }
       }
@@ -121,7 +130,11 @@ public class EquationParser {
 
     if (debug) {
       operators.printStack();
-      root.recursivePrint(""); // For debugging
+      if (root != null) {
+        root.recursivePrint(""); // For debugging
+        double res = root.calculate(0, 0, new Variable[1]);
+        System.out.println(res);
+      }
     }
     // debugging
 
