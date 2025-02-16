@@ -23,12 +23,17 @@
 }
 
 .add-button {
-    -fx-background-image: url('addButton.png');
+    -fx-background-image: url('/resources/addButton.png');
     -fx-background-size: 30px 30px;
 }
 
+.preview-button {
+    -fx-background-image: url('/resources/previewButton.png');
+    -fx-background-size: 50px 50px;
+}
+
 .expand-button {
-    -fx-background-image: url('expandButton.png');
+    -fx-background-image: url('/resources/expandButton.png');
     -fx-background-size: 30px 20px;
 }
 

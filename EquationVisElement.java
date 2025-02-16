@@ -48,6 +48,12 @@ public class EquationVisElement implements MenuHaver{
         colorPicker = new RoundColorPicker(colorX,colorY,yPos, defaultColor, false,root,controller);
         pane.getChildren().add(colorPicker.displayButton);
         parent.getChildren().add(pane);
+
+        pane.setOnMouseClicked(e -> {
+            if (e.getClickCount() == 2) {
+                controller.editEquation(this);
+            }
+        });
     }
 
     public void updateTransform() {
