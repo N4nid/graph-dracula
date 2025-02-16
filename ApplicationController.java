@@ -112,7 +112,7 @@ public class ApplicationController implements MenuHaver{
     GraphicsContext gc = mainCanvas.getGraphicsContext2D();
     root.getChildren().add(mainCanvas);
     mouseMindpointOffset = new TwoDVec<Double>(0.0,0.0);
-    recenterButton = new MenuOption("Recenter",new Image("/resources/recenter.png"),15,20,this,new TwoDVec<Double>(135.0,30.0),new TwoDVec<Double>(200.0,200.0),root);
+    recenterButton = new MenuOption("recenter",new Image("/resources/recenter.png"),15,20,this,new TwoDVec<Double>(135.0,30.0),new TwoDVec<Double>(200.0,200.0),root);
     recenterButton.optionPane.setVisible(false);
     previewButton.setPrefHeight(defaultButtonSize+3);
     previewButton.setPrefWidth(defaultButtonSize+3);
