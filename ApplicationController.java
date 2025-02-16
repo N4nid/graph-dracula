@@ -26,6 +26,7 @@ public class ApplicationController implements MenuHaver{
   public Button extraInputButton;
   public Button addButton;
   public ScrollPane scrollPane;
+  private Button previewButton = new Button();
   private MenuOption recenterButton;
   public Canvas mainCanvas;
   ArrayList<EquationVisElement> listElements = new ArrayList<EquationVisElement>();
@@ -35,6 +36,7 @@ public class ApplicationController implements MenuHaver{
 
   public double minEquationListHeight = 20f;
   private int editIndex = -1;
+  private EquationTree previewEquation;
 
   private static TwoDVec<Double> defaultGraphViewPanePos;
   private static TwoDVec<Double> defaultGraphViewPaneSize;
@@ -54,6 +56,7 @@ public class ApplicationController implements MenuHaver{
   
   @FXML
   protected void onAddButtonClick() {
+    previewEquation = null;
     EquationTree inputEquation = EquationParser.parseString(equationInput.getText());
     if (inputEquation.root == null) {
       System.out.println("Invalid equation! Please try again.");
@@ -70,6 +73,7 @@ public class ApplicationController implements MenuHaver{
     }
     equationInput.setText("");
     mainColorPicker.pickColor(new Random().nextInt(15));
+    setEditModeUI(false);
     updateInputBarColor();
     updateRenderCanvas();
   }
@@ -110,6 +114,17 @@ public class ApplicationController implements MenuHaver{
     mouseMindpointOffset = new TwoDVec<Double>(0.0,0.0);
     recenterButton = new MenuOption("Recenter",new Image("/resources/recenter.png"),15,20,this,new TwoDVec<Double>(135.0,30.0),new TwoDVec<Double>(200.0,200.0),root);
     recenterButton.optionPane.setVisible(false);
+    previewButton.setPrefHeight(defaultButtonSize+3);
+    previewButton.setPrefWidth(defaultButtonSize+3);
+    previewButton.setVisible(false);
+    previewButton.getStyleClass().add("black");
+    previewButton.getStyleClass().add("border");
+    previewButton.getStyleClass().add("image-button");
+    previewButton.getStyleClass().add("preview-button");
+    Effects.addDefaultHoverEffect(previewButton);
+    root.getChildren().add(previewButton);
+    previewButton.setOnAction(e -> addPreviewEquation());
+
 
     anchors.add(new Anchor(extraInputButton,root,new TwoDVec<Double>(0.0,-138.0),"scale->pos",true,false));
     anchors.add(new Anchor(addButton,root,new TwoDVec<Double>(-98.0,-138.0),"scale->pos"));
@@ -122,6 +137,8 @@ public class ApplicationController implements MenuHaver{
     anchors.add(new Anchor(equationListLabel,scrollPane,new TwoDVec<Double>(15.0,-13.0),"pos"));
     anchors.add(new Anchor(recenterButton.optionPane,graphViewPane,new TwoDVec<Double>(0.0,0.0),"pos"));
     anchors.add(new Anchor(recenterButton.optionPane,graphViewPane,new TwoDVec<Double>(-90.0,0.0),"scale->pos"));
+    anchors.add(new Anchor(previewButton,equationInputPane,new TwoDVec<Double>(0.0,0.0),"pos"));
+    anchors.add(new Anchor(previewButton,equationInputPane,new TwoDVec<Double>(128.0,0.0),"scale->pos",false,true));
     resize();
 
     funcDrawer.centerCoordinateSystem();
@@ -266,11 +283,26 @@ public class ApplicationController implements MenuHaver{
 
     Color[] colors = new Color[listElements.size()];
     EquationTree[] equations = new EquationTree[listElements.size()];
+    if (previewEquation != null) {
+      colors = new Color[listElements.size() - 1];
+      equations = new EquationTree[listElements.size() - 1];
+    }
     for(int i = 0; i < listElements.size();i++) {
-      colors[i] = listElements.get(i).colorPicker.colorValue;
-      equations[i] = listElements.get(i).equation;
+      if (!(previewEquation != null && i == editIndex)) {
+        if (previewEquation != null && i > editIndex) {
+          colors[i-1] = listElements.get(i).colorPicker.colorValue;
+          equations[i-1] = listElements.get(i).equation;
+        }
+        else {
+          colors[i] = listElements.get(i).colorPicker.colorValue;
+          equations[i] = listElements.get(i).equation;
+        }
+      }
     }
     funcDrawer.drawFunctions(mainCanvas.getGraphicsContext2D(),colors,equations);
+    if (previewEquation != null) {
+      funcDrawer.drawFunction(mainCanvas.getGraphicsContext2D(),funcDrawer.getXArray(), funcDrawer.calculateFunctionValues(previewEquation),mainColorPicker.colorValue,previewEquation);
+    }
     long endTime   = System.nanoTime();
     long totalTime = endTime - startTime;
     //System.out.println(totalTime);
@@ -295,12 +327,44 @@ public class ApplicationController implements MenuHaver{
     mainColorPicker.pickColor(equation.colorPicker.colorIndex);
     equationInput.setText(equation.equationText);
     editIndex = listElements.indexOf(equation);
+    setEditModeUI(true);
+  }
+
+  public void addPreviewEquation() {
+    EquationTree previewEquation = EquationParser.parseString(equationInput.getText());
+    if (previewEquation.root == null) {
+      System.out.println("Invalid equation, try again!");
+    }
+    else {
+      this.previewEquation = previewEquation;
+      updateRenderCanvas();
+    }
+  }
+
+  public void setEditModeUI(boolean isEditMode) {
+    if (isEditMode) {
+      addButton.setStyle("-fx-background-image: url('/resources/checkmark.png');");
+      Anchor equationInputPaneAnchor = Anchor.findAnchorOfObject(equationInputPane,"scale",anchors);
+      equationInputPaneAnchor.offsetVec.setPos(-293.0, equationInputPaneAnchor.offsetVec.y);
+      Anchor.applyAnchors(anchors);
+      updateInputBarColor();
+      previewButton.setVisible(true);
+    }
+    else  {
+      addButton.setStyle("-fx-background-image: url('/resources/addButton.png');");
+      Anchor equationInputPaneAnchor = Anchor.findAnchorOfObject(equationInputPane,"scale",anchors);
+      equationInputPaneAnchor.offsetVec.setPos(-226.0, equationInputPaneAnchor.offsetVec.y);
+      Anchor.applyAnchors(anchors);
+      updateInputBarColor();
+      previewButton.setVisible(false);
+    }
   }
   
   public void updateInputBarColor() {
     equationInputPane.setStyle("-fx-border-color: " + toRGBCode(mainColorPicker.colorValue));
     addButton.setStyle("-fx-border-color: " + toRGBCode(mainColorPicker.colorValue));
     extraInputButton.setStyle("-fx-border-color: " + toRGBCode(mainColorPicker.colorValue));
+    previewButton.setStyle("-fx-border-color: " + toRGBCode(mainColorPicker.colorValue));
   }
   
   public void hideRedundantElements() {
@@ -336,29 +400,29 @@ public class ApplicationController implements MenuHaver{
 class Anchor {
    private Region baseObject;
    private Region relateToObject;
-   private TwoDVec<Double> offsetVec;
+   public TwoDVec<Double> offsetVec;
    private boolean keepX = false;
    private boolean keepY = false;
-   private String Type;
+   private String type;
 
-   public Anchor(Region baseObject, Region relateToObject, TwoDVec<Double> offsetVec, String Type) {
+   public Anchor(Region baseObject, Region relateToObject, TwoDVec<Double> offsetVec, String type) {
      this.baseObject = baseObject;
      this.relateToObject = relateToObject;
      this.offsetVec = offsetVec;
-     this.Type = Type;
+     this.type = type;
    }
 
-  public Anchor(Region baseObject, Region relateToObject, TwoDVec<Double> offsetVec, String Type, boolean keepX, boolean keepY) {
+  public Anchor(Region baseObject, Region relateToObject, TwoDVec<Double> offsetVec, String type, boolean keepX, boolean keepY) {
     this.baseObject = baseObject;
     this.relateToObject = relateToObject;
     this.offsetVec = offsetVec;
     this.keepX = keepX;
     this.keepY = keepY;
-    this.Type = Type;
+    this.type = type;
   }
 
    public void applyAnchor(){
-     if (Type.equals("scale")) {;
+     if (type.equals("scale")) {;
        if (!keepX) {
          baseObject.setPrefWidth(relateToObject.getPrefWidth() + offsetVec.x);
        }
@@ -366,7 +430,7 @@ class Anchor {
          baseObject.setPrefHeight(relateToObject.getPrefHeight() + offsetVec.y);
        }
      }
-     if (Type.equals("pos")) {
+     if (type.equals("pos")) {
        if (!keepX) {
          baseObject.setLayoutX(relateToObject.getLayoutX() + offsetVec.x);
        }
@@ -374,7 +438,7 @@ class Anchor {
          baseObject.setLayoutY(relateToObject.getLayoutY() + offsetVec.y);
        }
      }
-     if (Type.equals("scale->pos")) {
+     if (type.equals("scale->pos")) {
        if (!keepX) {
          baseObject.setLayoutX(relateToObject.getPrefWidth() + offsetVec.x);
        }
@@ -382,7 +446,7 @@ class Anchor {
          baseObject.setLayoutY(relateToObject.getPrefHeight() + offsetVec.y);
        }
      }
-     if (Type.equals("pos->scale")) {
+     if (type.equals("pos->scale")) {
        if (!keepX) {
          baseObject.setPrefWidth(relateToObject.getLayoutX() + offsetVec.x);
        }
@@ -396,5 +460,14 @@ class Anchor {
      for (int i = 0; i < anchors.size(); i++) {
        anchors.get(i).applyAnchor();
      }
+  }
+
+  public static Anchor findAnchorOfObject(Node object, String type, ArrayList<Anchor> anchors) {
+     for (int i = 0; i < anchors.size(); i++) {
+       if (anchors.get(i).baseObject == object && anchors.get(i).type.equals(type)) {
+         return anchors.get(i);
+       }
+     }
+     return null;
   }
 }
