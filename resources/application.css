@@ -4,7 +4,7 @@
 
 @font-face {
     -fx-font-family: source code pro;
-    -fx-src: url("SourceCodePro-Regular.ttf");
+    -fx-src: url("file:resources/SourceCodePro-Regular.ttf");
 }
 
 .border {

@@ -9,6 +9,8 @@ public class RealFunctionDrawer{
   public TwoDVec<Double> zoom;
   public TwoDVec<Double> midpoint;
 
+  private TwoDVec<Integer> axisNumbersDecimalPlaces = new TwoDVec<Integer>(0,0);
+
   private Font defaultFont;
   private static final double defaultFontSize = 17;
   private static final double slopeBreakThreshhold = 400;
@@ -101,6 +103,9 @@ public class RealFunctionDrawer{
   public void drawCoordinateSystem(GraphicsContext gc) {
     double unitDistanceX = 1 / zoom.x;
     double unitDistanceY = 1 / zoom.y;
+    axisNumbersDecimalPlaces = new TwoDVec<Integer>(0,0);
+    unitDistanceX = fixUnitDistance(unitDistanceX, true);
+    unitDistanceY = fixUnitDistance(unitDistanceY, false);
 
     gc.setStroke(Color.WHITE);
     gc.setLineWidth(1);
@@ -113,10 +118,27 @@ public class RealFunctionDrawer{
     drawYCoords(gc,unitDistanceY);
   }
 
+  private double fixUnitDistance(double unitDistance, boolean isX){
+    double axisRes = 1000;
+    while (axisRes / unitDistance < 10) {
+      unitDistance /= 2;
+      if (isX) {
+        axisNumbersDecimalPlaces.x += 1;
+      }
+      else {
+        axisNumbersDecimalPlaces.y += 1;
+      }
+    }
+    while (axisRes / unitDistance > 20) {
+      unitDistance *= 2;
+    }
+    return unitDistance;
+  }
+
   private void drawXCoords(GraphicsContext gc, double unitDistanceX) {
-    int startNumb = (int)Math.round((- midpoint.x) * zoom.x) - 1;
+    int startNumb = (int)Math.round((- midpoint.x) / unitDistanceX) - 1;
+    int endNumb = (int)Math.round(startNumb + resolution.x /unitDistanceX)  + 1;
     //System.out.println(startNumb);
-    int endNumb = (int)Math.round((- midpoint.x + resolution.x) * zoom.x)  + 1;
     //System.out.println(endNumb);
     double currentX = startNumb * unitDistanceX + midpoint.x;
     int iterator = startNumb;
@@ -126,8 +148,9 @@ public class RealFunctionDrawer{
       if (iterator != 0) {
         gc.strokeLine(currentX, 0, currentX, resolution.y);
 
-        int stringLenght = ("" + iterator).length();
-        gc.fillText("" + iterator, currentX - 0.3 * defaultFontSize * stringLenght, midpoint.y + 1.2 * defaultFontSize);
+        String labelString = String.format("%." + axisNumbersDecimalPlaces.x + "f", pixelCordToReal(new TwoDVec<Double>(currentX,0.0)).x);
+        int stringLenght = labelString.length();
+        gc.fillText(labelString, currentX - 0.3 * defaultFontSize * stringLenght, midpoint.y + 1.2 * defaultFontSize);
       }
       currentX += unitDistanceX;
       iterator++;
@@ -135,8 +158,10 @@ public class RealFunctionDrawer{
   }
 
   private void drawYCoords(GraphicsContext gc, double unitDistanceY) {
-    int startNumb = (int)Math.round((midpoint.y - resolution.y) * zoom.y) - 1;
-    int endNumb = (int)Math.round(midpoint.y * zoom.y) + 1;
+    int endNumb = (int)Math.round(( midpoint.y) / unitDistanceY) + 2;
+    int startNumb = (int) (endNumb - resolution.y / unitDistanceY) - 2;
+    /*System.out.println(startNumb);
+    System.out.println(endNumb);*/
     double currentY = - startNumb * unitDistanceY + midpoint.y;
     int iterator = startNumb;
     gc.setFill(Color.WHITE);
@@ -144,8 +169,9 @@ public class RealFunctionDrawer{
       if (iterator != 0) {
         gc.strokeLine(0, currentY, resolution.x, currentY);
 
-        int stringLenght = ("" + iterator).length();
-        gc.fillText("" + iterator, midpoint.x - (0.2 + stringLenght) * defaultFontSize, currentY + 0.3 * defaultFontSize);
+        String labelString = String.format("%." + axisNumbersDecimalPlaces.y + "f", pixelCordToReal(new TwoDVec<Double>(0.0,currentY)).y);
+        int stringLenght = labelString.length();
+        gc.fillText(labelString, midpoint.x - (0.8 * stringLenght) * defaultFontSize, currentY + 0.3 * defaultFontSize);
       }
       currentY -= unitDistanceY;
       iterator++;
@@ -165,7 +191,7 @@ public class RealFunctionDrawer{
   }
 
   public TwoDVec<Double> pixelCordToReal(TwoDVec<Double> pixelCoord) {
-    TwoDVec<Double> realCord = new TwoDVec<Double>((pixelCoord.x - midpoint.x)* zoom.x, (-pixelCoord.y- midpoint.y) * zoom.y);
+    TwoDVec<Double> realCord = new TwoDVec<Double>((pixelCoord.x - midpoint.x)* zoom.x, (-pixelCoord.y+ midpoint.y) * zoom.y);
     return realCord;
   }
 }

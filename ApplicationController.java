@@ -4,6 +4,7 @@ import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.*;
@@ -12,7 +13,7 @@ import javafx.scene.paint.Color;
 import java.util.ArrayList;
 import java.util.Random;
 
-public class ApplicationController {
+public class ApplicationController implements MenuHaver{
   public ArrayList<Hideble> hideOnClick = new ArrayList<Hideble>();
   public Label welcomeText;
   public Pane graphViewPane;
@@ -25,8 +26,10 @@ public class ApplicationController {
   public Button extraInputButton;
   public Button addButton;
   public ScrollPane scrollPane;
+  private MenuOption recenterButton;
   public Canvas mainCanvas;
   ArrayList<EquationVisElement> listElements = new ArrayList<EquationVisElement>();
+
   public RoundColorPicker mainColorPicker;
   public Scene scene;
 
@@ -42,6 +45,7 @@ public class ApplicationController {
   private static final double defaultSceneHeight = 1080;
   private static final double defaultSceneWidth = 1920;
   private static final double defaultButtonSize = 70;
+  public static double zoomSensitivity = 0.0015;
 
   private ArrayList<Anchor> anchors = new ArrayList<Anchor>();
   private RealFunctionDrawer funcDrawer = new RealFunctionDrawer(new TwoDVec<Integer>(1920,1080),new TwoDVec<Double>(0.02,0.02),new TwoDVec<Double>(0.0,0.0));
@@ -99,6 +103,14 @@ public class ApplicationController {
     calculateDefaultSizes();
     scene = equationInput.getScene();
 
+    mainCanvas = new Canvas(graphViewPane.getPrefWidth(), graphViewPane.getPrefHeight());
+    mainCanvas.relocate(graphViewPane.getLayoutX(),graphViewPane.getLayoutY());
+    GraphicsContext gc = mainCanvas.getGraphicsContext2D();
+    root.getChildren().add(mainCanvas);
+    mouseMindpointOffset = new TwoDVec<Double>(0.0,0.0);
+    recenterButton = new MenuOption("Recenter",new Image("/resources/recenter.png"),15,20,this,new TwoDVec<Double>(135.0,30.0),new TwoDVec<Double>(200.0,200.0),root);
+    recenterButton.optionPane.setVisible(false);
+
     anchors.add(new Anchor(extraInputButton,root,new TwoDVec<Double>(0.0,-138.0),"scale->pos",true,false));
     anchors.add(new Anchor(addButton,root,new TwoDVec<Double>(-98.0,-138.0),"scale->pos"));
     anchors.add(new Anchor(equationInputPane,root,new TwoDVec<Double>(-226.0,0.0),"scale",false,true));
@@ -108,15 +120,10 @@ public class ApplicationController {
     anchors.add(new Anchor(equationList,scrollPane,new TwoDVec<Double>(0.0,0.0),"scale"));
     anchors.add(new Anchor(graphViewLabel,graphViewPane,new TwoDVec<Double>(15.0,-13.0),"pos"));
     anchors.add(new Anchor(equationListLabel,scrollPane,new TwoDVec<Double>(15.0,-13.0),"pos"));
-
-    mainCanvas = new Canvas(graphViewPane.getPrefWidth(), graphViewPane.getPrefHeight());
-    mainCanvas.relocate(graphViewPane.getLayoutX(),graphViewPane.getLayoutY());
-    GraphicsContext gc = mainCanvas.getGraphicsContext2D();
-    root.getChildren().add(mainCanvas);
-    mouseMindpointOffset = new TwoDVec<Double>(0.0,0.0);
-
-
+    anchors.add(new Anchor(recenterButton.optionPane,graphViewPane,new TwoDVec<Double>(0.0,0.0),"pos"));
+    anchors.add(new Anchor(recenterButton.optionPane,graphViewPane,new TwoDVec<Double>(-90.0,0.0),"scale->pos"));
     resize();
+
     funcDrawer.centerCoordinateSystem();
     updateRenderCanvas();
     scene.widthProperty().addListener((obs, oldVal, newVal) -> {
@@ -135,11 +142,18 @@ public class ApplicationController {
 
     scene.setOnMouseClicked(e -> {
       if (e.getButton() == MouseButton.SECONDARY) {
-        EquationVisElement hoveringElement = getHoveredEquationVisElement();
-        if (hoveringElement != null) {
+        if (mainCanvas.isHover()) {
           TwoDVec<Double> mousePos= new TwoDVec<Double>(e.getX(),e.getY());
-          OverlayMenu rightClickMenu = new OverlayMenu(hoveringElement,"equationElement",mousePos,root);
+          OverlayMenu rightClickMenu = new OverlayMenu(this,"graphView",mousePos,root);
           hideOnClick.add(rightClickMenu);
+        }
+        else {
+          EquationVisElement hoveringElement = getHoveredEquationVisElement();
+          if (hoveringElement != null) {
+            TwoDVec<Double> mousePos= new TwoDVec<Double>(e.getX(),e.getY());
+            OverlayMenu rightClickMenu = new OverlayMenu(hoveringElement,"equationElement",mousePos,root);
+            hideOnClick.add(rightClickMenu);
+          }
         }
       }
     });
@@ -147,6 +161,11 @@ public class ApplicationController {
 
     scrollPane.setOnScroll(scrollEvent -> updateListElementTransform());
 
+    mainCanvas.setOnScroll(scrollEvent -> {
+      double avgZoom =  (funcDrawer.zoom.x + funcDrawer.zoom.y) / 2;
+      funcDrawer.zoom.setPos(funcDrawer.zoom.x - avgZoom * scrollEvent.getDeltaY() * zoomSensitivity, funcDrawer.zoom.y - avgZoom * scrollEvent.getDeltaY() * zoomSensitivity);
+      updateRenderCanvas();
+    });
 
     mainCanvas.setOnMouseReleased(e -> {
       firstDrag = true;
@@ -157,6 +176,12 @@ public class ApplicationController {
         firstDrag = false;
       }
       TwoDVec<Double> newPos = new TwoDVec<Double>((e.getX() - mouseMindpointOffset.x),(e.getY() - mouseMindpointOffset.y));
+      if (graphOffsetInBounds(0.1,funcDrawer)) {
+        recenterButton.optionPane.setVisible(false);
+      }
+      else {
+        recenterButton.optionPane.setVisible(true);
+      }
       funcDrawer.midpoint.setPos(newPos.x,newPos.y);
       updateRenderCanvas();
     });
@@ -169,6 +194,30 @@ public class ApplicationController {
       }
     }
     return null;
+  }
+
+  public static boolean graphOffsetInBounds(double margin, RealFunctionDrawer funcDrawer) {
+    double minX = funcDrawer.resolution.x * margin;
+    double maxX = funcDrawer.resolution.x - funcDrawer.resolution.x * margin;
+    double minY = funcDrawer.resolution.y * margin;
+    double maxY = funcDrawer.resolution.y - funcDrawer.resolution.y * margin;
+
+    boolean isInXBounds = funcDrawer.midpoint.x > minX && funcDrawer.midpoint.x < maxX;
+    boolean isInYBounds = funcDrawer.midpoint.y > minY && funcDrawer.midpoint.y < maxY;
+
+    return isInXBounds && isInYBounds;
+  }
+
+  public void executeMenuOption(String menuOption) {
+    if (menuOption.equals("recenter")) {
+      funcDrawer.centerCoordinateSystem();
+      updateRenderCanvas();
+      recenterButton.optionPane.setVisible(false);
+    }
+    if (menuOption.equals("reset zoom")) {
+      funcDrawer.zoom.setUniform(0.01);
+      updateRenderCanvas();
+    }
   }
   
   public void calculateDefaultSizes() {

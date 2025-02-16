@@ -13,4 +13,12 @@ public class TwoDVec<E> {
         this.x = x;
         this.y = y;
     }
+    public void setUniform(E fac) {
+        this.x = fac;
+        this.y = fac;
+    }
+
+    public void printDouble() {
+        System.out.println("(" + (Double) x + "|" + (Double) y + ")");
+    }
 }
