@@ -78,7 +78,7 @@ public class Main extends Application {
   }
 
   public static void quickDebug() {
-    String test = "(1+3)*3-1";
+    String test = "root(root(2,4),64)";
     // String test = "1+3*3^2";
     // String test = "cos(sin(1-1)*2.4)";
     // String test = "4*4^5+cos(4^2)-1/2*sin(4)+1/4*(4+1)";
@@ -91,6 +91,7 @@ public class Main extends Application {
     // String test = "2+3^(23-1/2)";
     // String test = "x^3+34/6.5-1/(a^(sin(56)))*3";
     EquationParser.parseString(test);
+    // EquationParser.getBetweenBrackets(new StringBuffer("(root(2,4),64)+1"));
   }
 
   public static void interactiveDemo() {

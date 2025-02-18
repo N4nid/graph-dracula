@@ -73,6 +73,8 @@ public class EquationNode {
         return Math.tan(calVal);
       } else if (op.equals("ln")) {
         return Math.log(calVal);
+      } else if (op.equals("sqrt")) {
+        return Math.pow(calVal, 0.5);
       } else {
         System.out.println("Invalid special function!");
       }
