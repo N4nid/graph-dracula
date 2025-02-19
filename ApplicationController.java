@@ -51,11 +51,13 @@ public class ApplicationController implements MenuHaver{
 
   private ArrayList<Anchor> anchors = new ArrayList<Anchor>();
   private RealFunctionDrawer funcDrawer = new RealFunctionDrawer(new TwoDVec<Integer>(1920,1080),new TwoDVec<Double>(0.02,0.02),new TwoDVec<Double>(0.0,0.0));
+  private FunctionRenderer_4_0 equationRenderer;
   private static  TwoDVec<Double> mouseMindpointOffset;
   boolean firstDrag = true;
   
   @FXML
   protected void onAddButtonClick() {
+    equationRenderer.lastZoom = new TwoDVec<Double>(-1.0,-1.0);
     previewEquation = null;
     EquationTree inputEquation = EquationParser.parseString(equationInput.getText());
     if (inputEquation.root == null) {
@@ -142,6 +144,7 @@ public class ApplicationController implements MenuHaver{
     resize();
 
     funcDrawer.centerCoordinateSystem();
+    equationRenderer = new FunctionRenderer_4_0((int)graphViewPane.getPrefWidth(),(int)graphViewPane.getPrefHeight(),funcDrawer.zoom.x);
     updateRenderCanvas();
     scene.widthProperty().addListener((obs, oldVal, newVal) -> {
       resize();
@@ -203,6 +206,7 @@ public class ApplicationController implements MenuHaver{
       updateRenderCanvas();
     });
   }
+
 
   public EquationVisElement getHoveredEquationVisElement() {
     for (int i = 0; i < listElements.size(); i++) {
@@ -279,27 +283,40 @@ public class ApplicationController implements MenuHaver{
     mainCanvas.relocate(graphViewPane.getLayoutX(),graphViewPane.getLayoutY());
     TwoDVec<Integer> res = new TwoDVec<Integer>((int)mainCanvas.getWidth(),(int)mainCanvas.getHeight());
     long startTime = System.nanoTime();
+    GraphicsContext gc = mainCanvas.getGraphicsContext2D();
+    gc.clearRect(0,0,gc.getCanvas().getWidth(),gc.getCanvas().getHeight());
     funcDrawer.resolution = res;
 
-    Color[] colors = new Color[listElements.size()];
-    EquationTree[] equations = new EquationTree[listElements.size()];
-    if (previewEquation != null) {
-      colors = new Color[listElements.size() - 1];
-      equations = new EquationTree[listElements.size() - 1];
-    }
+    ArrayList<EquationTree> allEquations = new ArrayList<EquationTree>();
+    ArrayList<EquationTree> equations = new ArrayList<EquationTree>();
+    ArrayList<EquationTree> functions = new ArrayList<EquationTree>();
     for(int i = 0; i < listElements.size();i++) {
       if (!(previewEquation != null && i == editIndex)) {
-        if (previewEquation != null && i > editIndex) {
-          colors[i-1] = listElements.get(i).colorPicker.colorValue;
-          equations[i-1] = listElements.get(i).equation;
-        }
-        else {
-          colors[i] = listElements.get(i).colorPicker.colorValue;
-          equations[i] = listElements.get(i).equation;
-        }
+        allEquations.add(listElements.get(i).equation);
+        allEquations.getLast().GraphColor = listElements.get(i).colorPicker.colorValue;
+      }
+      else {
+        allEquations.add(EquationParser.parseString(equationInput.getText()));
+        allEquations.getLast().GraphColor = mainColorPicker.colorValue;
       }
     }
-    funcDrawer.drawFunctions(mainCanvas.getGraphicsContext2D(),colors,equations);
+    for (int i = 0; i < allEquations.size(); i++) {
+      if (allEquations.get(i).isFunction) {
+        functions.add(allEquations.get(i));
+      }
+      else {
+        equations.add(allEquations.get(i));
+      }
+    }
+    if (equations.size() > 0) {
+      Image equationRender = equationRenderer.drawEquations(equations);
+      TwoDVec<Double> imagePos = new TwoDVec<Double>(-graphViewPane.getPrefWidth()+ funcDrawer.midpoint.x,-graphViewPane.getPrefHeight()+ funcDrawer.midpoint.y);
+      System.out.println(funcDrawer.zoom.y * 50);
+      TwoDVec<Double> tempImageSize = new TwoDVec<Double>(graphViewPane.getPrefWidth() *2 / (funcDrawer.zoom.x * 50),graphViewPane.getPrefHeight() *2 / (funcDrawer.zoom.y * 50));
+      TwoDVec<Double> tempImageZoomOffset = new TwoDVec<Double>(-(tempImageSize.x / 2 - graphViewPane.getPrefWidth()),-(tempImageSize.y / 2- graphViewPane.getPrefHeight()));
+      mainCanvas.getGraphicsContext2D().drawImage(equationRender,imagePos.x + tempImageZoomOffset.x,imagePos.y + tempImageZoomOffset.y,tempImageSize.x,tempImageSize.y);
+    }
+    funcDrawer.drawFunctions(mainCanvas.getGraphicsContext2D(),functions);
     if (previewEquation != null) {
       funcDrawer.drawFunction(mainCanvas.getGraphicsContext2D(),funcDrawer.getXArray(), funcDrawer.calculateFunctionValues(previewEquation),mainColorPicker.colorValue,previewEquation);
     }
@@ -396,6 +413,7 @@ public class ApplicationController implements MenuHaver{
   }
   
 }
+
 
 class Anchor {
    private Region baseObject;

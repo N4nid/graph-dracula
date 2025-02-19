@@ -9,6 +9,7 @@ public class EquationTree{
 
     public EquationNode root;
     public Color GraphColor = Color.BLACK;
+    public boolean isFunction = false;
 
     public EquationTree(byte rootState, String rootValue) {
         this.root = new EquationNode(rootState,rootValue);
