@@ -3,11 +3,7 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.canvas.Canvas;
-import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.ArcType;
 import javafx.stage.Stage;
 import java.util.Scanner;
 
@@ -23,7 +19,6 @@ public class Main extends Application {
         Scene scene = new Scene(root);
         String css = this.getClass().getResource("/resources/application.css").toExternalForm();
         scene.getStylesheets().add(css);
-
 
         scene.addEventFilter(MouseEvent.MOUSE_PRESSED, new EventHandler<MouseEvent>() {
             @Override

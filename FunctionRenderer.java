@@ -45,14 +45,13 @@ public class FunctionRenderer {
     midpoint.setPos((double)(resolution.x / 2), (double)(resolution.y / 2));
   }
 
-  public void drawFunctions(GraphicsContext gc, Color[] colors, EquationTree[] functions) {
-    gc.clearRect(0,0,gc.getCanvas().getWidth(),gc.getCanvas().getHeight());
+  public void drawFunctions(GraphicsContext gc, ArrayList<EquationTree> functions) {
     drawCoordinateSystem(gc);
     double[] xValues = getXArray(); 
-    for (int i = 0; i < functions.length; i++) {
-      double[] functionValues = calculateFunctionValues(functions[i]);
-      fixValues(functionValues, functions[i]);
-      drawFunction(gc,xValues,functionValues,colors[i],functions[i]);
+    for (int i = 0; i < functions.size(); i++) {
+      double[] functionValues = calculateFunctionValues(functions.get(i));
+      fixValues(functionValues, functions.get(i));
+      drawFunction(gc,xValues,functionValues,functions.get(i).GraphColor,functions.get(i));
     }
   }
 
