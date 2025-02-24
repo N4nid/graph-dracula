@@ -4,7 +4,7 @@ import javafx.scene.text.Font;
 
 import java.util.ArrayList;
 
-public class RealFunctionDrawer{
+public class FunctionRenderer {
   public TwoDVec<Integer> resolution;
   public TwoDVec<Double> zoom;
   public TwoDVec<Double> midpoint;
@@ -17,7 +17,7 @@ public class RealFunctionDrawer{
 
   private ArrayList<RenderBreakpoints> equationBreakpoints = new ArrayList<RenderBreakpoints>();
 
-  public RealFunctionDrawer(TwoDVec<Integer> resolution, TwoDVec<Double> zoom, TwoDVec<Double> midpoint) {
+  public FunctionRenderer(TwoDVec<Integer> resolution, TwoDVec<Double> zoom, TwoDVec<Double> midpoint) {
     this.resolution = resolution;
     this.zoom = zoom;
     this.midpoint = midpoint;

@@ -50,7 +50,12 @@ public class ApplicationController implements MenuHaver{
   public static double zoomSensitivity = 0.0015;
 
   private ArrayList<Anchor> anchors = new ArrayList<Anchor>();
+<<<<<<< Updated upstream
   private RealFunctionDrawer funcDrawer = new RealFunctionDrawer(new TwoDVec<Integer>(1920,1080),new TwoDVec<Double>(0.02,0.02),new TwoDVec<Double>(0.0,0.0));
+=======
+  private FunctionRenderer funcDrawer = new FunctionRenderer(new TwoDVec<Integer>(1920,1080),new TwoDVec<Double>(0.02,0.02),new TwoDVec<Double>(0.0,0.0));
+  private EquationRenderer equationRenderer;
+>>>>>>> Stashed changes
   private static  TwoDVec<Double> mouseMindpointOffset;
   boolean firstDrag = true;
   
@@ -142,6 +147,10 @@ public class ApplicationController implements MenuHaver{
     resize();
 
     funcDrawer.centerCoordinateSystem();
+<<<<<<< Updated upstream
+=======
+    equationRenderer = new EquationRenderer((int)graphViewPane.getPrefWidth(),(int)graphViewPane.getPrefHeight(),funcDrawer.zoom.x);
+>>>>>>> Stashed changes
     updateRenderCanvas();
     scene.widthProperty().addListener((obs, oldVal, newVal) -> {
       resize();
@@ -213,7 +222,7 @@ public class ApplicationController implements MenuHaver{
     return null;
   }
 
-  public static boolean graphOffsetInBounds(double margin, RealFunctionDrawer funcDrawer) {
+  public static boolean graphOffsetInBounds(double margin, FunctionRenderer funcDrawer) {
     double minX = funcDrawer.resolution.x * margin;
     double maxX = funcDrawer.resolution.x - funcDrawer.resolution.x * margin;
     double minY = funcDrawer.resolution.y * margin;
@@ -299,7 +308,24 @@ public class ApplicationController implements MenuHaver{
         }
       }
     }
+<<<<<<< Updated upstream
     funcDrawer.drawFunctions(mainCanvas.getGraphicsContext2D(),colors,equations);
+=======
+    for (int i = 0; i < allEquations.size(); i++) {
+      if (allEquations.get(i).isFunction) {
+        functions.add(allEquations.get(i));
+      }
+      else {
+        equations.add(allEquations.get(i));
+      }
+    }
+    if (equations.size() > 0) {
+      RenderImage equationRender = equationRenderer.getRenderedEquations(equations,funcDrawer.zoom,funcDrawer.midpoint,new TwoDVec<Double>(graphViewPane.getPrefWidth(),graphViewPane.getPrefHeight()));
+      equationRender = equationRender.convertToDifferentCoord(funcDrawer.midpoint,funcDrawer.zoom,new TwoDVec<Double>(graphViewPane.getPrefWidth(),graphViewPane.getPrefHeight()));
+      mainCanvas.getGraphicsContext2D().drawImage(equationRender.image,equationRender.renderPos.x,equationRender.renderPos.y,equationRender.renderZoom.x,equationRender.renderZoom.y);
+    }
+    funcDrawer.drawFunctions(mainCanvas.getGraphicsContext2D(),functions);
+>>>>>>> Stashed changes
     if (previewEquation != null) {
       funcDrawer.drawFunction(mainCanvas.getGraphicsContext2D(),funcDrawer.getXArray(), funcDrawer.calculateFunctionValues(previewEquation),mainColorPicker.colorValue,previewEquation);
     }
