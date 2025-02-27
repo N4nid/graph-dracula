@@ -13,15 +13,23 @@ public class MenuOption {
     private ImageView icon;
 
     private static final double textOffset = 10;
-    private static final double iconSize = 25;
+    private static final int iconSize = 25;
     private static final double xOffset = 7;
 
-    public MenuOption(String optionText, Image icon, OverlayMenu parentMenu, TwoDVec<Double> dimensions, double yPos, Pane parent) {
+    public MenuOption(String optionText, Image icon, MenuHaver menuHaver, TwoDVec<Double> dimensions, TwoDVec<Double> position, Pane parent) {
+        setup(optionText,icon,iconSize,-1,menuHaver,dimensions,position,parent);
+    }
+
+    public MenuOption(String optionText, Image icon, int iconSize, int fontSize, MenuHaver menuHaver, TwoDVec<Double> dimensions, TwoDVec<Double> position, Pane parent) {
+        setup(optionText,icon,iconSize,fontSize,menuHaver,dimensions,position,parent);
+    }
+
+    private void setup(String optionText, Image icon, int iconSize, int fontSize, MenuHaver menuHaver, TwoDVec<Double> dimensions, TwoDVec<Double> position, Pane parent) {
         double yOffset = (dimensions.y - iconSize) / 2;
 
         optionPane = new Pane();
-        optionPane.setLayoutX(0);
-        optionPane.setLayoutY(yPos);
+        optionPane.setLayoutX(position.x);
+        optionPane.setLayoutY(position.y);
         optionPane.setPrefWidth(dimensions.x);
         optionPane.setPrefHeight(dimensions.y);
         optionPane.getStyleClass().add("black");
@@ -36,6 +44,9 @@ public class MenuOption {
         this.optionText.setText(optionText);
         this.optionText.getStyleClass().add("normal-text");
         this.optionText.setStyle("-fx-text-fill: white");
+        if (fontSize != -1) {
+            this.optionText.setStyle("-fx-font-size: " + fontSize + "px");
+        }
         optionPane.getChildren().add(this.optionText);
 
         this.icon = new ImageView();
@@ -48,7 +59,7 @@ public class MenuOption {
 
         this.optionPane.setOnMouseClicked(e -> {
             if (e.getButton() == MouseButton.PRIMARY) {
-                parentMenu.executeMenuOption(optionText);
+                menuHaver.executeMenuOption(optionText);
             }
         });
 

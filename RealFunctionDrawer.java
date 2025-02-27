@@ -1,15 +1,21 @@
-import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
+
+import java.util.ArrayList;
 
 public class RealFunctionDrawer{
   public TwoDVec<Integer> resolution;
   public TwoDVec<Double> zoom;
   public TwoDVec<Double> midpoint;
 
+  private TwoDVec<Integer> axisNumbersDecimalPlaces = new TwoDVec<Integer>(0,0);
+
   private Font defaultFont;
   private static final double defaultFontSize = 17;
+  private static final double slopeBreakThreshhold = 400;
+
+  private ArrayList<RenderBreakpoints> equationBreakpoints = new ArrayList<RenderBreakpoints>();
 
   public RealFunctionDrawer(TwoDVec<Integer> resolution, TwoDVec<Double> zoom, TwoDVec<Double> midpoint) {
     this.resolution = resolution;
@@ -39,25 +45,40 @@ public class RealFunctionDrawer{
     midpoint.setPos((double)(resolution.x / 2), (double)(resolution.y / 2));
   }
 
-  public void drawFunctions(GraphicsContext gc, Color[] colors, EquationTree[] functions) {
-    gc.clearRect(0,0,gc.getCanvas().getWidth(),gc.getCanvas().getHeight());
+  public void drawFunctions(GraphicsContext gc, ArrayList<EquationTree> functions) {
     drawCoordinateSystem(gc);
     double[] xValues = getXArray(); 
-    for (int i = 0; i < functions.length; i++) {
-      double[] functionValues = calculateFunctionValues(functions[i]);
-      drawFunction(gc,xValues,functionValues,colors[i]);
+    for (int i = 0; i < functions.size(); i++) {
+      double[] functionValues = calculateFunctionValues(functions.get(i));
+      fixValues(functionValues, functions.get(i));
+      drawFunction(gc,xValues,functionValues,functions.get(i).GraphColor,functions.get(i));
     }
   }
 
-  public void drawFunction(GraphicsContext gc, double[] xValues, double[] functionValues, Color color) {
+  public void drawFunction(GraphicsContext gc, double[] xValues, double[] functionValues, Color color,EquationTree function) {
     gc.setStroke(color);
     gc.setLineWidth(2);
-    fixNans(functionValues);
+    RenderBreakpoints associatedBreakpoints = RenderBreakpoints.findFunctionBreakpoints(equationBreakpoints,function);
+    if (associatedBreakpoints!=null){
+    }
     gc.strokePolyline(xValues,functionValues, xValues.length);
   }
 
-  private void fixNans(double[] fixableValues) {
+  private void fixValues(double[] fixableValues, EquationTree fixableFunction) {
     for (int i = 2; i < fixableValues.length - 2; i++) {
+      if (!Double.isNaN(fixableValues[i]) && Double.isNaN(fixableValues[i+1])){
+        if (Math.abs(fixableValues[i] - fixableValues[i+1]) > slopeBreakThreshhold) {
+          RenderBreakpoints associatedBreakpoints = RenderBreakpoints.findFunctionBreakpoints(equationBreakpoints,fixableFunction);
+          if (associatedBreakpoints != null) {
+            if (!associatedBreakpoints.breakpoints.contains((double)i)) {
+              associatedBreakpoints.breakpoints.add((double)i);
+            }
+          }
+          else {
+            equationBreakpoints.add(new RenderBreakpoints(fixableFunction,(double)i));
+          }
+        }
+      }
       if (Double.isNaN(fixableValues[i]) && !Double.isNaN(fixableValues[i+1]) && !Double.isNaN(fixableValues[i+2])) {
         if (fixableValues[i + 2] - fixableValues[i + 1] < 0) {
           fixableValues[i] = resolution.y;
@@ -68,10 +89,10 @@ public class RealFunctionDrawer{
       }
       else if (Double.isNaN(fixableValues[i]) && !Double.isNaN(fixableValues[i-1]) && !Double.isNaN(fixableValues[i-2])) {
         if (fixableValues[i -1] - fixableValues[i -2] < 0) {
-          fixableValues[i] = -5;
+          fixableValues[i] = resolution.y;
         }
         else {
-          fixableValues[i] = resolution.y;
+          fixableValues[i] = -5;
         }
         i+=2;
       }
@@ -81,6 +102,9 @@ public class RealFunctionDrawer{
   public void drawCoordinateSystem(GraphicsContext gc) {
     double unitDistanceX = 1 / zoom.x;
     double unitDistanceY = 1 / zoom.y;
+    axisNumbersDecimalPlaces = new TwoDVec<Integer>(0,0);
+    unitDistanceX = fixUnitDistance(unitDistanceX, true);
+    unitDistanceY = fixUnitDistance(unitDistanceY, false);
 
     gc.setStroke(Color.WHITE);
     gc.setLineWidth(1);
@@ -93,10 +117,27 @@ public class RealFunctionDrawer{
     drawYCoords(gc,unitDistanceY);
   }
 
+  private double fixUnitDistance(double unitDistance, boolean isX){
+    double axisRes = 1000;
+    while (axisRes / unitDistance < 10) {
+      unitDistance /= 2;
+      if (isX) {
+        axisNumbersDecimalPlaces.x += 1;
+      }
+      else {
+        axisNumbersDecimalPlaces.y += 1;
+      }
+    }
+    while (axisRes / unitDistance > 20) {
+      unitDistance *= 2;
+    }
+    return unitDistance;
+  }
+
   private void drawXCoords(GraphicsContext gc, double unitDistanceX) {
-    int startNumb = (int)Math.round((- midpoint.x) * zoom.x) - 1;
+    int startNumb = (int)Math.round((- midpoint.x) / unitDistanceX) - 1;
+    int endNumb = (int)Math.round(startNumb + resolution.x /unitDistanceX)  + 1;
     //System.out.println(startNumb);
-    int endNumb = (int)Math.round((- midpoint.x + resolution.x) * zoom.x)  + 1;
     //System.out.println(endNumb);
     double currentX = startNumb * unitDistanceX + midpoint.x;
     int iterator = startNumb;
@@ -106,8 +147,9 @@ public class RealFunctionDrawer{
       if (iterator != 0) {
         gc.strokeLine(currentX, 0, currentX, resolution.y);
 
-        int stringLenght = ("" + iterator).length();
-        gc.fillText("" + iterator, currentX - 0.3 * defaultFontSize * stringLenght, midpoint.y + 1.2 * defaultFontSize);
+        String labelString = String.format("%." + axisNumbersDecimalPlaces.x + "f", pixelCordToReal(new TwoDVec<Double>(currentX,0.0)).x);
+        int stringLenght = labelString.length();
+        gc.fillText(labelString, currentX - 0.3 * defaultFontSize * stringLenght, midpoint.y + 1.2 * defaultFontSize);
       }
       currentX += unitDistanceX;
       iterator++;
@@ -115,8 +157,10 @@ public class RealFunctionDrawer{
   }
 
   private void drawYCoords(GraphicsContext gc, double unitDistanceY) {
-    int startNumb = (int)Math.round((midpoint.y - resolution.y) * zoom.y) - 1;
-    int endNumb = (int)Math.round(midpoint.y * zoom.y) + 1;
+    int endNumb = (int)Math.round(( midpoint.y) / unitDistanceY) + 2;
+    int startNumb = (int) (endNumb - resolution.y / unitDistanceY) - 2;
+    /*System.out.println(startNumb);
+    System.out.println(endNumb);*/
     double currentY = - startNumb * unitDistanceY + midpoint.y;
     int iterator = startNumb;
     gc.setFill(Color.WHITE);
@@ -124,8 +168,9 @@ public class RealFunctionDrawer{
       if (iterator != 0) {
         gc.strokeLine(0, currentY, resolution.x, currentY);
 
-        int stringLenght = ("" + iterator).length();
-        gc.fillText("" + iterator, midpoint.x - (0.2 + stringLenght) * defaultFontSize, currentY + 0.3 * defaultFontSize);
+        String labelString = String.format("%." + axisNumbersDecimalPlaces.y + "f", pixelCordToReal(new TwoDVec<Double>(0.0,currentY)).y);
+        int stringLenght = labelString.length();
+        gc.fillText(labelString, midpoint.x - (0.8 * stringLenght) * defaultFontSize, currentY + 0.3 * defaultFontSize);
       }
       currentY -= unitDistanceY;
       iterator++;
@@ -145,7 +190,26 @@ public class RealFunctionDrawer{
   }
 
   public TwoDVec<Double> pixelCordToReal(TwoDVec<Double> pixelCoord) {
-    TwoDVec<Double> realCord = new TwoDVec<Double>((pixelCoord.x - midpoint.x)* zoom.x, (-pixelCoord.y- midpoint.y) * zoom.y);
+    TwoDVec<Double> realCord = new TwoDVec<Double>((pixelCoord.x - midpoint.x)* zoom.x, (-pixelCoord.y+ midpoint.y) * zoom.y);
     return realCord;
+  }
+}
+
+class RenderBreakpoints {
+  public EquationTree brokenFunction;
+  public ArrayList<Double> breakpoints;
+  public RenderBreakpoints(EquationTree brokenFunction, double initBreakpoint) {
+    this.brokenFunction = brokenFunction;
+    this.breakpoints = new ArrayList<Double>();
+    this.breakpoints.add(initBreakpoint);
+  }
+
+  public static RenderBreakpoints findFunctionBreakpoints(ArrayList<RenderBreakpoints> brokenFunctions, EquationTree function){
+    for (int i = 0; i < brokenFunctions.size(); i++) {
+      if (brokenFunctions.get(i).brokenFunction==function) {
+        return brokenFunctions.get(i);
+      }
+    }
+    return null;
   }
 }

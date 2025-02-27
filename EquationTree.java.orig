@@ -6,9 +6,14 @@ import java.io.IOException;
 
 public class EquationTree {
 
+<<<<<<< HEAD
   public EquationNode root;
   public Color GraphColor = Color.BLACK;
-  public boolean isFunction = false;
+=======
+    public EquationNode root;
+    public Color GraphColor = Color.BLACK;
+    public boolean isFunction = false;
+>>>>>>> main
 
   public EquationTree(byte rootState, String rootValue) {
     this.root = new EquationNode(rootState, rootValue);

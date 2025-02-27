@@ -1,5 +1,5 @@
 public class EquationParser {
-  static boolean debug = true; // all debugging prints will be removed when there are no issues anymore
+  public static boolean debug = true; // all debugging prints will be removed when there are no issues anymore
 
   // this code could also be in Main.java
   // TODO
@@ -109,7 +109,7 @@ public class EquationParser {
 
         if (stackTop != null) {
 
-          if (lastNode.state >= 2 && val.equals("-")) { // so that negative numbers work
+          if (lastNode.value.equals("(") && val.equals("-")) { // so that negative numbers work
             if (debug)
               System.out.println("neg. number fix " + lastNode.value);
             lastNode.right = new EquationNode((byte) 0, "0");
