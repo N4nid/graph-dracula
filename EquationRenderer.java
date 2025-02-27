@@ -100,7 +100,7 @@ public class EquationRenderer {
       for(int y=1; y < hoehe*2 - 1; y++) {
           for (int i = 0; i < functions.size(); i++) {
             if (isPartOfFunction(x,y,negPosMaps,i)) {
-              image.getPixelWriter().setColor(x,y,functions.get(i).GraphColor);
+              image.getPixelWriter().setColor(x,y,functions.get(i).graphColor);
             } // end of if
           }
       }

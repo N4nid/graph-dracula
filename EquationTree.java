@@ -1,14 +1,9 @@
-import javafx.application.Application;
-
 import javafx.scene.paint.Color;
-
-
-import java.io.IOException;
 
 public class EquationTree{
 
     public EquationNode root;
-    public Color GraphColor = Color.BLACK;
+    public Color graphColor = Color.BLACK;
     public boolean isFunction = false;
 
     public EquationTree(byte rootState, String rootValue) {

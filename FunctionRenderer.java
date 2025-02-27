@@ -51,7 +51,7 @@ public class FunctionRenderer {
     for (int i = 0; i < functions.size(); i++) {
       double[] functionValues = calculateFunctionValues(functions.get(i));
       fixValues(functionValues, functions.get(i));
-      drawFunction(gc,xValues,functionValues,functions.get(i).GraphColor,functions.get(i));
+      drawFunction(gc,xValues,functionValues,functions.get(i).graphColor,functions.get(i));
     }
   }
 
