@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>RoundColorPicker</title>
+</head>
+<body>
+
+<h1>RoundColorPicker</h1>
+<p>This class is instantiated either as a part of an <a href = "EquationVisElement.html"> EquationVisElement </a> or as the mainColorPicker of the <a href = "ApplicationController.html"> ApplicationController </a> class.
+<br>It contains a the clickable button to choose the color and the context menu, to choose a color.</p>
+<h2>Relevant Variables</h2>
+    <ul>
+        <li><h3>isUp</a></h3></li>
+            <ul><p>This determines, if the RoundColorPicker opens it's UI window over the displayButton.<br> 
+                If it opens the window over the button it's true (that would mean it's the MainColorPicker of the 
+                <a href = "ApplicationController.html"> ApplicationController </a> class.</p></ul>
+            <li><h3>selectableColors</a></h3></li>
+                <ul><p>This Color array stores all possible Colors to select in the colorPickerWindow.
+                    <br>If you choose a color, an index from this array is passed on.</p></ul>
+            <li><h3>displayButton</a></h3></li>
+                    <ul><p>This is the round button, which displays the selected color and you can click to open the ColorPickerWindow.</p></ul>     
+            <li><h3>colorPickerWindow</a></h3></li>
+                    <ul><p>This is the window, that pops up, when you click the displayButton. 
+                    <br>It displays the selectable <a href = "ColorPickButton.html"> ColorPickButtons </a> and has an attached Label and a closeButton.</p></ul>       
+    </ul>
+<h2>Methods</h2>
+    <ul>
+        <li><h3>Constructor</h3></li>
+            <ul><p>Set's uo the UI for the button and the window to choose colors. The window is hidden by default.</p></ul>
+        <li><h3>recalcExtraPostions()</a></h3></li>
+            <ul><p>This method is called, when you scroll or resize the window. 
+            <br>It recalculates the positon of the colorPickerWindow if it is currently visible.</p></ul>
+        <li><h3>hide()</a></h3></li>
+            <ul><p>This method is called, when you click somewhere on the scene. 
+            <br>It hides the colorPickerWindow, if you din't click on the buttun, or on the pane, 
+            <br>because then you interacted with the UI and didn't want the colorPickerWindow to go away. 
+            <br>This is part of the <a href = "Hideble.html"> Hideble </a> interface.</p></ul>
+        <li><h3>limitPos()</a></h3></li>
+            <ul><p>This method makes shure, the colorPickerWindow doesn't go over the window border.</p></ul>
+        <li><h3>moveTo()</a></h3></li>
+             <ul><p>This method moves a Node to a given postion.</p></ul>
+        <li><h3>onClick()</a></h3></li>
+            <ul><p>This method is called, when you click the displayButton. 
+            <br>It shwos or closes the colorPickerWindow and makes shure everything is a the right place.</p></ul> 
+        <li><h3>pickColor()</a></h3></li>
+            <ul><p>This method is called, when you click a <a href = "ColorPickButton.html"> ColorPickButton </a>.
+            <br>It changes the associated values from this class and the color of the displayButton.</p></ul> 
+        <li><h3>toRGBCode()</h3></li>
+            <ul><p>Converts a given javafx Color to a String of it's hexRGB code.</p></ul>  
+        <li><h3>setupColors()</h3></li>
+            <ul><p>This method add all Colors, which i typed in manually to the selectableColors array.</p></ul>           
+    </ul>
+
+</body>
+</html>

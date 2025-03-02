@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Anchor</title>
+</head>
+<body>
+
+<h1>Anchor</h1>
+<p>This class can dynamically resize and relocate one UI object based on another</p>
+<h2>Variables</h2>
+    <ul>
+        <li><h3>baseObject</a></h3></li>
+            <ul><p>The javafx object, which is dynamically resized.<p></ul>
+        <li><h3>relateToObject</a></h3></li>
+            <ul><p>The javafx object, which the Anchor relates to.<p></ul>
+        <li><h3>offsetVec</a></h3></li>
+            <ul><p>This defines the difference between the baseObject and the relateToObject.<p></ul>
+        <li><h3>keepX/Y</a></h3></li>
+            <ul><p>Stores, if the x or y value of the baseObject should be kept.<p></ul>
+        <li><h3>Type</a></h3></li>
+            <ul><p>Stores the type of Anchor. It can be "scale": relats the scale of both objects together, "pos": releates the position of them, "scale->pos": relates the scale of the releateToObject to the position of the baseObject or "pos->scale": relates the position of the releateToObject to the scale of the baseObject<p></ul>
+    </ul>
+<h2>Methods</h2>
+    <ul>
+        <li><h3>applyAnchor()</h3></li>
+            <ul><p>Apllies the Anchor based on the defined variables.</p></ul>
+        <li><h3>applyAnchors()</h3></li>
+            <ul><p>Calls applyAnchor() function for all Anchors in a given Anchor list.</p></ul>
+    </ul>
+
+</body>
+</html>
