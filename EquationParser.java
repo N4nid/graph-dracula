@@ -8,7 +8,12 @@ public class EquationParser {
   // - Deal with brackets and sings
   // - figure out what todo with variables
   // - special functions
+
+
   public static EquationTree parseString(String input) {
+    //Sanitize string
+    input = input.replaceAll("\\s","");
+
     // FIXME workaround when equation starts with brackets (20-2)*2
     char first = input.charAt(0);
     if (first == '(') {
