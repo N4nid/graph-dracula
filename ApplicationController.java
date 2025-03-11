@@ -29,6 +29,7 @@ public class ApplicationController implements MenuHaver {
   private Button previewButton = new Button();
   private MenuOption recenterButton;
   public Canvas mainCanvas;
+  private ExpandMenu expandMenu;
   ArrayList<EquationVisElement> listElements = new ArrayList<EquationVisElement>();
 
   public RoundColorPicker mainColorPicker;
@@ -104,6 +105,8 @@ public class ApplicationController implements MenuHaver {
     equationInputPane.getChildren().add(mainColorPicker.displayButton);
     hideOnClick.add(mainColorPicker);
 
+    expandMenu = new ExpandMenu(root);
+
     Effects.addDefaultHoverEffect(addButton);
     Effects.addDefaultHoverEffect(extraInputButton);
     updateInputBarColor();
@@ -142,8 +145,8 @@ public class ApplicationController implements MenuHaver {
     anchors.add(new Anchor(recenterButton.optionPane, graphViewPane, new TwoDVec<Double>(0.0, 0.0), "pos"));
     anchors.add(new Anchor(recenterButton.optionPane, graphViewPane, new TwoDVec<Double>(-90.0, 0.0), "scale->pos"));
     anchors.add(new Anchor(previewButton, equationInputPane, new TwoDVec<Double>(0.0, 0.0), "pos"));
-    anchors
-            .add(new Anchor(previewButton, equationInputPane, new TwoDVec<Double>(128.0, 0.0), "scale->pos", false, true));
+    anchors.add(new Anchor(previewButton, equationInputPane, new TwoDVec<Double>(128.0, 0.0), "scale->pos", false, true));
+    anchors.add(new Anchor(expandMenu.background,root,new TwoDVec<Double>(-200.0,0.0),"scale",false,true));
     resize();
 
     funcDrawer.centerCoordinateSystem();
