@@ -19,6 +19,7 @@ public class EquationParser {
     //Transform
     if(!input.contains("=") && !input.contains("y")){
       input += "-y";
+      isFunction = false;
     }
     else if(checkIfFunction(input)){
       input = input.split("=")[1]+"-y";
@@ -303,7 +304,8 @@ public class EquationParser {
     input = input.delete(0, counter);
 
     String specials = "sin cos tan ln sqrt";
-    String constants = "pi";
+    String constants = "pi phi"; // must be divided by spaces for split() in getConstant
+    Double constValues[] = {Math.PI,1.6180339887498948}; // must be divided by spaces for split() in getConstant
     String operators = "root log";
     if (state == 1) {
       if (specials.contains(value)) {
@@ -314,7 +316,13 @@ public class EquationParser {
         opLevel = 3; // XXX CHECK IF WORKS THAT WAY
       } else if(constants.contains(value)){
         state = 0;
-        value = Math.PI+"";
+        String consts[] = constants.split(" ");
+        for (int i = 0; i < consts.length; i++) {
+          if(value.equals(consts[i])){
+            value = constValues[i]+"";
+            break;
+          }
+        }
       }else {
         return null; // invalid input
       }
