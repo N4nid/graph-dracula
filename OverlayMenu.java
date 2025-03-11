@@ -1,7 +1,7 @@
 import javafx.scene.image.Image;
 import javafx.scene.layout.Pane;
 
-public class OverlayMenu implements Hideble{
+public class OverlayMenu implements Hideble, MenuHaver{
     private MenuOption[] options;
     public Pane window;
     private MenuHaver menuHaver;
@@ -32,14 +32,22 @@ public class OverlayMenu implements Hideble{
     private void setMenuPreset(String menuPreset) {
         if (menuPreset.equals("equationElement")) {
             this.optionDimentions = new TwoDVec<Double>(150.0,40.0);
-            window.setPrefWidth(optionDimentions.x);
-            window.setPrefHeight(optionDimentions.y * 2);
             options =  new MenuOption[2];
             Image editIcon = new Image("/resources/editButton.png");
             Image deleteIcon = new Image("/resources/trashBin.png");
-            options[0] = new MenuOption("Edit",editIcon,this,optionDimentions,0,window);
-            options[1] = new MenuOption("Delete",deleteIcon,this,optionDimentions,optionDimentions.y - 3,window);
+            options[0] = new MenuOption("edit",editIcon,this,optionDimentions,new TwoDVec<Double>(0.0,0.0),window);
+            options[1] = new MenuOption("delete",deleteIcon,this,optionDimentions,new TwoDVec<Double>(0.0,optionDimentions.y - 3),window);
         }
+        if (menuPreset.equals("graphView")) {
+            this.optionDimentions = new TwoDVec<Double>(180.0,35.0);
+            options =  new MenuOption[2];
+            Image recenterIcon = new Image("/resources/recenter.png");
+            Image resetZoomIcon = new Image("/resources/resetZoomIcon.png");
+            options[0] = new MenuOption("recenter",recenterIcon,18,22,this,optionDimentions,new TwoDVec<Double>(0.0,0.0),window);
+            options[1] = new MenuOption("reset zoom",resetZoomIcon,18,22,this,optionDimentions,new TwoDVec<Double>(0.0,optionDimentions.y -3),window);
+        }
+        window.setPrefWidth(optionDimentions.x);
+        window.setPrefHeight(optionDimentions.y * options.length);
     }
 
     public void executeMenuOption(String option) {
