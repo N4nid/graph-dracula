@@ -46,6 +46,7 @@ public class EquationVisElement implements MenuHaver{
 
         pane.getChildren().add(funcDisplay);
         colorPicker = new RoundColorPicker(colorX,colorY,yPos, defaultColor, false,root,controller);
+        this.equation.graphColor = colorPicker.colorValue;
         pane.getChildren().add(colorPicker.displayButton);
         parent.getChildren().add(pane);
 
