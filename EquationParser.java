@@ -1,5 +1,7 @@
 public class EquationParser {
   public static boolean debug = true; // all debugging prints will be removed when there are no issues anymore
+  static String name = "";
+  static boolean isFunction = false;
 
   // this code could also be in Main.java
   // TODO
@@ -10,9 +12,20 @@ public class EquationParser {
   // - special functions
 
 
-  public static EquationTree parseString(String input) {
+  private static String transformString(String input){
     //Sanitize string
     input = input.replaceAll("\\s","");
+
+    //Transform
+    if(!input.contains("=") && !input.contains("y")){
+      input += "-y";
+    }
+    else if(checkIfFunction(input)){
+      input = input.split("=")[1]+"-y";
+    }else if(input.contains("=")){
+      String[] split = input.split("=");
+      input = split[0]+"-("+split[1]+")";
+    }
 
     // FIXME workaround when equation starts with brackets (20-2)*2
     char first = input.charAt(0);
@@ -21,6 +34,11 @@ public class EquationParser {
     } else if (first == '-') {
       input = "0" + input;
     }
+    return input;
+  }
+
+  public static EquationTree parseString(String input) {
+    input = transformString(input);
 
     if (debug)
       System.out.println(input);
@@ -184,7 +202,20 @@ public class EquationParser {
     }
     // debugging
 
-    return new EquationTree(root);
+    return new EquationTree(root,name,isFunction);
+  }
+
+  private static boolean checkIfFunction(String input){
+    //only one char functions 
+    // f(x) and not wow(x)
+    String sub = input.substring(1,5); // should be (x)=
+    if(sub.equals("(x)=")){
+      name = input.charAt(0)+"(x)";
+      isFunction = true;
+      return true;
+    }
+    
+    return false;
   }
 
   public static String[] getBetweenBrackets(StringBuffer input) {
@@ -234,6 +265,10 @@ public class EquationParser {
     byte state = getState(first);
     byte opLevel = -1;
     EquationNode result;
+    if(value.equals("e")){
+      value = Math.E+"";
+      state = 0;
+    }
 
     if (input.length() == 1) { // to prevent out of bounds with the following lines
       input = input.delete(0, 1);
@@ -268,6 +303,7 @@ public class EquationParser {
     input = input.delete(0, counter);
 
     String specials = "sin cos tan ln sqrt";
+    String constants = "pi";
     String operators = "root log";
     if (state == 1) {
       if (specials.contains(value)) {
@@ -276,7 +312,10 @@ public class EquationParser {
       } else if (operators.contains(value)) {
         state = 4; // So that i can treat it differently -> will be changed to 2 later
         opLevel = 3; // XXX CHECK IF WORKS THAT WAY
-      } else {
+      } else if(constants.contains(value)){
+        state = 0;
+        value = Math.PI+"";
+      }else {
         return null; // invalid input
       }
     }
