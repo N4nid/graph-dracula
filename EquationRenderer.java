@@ -21,9 +21,9 @@ public class EquationRenderer {
   int X0 = breite;     //x = 0 des Funktions-Koord.-systems in Abh. von render
   int Y0 = hoehe;      //y = 0 des Funktions-Koord.-systems in Abh. von render
   ArrayList<EquationTree> functions = new ArrayList<EquationTree>();
-
   public TwoDVec<Double> lastPos = new TwoDVec<Double>(-1.0, -1.0);
   public TwoDVec<Double> lastZoom = new TwoDVec<Double>(-1.0, -1.0);
+  public boolean doImageWriting = true;
 
   public EquationRenderer(int breite, int hoehe, double scaling) {
     this.breite = breite;
@@ -86,7 +86,9 @@ public class EquationRenderer {
       for (int y = 1; y < hoehe * 2 - 1; y++) {
         for (int i = 0; i < functions.size(); i++) {
           if (isPartOfFunction(x, y, negPosMaps, i)) {
-            image.getPixelWriter().setColor(x, y, functions.get(i).graphColor);
+            if (doImageWriting) {
+              image.getPixelWriter().setColor(x, y, functions.get(i).graphColor);
+            }
           } // end of if
         }
       }
@@ -95,11 +97,16 @@ public class EquationRenderer {
   }
 
   public Image drawEquations(ArrayList<EquationTree> equations) {
+    long startTime = System.nanoTime();
     if (lastZoom.x != scaling) {
-      initialiseImage();
+      if (doImageWriting) {
+        initialiseImage();
+      }
       this.functions = equations;
       this.lastZoom = new TwoDVec<Double>(scaling, scaling);
       this.lastPos = new TwoDVec<Double>((double) X0, (double) Y0);
+      long endTime = System.nanoTime();
+      System.out.println("RenderTIme: " + (endTime - startTime));
       return drawNewFunctions(getNegPosMaps(equations));
     } else {
       return image;
