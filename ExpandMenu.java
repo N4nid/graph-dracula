@@ -13,7 +13,7 @@ public class ExpandMenu {
     private double buttonDistXY = 20;
     private int buttonColloms = 5;
     private int buttonRows = 4;
-    private String standardPath = "/resources/MathIcons";
+    private String standardPath = "/resources/MathIcons/";
     private String standardImageFormat = ".png";
     public ExpandMenu(Pane root) {
         background = new Pane();
@@ -23,7 +23,7 @@ public class ExpandMenu {
         background.setPrefHeight(height);
         background.setViewOrder(-1);
         root.getChildren().add(background);
-        MathButton testButton = new MathButton(this,"/resources/MathIcons/e.png","e",0,standardButtonSize);
+        initiateButtons();
     }
 
     private void initiateButtons() {
