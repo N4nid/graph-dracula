@@ -146,8 +146,8 @@ public class ApplicationController implements MenuHaver {
     anchors.add(new Anchor(recenterButton.optionPane, graphViewPane, new TwoDVec<Double>(-90.0, 0.0), "scale->pos"));
     anchors.add(new Anchor(previewButton, equationInputPane, new TwoDVec<Double>(0.0, 0.0), "pos"));
     anchors.add(new Anchor(previewButton, equationInputPane, new TwoDVec<Double>(128.0, 0.0), "scale->pos", false, true));
-    anchors.add(new Anchor(expandMenu.background,root,new TwoDVec<Double>(-150.0,0.0),"scale",false,true,new TwoDVec<Double>(400.0,1000.0)));
-    anchors.add(new Anchor(expandMenu.background,root,new TwoDVec<Double>(0.0,-400.0),"scale->pos",true,false));
+    anchors.add(new Anchor(expandMenu.background,root,new TwoDVec<Double>(-90.0,0.0),"scale",false,true,new TwoDVec<Double>(600.0,1000.0)));
+    anchors.add(new Anchor(expandMenu.background,root,new TwoDVec<Double>(0.0,-360.0),"scale->pos",true,false));
     resize();
 
     funcDrawer.centerCoordinateSystem();
@@ -319,7 +319,6 @@ public class ApplicationController implements MenuHaver {
       Image equationRender = equationRenderer.drawEquations(equations);
       if (equationRenderer.doImageWriting) {
         TwoDVec<Double> imagePos = new TwoDVec<Double>(-graphViewPane.getPrefWidth() + funcDrawer.midpoint.x, -graphViewPane.getPrefHeight() + funcDrawer.midpoint.y);
-        System.out.println(funcDrawer.zoom.y * 50);
         TwoDVec<Double> tempImageSize = new TwoDVec<Double>(graphViewPane.getPrefWidth() * 2 / (funcDrawer.zoom.x * 50), graphViewPane.getPrefHeight() * 2 / (funcDrawer.zoom.y * 50));
         TwoDVec<Double> tempImageZoomOffset = new TwoDVec<Double>(-(tempImageSize.x / 2 - graphViewPane.getPrefWidth()),-(tempImageSize.y / 2 - graphViewPane.getPrefHeight()));
         mainCanvas.getGraphicsContext2D().drawImage(equationRender, imagePos.x + tempImageZoomOffset.x, imagePos.y + tempImageZoomOffset.y, tempImageSize.x, tempImageSize.y);
@@ -459,11 +458,19 @@ class Anchor {
   public void applyAnchor() {
     if (type.equals("scale")) {
       TwoDVec<Double> targetSize = new TwoDVec<Double>(relateToObject.getPrefWidth() + offsetVec.x,relateToObject.getPrefHeight() + offsetVec.y);
-      if (!keepX && ((targetSize.x <= maxSize.x))) {
-        baseObject.setPrefWidth(targetSize.x);
+      if (!keepX) {
+        if ((targetSize.x <= maxSize.x)) {
+          baseObject.setPrefWidth(targetSize.x);
+        } else if(baseObject.getPrefWidth() < maxSize.x) {
+          baseObject.setPrefWidth(maxSize.x);
+        }
       }
-      if (!keepY && targetSize.y < maxSize.y) {
-        baseObject.setPrefHeight(targetSize.y);
+      if (!keepY) {
+        if (targetSize.y < maxSize.y) {
+          baseObject.setPrefHeight(targetSize.y);
+        } else if(baseObject.getPrefHeight() < maxSize.y) {
+          baseObject.setPrefHeight(maxSize.y);
+        }
       }
     }
     if (type.equals("pos")) {
@@ -483,12 +490,20 @@ class Anchor {
       }
     }
     if (type.equals("pos->scale")) {
-      TwoDVec<Double> targetSize = new TwoDVec<Double>(relateToObject.getPrefWidth() + offsetVec.x,relateToObject.getPrefHeight() + offsetVec.y);
-      if (!keepX  && targetSize.x <= maxSize.x) {
-        baseObject.setPrefWidth(targetSize.x + offsetVec.x);
+      TwoDVec<Double> targetSize = new TwoDVec<Double>(relateToObject.getLayoutX() + offsetVec.x,relateToObject.getLayoutY() + offsetVec.y);
+      if (!keepX) {
+        if (targetSize.x <= maxSize.x) {
+          baseObject.setPrefWidth(targetSize.x + offsetVec.x);
+        } else if(baseObject.getPrefWidth() < maxSize.x) {
+          baseObject.setPrefWidth(maxSize.x);
+        }
       }
-      if (!keepY  && targetSize.y <= maxSize.y) {
-        baseObject.setPrefHeight(targetSize.y);
+      if (!keepY) {
+        if (targetSize.y <= maxSize.y) {
+          baseObject.setPrefHeight(targetSize.y);
+        } else if(baseObject.getPrefHeight() < maxSize.y) {
+          baseObject.setPrefWidth(maxSize.y);
+        }
       }
     }
   }

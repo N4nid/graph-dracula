@@ -55,7 +55,10 @@ public class EquationNode {
         return part1 / part2;
       } else if (op.equals("^")) {
         return Math.pow(part1, part2);
-      } else if (op.equals("root")) {
+      } else if (op.equals("mod")) {
+        return part1%part2;
+      }
+      else if (op.equals("root")) {
         return Math.pow(part2, 1.0 / part1);
       } else if (op.equals("log")) {
         return Math.log(part2) / Math.log(part1);
@@ -73,7 +76,10 @@ public class EquationNode {
         return Math.tan(calVal);
       } else if (op.equals("ln")) {
         return Math.log(calVal);
-      } else {
+      } else if (op.equals("abs")){
+        return Math.abs(calVal);
+      }
+      else {
         System.out.println("Invalid special function!");
       }
     } else {
