@@ -37,6 +37,10 @@
     -fx-background-size: 30px 20px;
 }
 
+.math-button {
+    -fx-background-size: 100px 52px;
+}
+
 .image-button {
     -fx-background-color: rgba(0,0,0,0);
     -fx-background-repeat: no-repeat;
