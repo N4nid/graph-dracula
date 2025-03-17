@@ -78,7 +78,9 @@ public class Main extends Application {
   }
 
   public static void quickDebug() {
-    String test = "root(root(2,4),64)";
+    String test = "1+root(2,x)";
+    //String test = "sin(ln(root(3,x)))";
+    //String test = "root(root(2,4),64)";
     // String test = "1+3*3^2";
     // String test = "cos(sin(1-1)*2.4)";
     // String test = "4*4^5+cos(4^2)-1/2*sin(4)+1/4*(4+1)";
