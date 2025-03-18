@@ -10,11 +10,10 @@ public class ExpandMenu {
     public Pane background;
     public TextField mainInputField;
     private double xMargin = 60;
-    private double height = 200;
+    private double height = 215;
     private TwoDVec<Double> standardButtonSize = new TwoDVec<Double>(99.875,52.0);
-    private double buttonDistXY = 20;
-    private int buttonColloms = 5;
-    private int buttonRows = 4;
+    private double buttonDistXY = 15;
+    private int buttonColloms = 8;
     private ArrayList<MathButton> mathButtons = new ArrayList<MathButton>();
     private String standardPath = "/resources/MathIcons/";
     private String standardImageFormat = ".png";
@@ -31,7 +30,7 @@ public class ExpandMenu {
 
     private void initiateButtons() {
         TwoDVec<Double> currentPos = new TwoDVec<Double>(buttonDistXY,buttonDistXY);
-        mathButtons.add(initiateButton("f(X)","f(x) = " , -6));
+        mathButtons.add(initiateButton("f(x)","f(x) = " , -6));
         mathButtons.add(initiateButton("pi","pi"));
         mathButtons.add(initiateButton("e","e"));
         mathButtons.add(initiateButton("phi","phi"));
@@ -39,7 +38,22 @@ public class ExpandMenu {
         mathButtons.add(initiateButton("exponent","^"));
         mathButtons.add(initiateButton("sqrt","sqrt()",-1));
         mathButtons.add(initiateButton("root","root(,)",-2));
+        mathButtons.add(initiateButton("log","log(,)",-2));
+        mathButtons.add(initiateButton("log1o","log(10,)",-1));
+        mathButtons.add(initiateButton("ln","ln()",-1));
+        mathButtons.add(initiateButton("e_exp","e^"));
+        mathButtons.add(initiateButton("sin","sin()",-1));
+        mathButtons.add(initiateButton("cos","cos()",-1));
+        mathButtons.add(initiateButton("tan","tan()",-1));
+        mathButtons.add(initiateButton("sin_ex","sin()^-1",-4));
+        mathButtons.add(initiateButton("cos_ex","cos()^-1",-4));
+        mathButtons.add(initiateButton("tan_ex","tan()^-1",-4));
 
+        for (int i = 0; i < mathButtons.size(); i++) {
+            TwoDVec<Integer> posIndex = new TwoDVec<Integer>(i % buttonColloms,(int) (i / buttonColloms));
+            TwoDVec<Double> pos = new TwoDVec<Double>(buttonDistXY + posIndex.x * (standardButtonSize.x + buttonDistXY),buttonDistXY + posIndex.y * (standardButtonSize.y + buttonDistXY));
+            mathButtons.get(i).setPos(pos);
+        }
     }
 
     private MathButton initiateButton(String filename, String inputString) {
@@ -56,7 +70,7 @@ class MathButton {
     private String inputString;
     private int cursorPos;
 
-    public Button baseButton;
+    private Button baseButton;
 
     public MathButton(ExpandMenu parentMenu, String displayImagePath, String inputString, int cursorPos, TwoDVec<Double> scale) {
         baseButton = new Button();
@@ -74,5 +88,7 @@ class MathButton {
         parentMenu.background.getChildren().add(baseButton);
     }
 
-
+    public void setPos(TwoDVec<Double> pos) {
+        baseButton.relocate(pos.x,pos.y);
+    }
 }
