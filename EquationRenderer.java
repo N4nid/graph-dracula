@@ -25,7 +25,7 @@ public class EquationRenderer {
   public TwoDVec<Double> lastZoom = new TwoDVec<Double>(-1.0, -1.0);
   long startTime;
   int counter = 0;
-  public boolean doImageWriting = false;
+  public boolean doImageWriting = true;
 
   public EquationRenderer(int breite, int hoehe, double scaling) {
     this.breite = breite;

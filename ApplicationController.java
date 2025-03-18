@@ -106,6 +106,8 @@ public class ApplicationController implements MenuHaver {
 
     expandMenu = new ExpandMenu(root,equationInput);
 
+    graphViewLabel.setViewOrder(-1);
+
     Effects.addDefaultHoverEffect(addButton);
     Effects.addDefaultHoverEffect(extraInputButton);
     updateInputBarColor();
@@ -117,8 +119,7 @@ public class ApplicationController implements MenuHaver {
     GraphicsContext gc = mainCanvas.getGraphicsContext2D();
     root.getChildren().add(mainCanvas);
     mouseMindpointOffset = new TwoDVec<Double>(0.0, 0.0);
-    recenterButton = new MenuOption("recenter", new Image("/resources/recenter.png"), 15, 20, this,
-            new TwoDVec<Double>(135.0, 30.0), new TwoDVec<Double>(200.0, 200.0), root);
+    recenterButton = new MenuOption("recenter", new Image("/resources/recenter.png"), 15, 20, this, new TwoDVec<Double>(135.0, 30.0), new TwoDVec<Double>(200.0, 200.0), root);
     recenterButton.optionPane.setVisible(false);
     previewButton.setPrefHeight(defaultButtonSize + 3);
     previewButton.setPrefWidth(defaultButtonSize + 3);
@@ -201,8 +202,7 @@ public class ApplicationController implements MenuHaver {
                 e.getY() - funcDrawer.midpoint.y);
         firstDrag = false;
       }
-      TwoDVec<Double> newPos = new TwoDVec<Double>((e.getX() - mouseMindpointOffset.x),
-              (e.getY() - mouseMindpointOffset.y));
+      TwoDVec<Double> newPos = new TwoDVec<Double>((e.getX() - mouseMindpointOffset.x), (e.getY() - mouseMindpointOffset.y));
       if (graphOffsetInBounds(0.1, funcDrawer)) {
         recenterButton.optionPane.setVisible(false);
       } else {
@@ -289,9 +289,9 @@ public class ApplicationController implements MenuHaver {
   }
 
   public void updateRenderCanvas() {
-    mainCanvas.setWidth(graphViewPane.getPrefWidth());
-    mainCanvas.setHeight(graphViewPane.getPrefHeight());
-    mainCanvas.relocate(graphViewPane.getLayoutX(), graphViewPane.getLayoutY());
+    mainCanvas.setWidth(graphViewPane.getPrefWidth() - 6);
+    mainCanvas.setHeight(graphViewPane.getPrefHeight() - 6);
+    mainCanvas.relocate(graphViewPane.getLayoutX()+3, graphViewPane.getLayoutY()+3);
     TwoDVec<Integer> res = new TwoDVec<Integer>((int) mainCanvas.getWidth(), (int) mainCanvas.getHeight());
     long startTime = System.nanoTime();
     GraphicsContext gc = mainCanvas.getGraphicsContext2D();
