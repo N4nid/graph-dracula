@@ -3,6 +3,8 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.layout.Pane;
 
+import java.util.ArrayList;
+
 
 public class ExpandMenu {
     public Pane background;
@@ -13,6 +15,7 @@ public class ExpandMenu {
     private double buttonDistXY = 20;
     private int buttonColloms = 5;
     private int buttonRows = 4;
+    private ArrayList<MathButton> mathButtons = new ArrayList<MathButton>();
     private String standardPath = "/resources/MathIcons/";
     private String standardImageFormat = ".png";
     public ExpandMenu(Pane root) {
@@ -28,12 +31,15 @@ public class ExpandMenu {
 
     private void initiateButtons() {
         TwoDVec<Double> currentPos = new TwoDVec<Double>(buttonDistXY,buttonDistXY);
-        MathButton fx = initiateButton("f(X)","f(x) = " , -6);
-        MathButton pi = initiateButton("pi","pi");
-        MathButton e = initiateButton("e","e");
-        MathButton phi = initiateButton("phi","phi");
-        MathButton square = initiateButton("square","^2");
-        MathButton exponent = initiateButton("exponent","^");
+        mathButtons.add(initiateButton("f(X)","f(x) = " , -6));
+        mathButtons.add(initiateButton("pi","pi"));
+        mathButtons.add(initiateButton("e","e"));
+        mathButtons.add(initiateButton("phi","phi"));
+        mathButtons.add(initiateButton("square","^2"));
+        mathButtons.add(initiateButton("exponent","^"));
+        mathButtons.add(initiateButton("sqrt","sqrt()",-1));
+        mathButtons.add(initiateButton("root","root(,)",-2));
+
     }
 
     private MathButton initiateButton(String filename, String inputString) {
