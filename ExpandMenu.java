@@ -1,3 +1,4 @@
+import javafx.scene.Group;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
@@ -17,7 +18,7 @@ public class ExpandMenu {
     private ArrayList<MathButton> mathButtons = new ArrayList<MathButton>();
     private String standardPath = "/resources/MathIcons/";
     private String standardImageFormat = ".png";
-    public ExpandMenu(Pane root) {
+    public ExpandMenu(Pane root, TextField mainInputField) {
         background = new Pane();
         background.getStyleClass().add("black");
         background.getStyleClass().add("border");
@@ -26,6 +27,7 @@ public class ExpandMenu {
         background.setViewOrder(-1);
         root.getChildren().add(background);
         initiateButtons();
+        this.mainInputField = mainInputField;
     }
 
     private void initiateButtons() {

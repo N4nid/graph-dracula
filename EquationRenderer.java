@@ -23,7 +23,9 @@ public class EquationRenderer {
   ArrayList<EquationTree> functions = new ArrayList<EquationTree>();
   public TwoDVec<Double> lastPos = new TwoDVec<Double>(-1.0, -1.0);
   public TwoDVec<Double> lastZoom = new TwoDVec<Double>(-1.0, -1.0);
-  public boolean doImageWriting = true;
+  long startTime;
+  int counter = 0;
+  public boolean doImageWriting = false;
 
   public EquationRenderer(int breite, int hoehe, double scaling) {
     this.breite = breite;
@@ -89,15 +91,19 @@ public class EquationRenderer {
             if (doImageWriting) {
               image.getPixelWriter().setColor(x, y, functions.get(i).graphColor);
             }
+            counter++;
           } // end of if
         }
       }
     }
+    long endTime = System.nanoTime();
+    System.out.println("RenderTIme: " + (endTime - startTime));
+    System.out.println("useless counter: " + counter);
     return image;
   }
 
   public Image drawEquations(ArrayList<EquationTree> equations) {
-    long startTime = System.nanoTime();
+    startTime = System.nanoTime();
     if (lastZoom.x != scaling) {
       if (doImageWriting) {
         initialiseImage();
@@ -105,8 +111,6 @@ public class EquationRenderer {
       this.functions = equations;
       this.lastZoom = new TwoDVec<Double>(scaling, scaling);
       this.lastPos = new TwoDVec<Double>((double) X0, (double) Y0);
-      long endTime = System.nanoTime();
-      System.out.println("RenderTIme: " + (endTime - startTime));
       return drawNewFunctions(getNegPosMaps(equations));
     } else {
       return image;

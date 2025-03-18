@@ -105,7 +105,7 @@ public class ApplicationController implements MenuHaver {
     equationInputPane.getChildren().add(mainColorPicker.displayButton);
     hideOnClick.add(mainColorPicker);
 
-    expandMenu = new ExpandMenu(root);
+    expandMenu = new ExpandMenu(root,equationInput);
 
     Effects.addDefaultHoverEffect(addButton);
     Effects.addDefaultHoverEffect(extraInputButton);
