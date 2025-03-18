@@ -1,86 +1,57 @@
---- MODE: debug
-4*4^5+cos(4^2)-1/2*sin(4)+1/4*(4+1)
-current: * | 0
-> root: *
-current: ^ | 0
-last: *
-addBelow *
-current: + | 0
-found last: *
-add above *
-YOOOOOO
-current: cos | 0
-last: +
-addBelow +
-current: ^ | 1
-last: cos
-addBelow cos
-current: - | 0
--- rm: ^
-found last: +
-add above +
-YOOOOOO
-current: / | 0
-last: -
-addBelow -
-current: * | 0
-last: /
-add above /
--#- below: -
-current: sin | 0
-last: *
-addBelow *
-current: + | 0
-found last: *
-add above *
--#- below: -
-current: / | 0
-last: +
-addBelow +
-current: * | 0
-last: /
-add above /
--#- below: +
-current: + | 1
-last: *
-addBelow *
------- top
-+ | 1 | 0
-* | 0 | 1
-/ | 0 | 1
-+ | 0 | 0
-sin | 0 | 3
-* | 0 | 1
-/ | 0 | 1
-- | 0 | 0
-cos | 0 | 3
-+ | 0 | 0
-^ | 0 | 2
-* | 0 | 1
---- bottom
-   -
-l   +
-ll   *
-lll   4
-llr   ^
-llrl   4
-llrr   5
-lr   cos
-lrr   ^
-lrrl   4
-lrrr   2
-r   +
-rl   *
-rll   /
-rlll   1
-rllr   2
-rlr   sin
-rlrr   4
-rr   *
-rrl   /
-rrll   1
-rrlr   4
-rrr   +
-rrrl   4
-rrrr   1
-4094.1707417673306
+Failed Graphics Hardware Qualifier check.
+System GPU doesn't meet the es2 pipe requirement
+GraphicsPipeline.createPipeline: error initializing pipeline com.sun.prism.es2.ES2Pipeline
+*** Fallback to Prism SW pipeline
+
+(java:16884): dbind-WARNING **: 13:14:02.974: Couldn't connect to accessibility bus: Failed to connect to socket /run/user/1000/at-spi/bus_0: Verbindungsaufbau abgelehnt
+ vsync: true vpipe: false
+Exception in thread "JavaFX Application Thread" java.lang.NegativeArraySizeException: -112
+	at FunctionRenderer.getXArray(FunctionRenderer.java:37)
+	at FunctionRenderer.drawFunctions(FunctionRenderer.java:50)
+	at ApplicationController.updateRenderCanvas(ApplicationController.java:322)
+	at ApplicationController.resize(ApplicationController.java:276)
+	at ApplicationController.lambda$setup$1(ApplicationController.java:154)
+	at javafx.base/com.sun.javafx.binding.ExpressionHelper$SingleChange.fireValueChangedEvent(ExpressionHelper.java:181)
+	at javafx.base/com.sun.javafx.binding.ExpressionHelper.fireValueChangedEvent(ExpressionHelper.java:80)
+	at javafx.base/javafx.beans.property.ReadOnlyDoublePropertyBase.fireValueChangedEvent(ReadOnlyDoublePropertyBase.java:78)
+	at javafx.base/javafx.beans.property.ReadOnlyDoubleWrapper.fireValueChangedEvent(ReadOnlyDoubleWrapper.java:103)
+	at javafx.base/javafx.beans.property.DoublePropertyBase.markInvalid(DoublePropertyBase.java:114)
+	at javafx.base/javafx.beans.property.DoublePropertyBase.set(DoublePropertyBase.java:148)
+	at javafx.graphics/javafx.scene.Scene.setWidth(Scene.java:931)
+	at javafx.graphics/javafx.scene.Scene$ScenePeerListener.changedSize(Scene.java:2607)
+	at javafx.graphics/com.sun.javafx.tk.quantum.GlassViewEventHandler$ViewEventNotification.run(GlassViewEventHandler.java:879)
+	at javafx.graphics/com.sun.javafx.tk.quantum.GlassViewEventHandler$ViewEventNotification.run(GlassViewEventHandler.java:849)
+	at java.base/java.security.AccessController.doPrivileged(AccessController.java:399)
+	at javafx.graphics/com.sun.javafx.tk.quantum.GlassViewEventHandler.lambda$handleViewEvent$15(GlassViewEventHandler.java:931)
+	at javafx.graphics/com.sun.javafx.tk.quantum.QuantumToolkit.runWithoutRenderLock(QuantumToolkit.java:423)
+	at javafx.graphics/com.sun.javafx.tk.quantum.GlassViewEventHandler.handleViewEvent(GlassViewEventHandler.java:930)
+	at javafx.graphics/com.sun.glass.ui.View.handleViewEvent(View.java:535)
+	at javafx.graphics/com.sun.glass.ui.View.notifyResize(View.java:875)
+	at javafx.graphics/com.sun.glass.ui.gtk.GtkApplication._runLoop(Native Method)
+	at javafx.graphics/com.sun.glass.ui.gtk.GtkApplication.lambda$runLoop$11(GtkApplication.java:290)
+	at java.base/java.lang.Thread.run(Thread.java:840)
+Exception in thread "JavaFX Application Thread" java.lang.NegativeArraySizeException: -112
+	at FunctionRenderer.getXArray(FunctionRenderer.java:37)
+	at FunctionRenderer.drawFunctions(FunctionRenderer.java:50)
+	at ApplicationController.updateRenderCanvas(ApplicationController.java:322)
+	at ApplicationController.resize(ApplicationController.java:276)
+	at ApplicationController.lambda$setup$2(ApplicationController.java:158)
+	at javafx.base/com.sun.javafx.binding.ExpressionHelper$SingleChange.fireValueChangedEvent(ExpressionHelper.java:181)
+	at javafx.base/com.sun.javafx.binding.ExpressionHelper.fireValueChangedEvent(ExpressionHelper.java:80)
+	at javafx.base/javafx.beans.property.ReadOnlyDoublePropertyBase.fireValueChangedEvent(ReadOnlyDoublePropertyBase.java:78)
+	at javafx.base/javafx.beans.property.ReadOnlyDoubleWrapper.fireValueChangedEvent(ReadOnlyDoubleWrapper.java:103)
+	at javafx.base/javafx.beans.property.DoublePropertyBase.markInvalid(DoublePropertyBase.java:114)
+	at javafx.base/javafx.beans.property.DoublePropertyBase.set(DoublePropertyBase.java:148)
+	at javafx.graphics/javafx.scene.Scene.setHeight(Scene.java:980)
+	at javafx.graphics/javafx.scene.Scene$ScenePeerListener.changedSize(Scene.java:2608)
+	at javafx.graphics/com.sun.javafx.tk.quantum.GlassViewEventHandler$ViewEventNotification.run(GlassViewEventHandler.java:879)
+	at javafx.graphics/com.sun.javafx.tk.quantum.GlassViewEventHandler$ViewEventNotification.run(GlassViewEventHandler.java:849)
+	at java.base/java.security.AccessController.doPrivileged(AccessController.java:399)
+	at javafx.graphics/com.sun.javafx.tk.quantum.GlassViewEventHandler.lambda$handleViewEvent$15(GlassViewEventHandler.java:931)
+	at javafx.graphics/com.sun.javafx.tk.quantum.QuantumToolkit.runWithoutRenderLock(QuantumToolkit.java:423)
+	at javafx.graphics/com.sun.javafx.tk.quantum.GlassViewEventHandler.handleViewEvent(GlassViewEventHandler.java:930)
+	at javafx.graphics/com.sun.glass.ui.View.handleViewEvent(View.java:535)
+	at javafx.graphics/com.sun.glass.ui.View.notifyResize(View.java:875)
+	at javafx.graphics/com.sun.glass.ui.gtk.GtkApplication._runLoop(Native Method)
+	at javafx.graphics/com.sun.glass.ui.gtk.GtkApplication.lambda$runLoop$11(GtkApplication.java:290)
+	at java.base/java.lang.Thread.run(Thread.java:840)
