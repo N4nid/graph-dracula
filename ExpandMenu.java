@@ -6,7 +6,7 @@ import javafx.scene.layout.Pane;
 import java.util.ArrayList;
 
 
-public class ExpandMenu {
+public class ExpandMenu{
     public Pane background;
     public TextField mainInputField;
     private double xMargin = 60;
@@ -17,7 +17,10 @@ public class ExpandMenu {
     private ArrayList<MathButton> mathButtons = new ArrayList<MathButton>();
     private String standardPath = "/resources/MathIcons/";
     private String standardImageFormat = ".png";
-    public ExpandMenu(Pane root) {
+
+    public int lastCaretPos = 0;
+
+    public ExpandMenu(Pane root, TextField mainInputField) {
         background = new Pane();
         background.getStyleClass().add("black");
         background.getStyleClass().add("border");
@@ -25,7 +28,15 @@ public class ExpandMenu {
         background.setPrefHeight(height);
         background.setViewOrder(-1);
         root.getChildren().add(background);
+        this.mainInputField = mainInputField;
         initiateButtons();
+
+        mainInputField.setOnMouseClicked(e ->{
+            lastCaretPos = mainInputField.getCaretPosition();
+        });
+        mainInputField.setOnKeyPressed(e ->{
+            lastCaretPos++;
+        });
     }
 
     private void initiateButtons() {
@@ -62,17 +73,22 @@ public class ExpandMenu {
     private MathButton initiateButton(String filename, String inputString, int cursorPos) {
         return new MathButton(this,standardPath + filename + standardImageFormat,inputString,cursorPos,standardButtonSize);
     }
+
+
+    public void flipVisibility() {
+        background.setVisible(!background.isVisible());
+    }
 }
 
 class MathButton {
     private ExpandMenu parentMenu;
 
     private String inputString;
-    private int cursorPos;
+    private int cursorPosOffset;
 
     private Button baseButton;
 
-    public MathButton(ExpandMenu parentMenu, String displayImagePath, String inputString, int cursorPos, TwoDVec<Double> scale) {
+    public MathButton(ExpandMenu parentMenu, String displayImagePath, String inputString, int cursorPosOffset, TwoDVec<Double> scale) {
         baseButton = new Button();
         baseButton.getStyleClass().add("black");
         baseButton.getStyleClass().add("border");
@@ -83,10 +99,24 @@ class MathButton {
         baseButton.setPrefHeight(scale.y);
         Effects.addDefaultHoverEffect(baseButton);
         this.inputString = inputString;
-        this.cursorPos = cursorPos;
+        this.cursorPosOffset = cursorPosOffset;
         this.parentMenu = parentMenu;
+        baseButton.setOnAction(e -> {
+            actionProcessor();
+        });
         parentMenu.background.getChildren().add(baseButton);
     }
+
+    private void actionProcessor() {
+        TextField inputField =  parentMenu.mainInputField;
+        inputField.requestFocus();
+        inputField.positionCaret(parentMenu.lastCaretPos);
+        inputField.insertText(inputField.getCaretPosition(),inputString);
+        inputField.positionCaret(inputField.getCaretPosition() + cursorPosOffset);
+        parentMenu.lastCaretPos = inputField.getCaretPosition();
+    }
+
+
 
     public void setPos(TwoDVec<Double> pos) {
         baseButton.relocate(pos.x,pos.y);

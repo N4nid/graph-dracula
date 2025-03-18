@@ -100,12 +100,11 @@ public class ApplicationController implements MenuHaver {
 
   public void setup() {
     TwoDVec<Double> colorPickPos = new TwoDVec<Double>(1650.0, 15.0);
-    mainColorPicker = new RoundColorPicker(colorPickPos.x, colorPickPos.y, 0, new Random().nextInt(15), true, root,
-            this);
+    mainColorPicker = new RoundColorPicker(colorPickPos.x, colorPickPos.y, 0, new Random().nextInt(15), true, root, this);
     equationInputPane.getChildren().add(mainColorPicker.displayButton);
     hideOnClick.add(mainColorPicker);
 
-    expandMenu = new ExpandMenu(root);
+    expandMenu = new ExpandMenu(root,equationInput);
 
     Effects.addDefaultHoverEffect(addButton);
     Effects.addDefaultHoverEffect(extraInputButton);
@@ -211,6 +210,10 @@ public class ApplicationController implements MenuHaver {
       }
       funcDrawer.midpoint.setPos(newPos.x, newPos.y);
       updateRenderCanvas();
+    });
+
+    extraInputButton.setOnAction(e->{
+      expandMenu.flipVisibility();
     });
   }
 
