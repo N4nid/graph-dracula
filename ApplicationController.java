@@ -153,7 +153,7 @@ public class ApplicationController implements MenuHaver {
     anchors.add(new Anchor(expandMenu.topTarget,root,new TwoDVec<Double>(0.0,-370.0),"scale->pos",true,false));
     anchors.add(new Anchor(expandMenu.bottomTarget,root,new TwoDVec<Double>(0.0,2.0),"scale->pos",true,false));
     anchors.add(new Anchor(expandMenu.contenScroll, expandMenu.background, new TwoDVec<Double>(-6.0, -6.0), "scale"));
-    anchors.add(new Anchor(expandMenu.contentPane, expandMenu.contenScroll, new TwoDVec<Double>(0.0, 0.0), "scale"));
+    anchors.add(new Anchor(expandMenu.contentPane, expandMenu.contenScroll, new TwoDVec<Double>(0.0, 0.0), "scale",false,true));
     resize();
 
     funcDrawer.centerCoordinateSystem();

@@ -101,6 +101,8 @@ public class ExpandMenu implements Hideble{
     }
 
     private void positionButtons() {
+        int buttonRows = (int) ((mathButtons.size()-1) / buttonColloms) + 1;
+        contentPane.setPrefHeight(buttonRows*(standardButtonSize.y+buttonDistXY)+buttonDistXY);
         for (int i = 0; i < mathButtons.size(); i++) {
             TwoDVec<Integer> posIndex = new TwoDVec<Integer>(i % buttonColloms,(int) (i / buttonColloms));
             TwoDVec<Double> pos = new TwoDVec<Double>(buttonDistXY + posIndex.x * (standardButtonSize.x + buttonDistXY),buttonDistXY + posIndex.y * (standardButtonSize.y + buttonDistXY));
