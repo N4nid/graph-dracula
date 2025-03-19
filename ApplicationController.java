@@ -9,6 +9,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.stage.Stage;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -33,6 +34,7 @@ public class ApplicationController implements MenuHaver {
   ArrayList<EquationVisElement> listElements = new ArrayList<EquationVisElement>();
 
   public RoundColorPicker mainColorPicker;
+
   public Scene scene;
 
   public double minEquationListHeight = 20f;
@@ -97,6 +99,8 @@ public class ApplicationController implements MenuHaver {
   }
 
   public void setup() {
+
+
     TwoDVec<Double> colorPickPos = new TwoDVec<Double>(1650.0, 15.0);
     mainColorPicker = new RoundColorPicker(colorPickPos.x, colorPickPos.y, 0, new Random().nextInt(15), true, root, this);
     equationInputPane.getChildren().add(mainColorPicker.displayButton);
@@ -146,12 +150,12 @@ public class ApplicationController implements MenuHaver {
     anchors.add(new Anchor(previewButton, equationInputPane, new TwoDVec<Double>(0.0, 0.0), "pos"));
     anchors.add(new Anchor(previewButton, equationInputPane, new TwoDVec<Double>(128.0, 0.0), "scale->pos", false, true));
     anchors.add(new Anchor(expandMenu.background,root,new TwoDVec<Double>(-90.0,0.0),"scale",false,true,new TwoDVec<Double>(935.0,1000.0)));
-    anchors.add(new Anchor(expandMenu.background,root,new TwoDVec<Double>(0.0,-370.0),"scale->pos",true,false));
+    anchors.add(new Anchor(expandMenu.topTarget,root,new TwoDVec<Double>(0.0,-370.0),"scale->pos",true,false));
+    anchors.add(new Anchor(expandMenu.bottomTarget,root,new TwoDVec<Double>(0.0,2.0),"scale->pos",true,false));
     resize();
 
     funcDrawer.centerCoordinateSystem();
-    equationRenderer = new EquationRenderer((int) graphViewPane.getPrefWidth(), (int) graphViewPane.getPrefHeight(),
-            funcDrawer.zoom.x);
+    equationRenderer = new EquationRenderer((int) graphViewPane.getPrefWidth(), (int) graphViewPane.getPrefHeight(), funcDrawer.zoom.x);
     updateRenderCanvas();
     scene.widthProperty().addListener((obs, oldVal, newVal) -> {
       resize();

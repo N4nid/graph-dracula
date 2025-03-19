@@ -1,14 +1,21 @@
+import javafx.animation.TranslateTransition;
 import javafx.scene.control.Button;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
-import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.Region;
+import javafx.util.Duration;
 
 import java.util.ArrayList;
 
 
 public class ExpandMenu implements Hideble{
     public Pane background;
+    public Pane contentPane;
+    public ScrollPane contenScroll;
+    public Region bottomTarget = new Region();
+    public Region topTarget = new Region();
     public TextField mainInputField;
     private double xMargin = 60;
     private double height = 215;
@@ -20,15 +27,20 @@ public class ExpandMenu implements Hideble{
     private String standardImageFormat = ".png";
     private Button expandButton;
     public int lastCaretPos = 0;
+    private boolean isAnimating = false;
+    private boolean isUp = false;
 
     public ExpandMenu(Pane root, TextField mainInputField, Button expandButton) {
         background = new Pane();
+        contentPane = new Pane();
+        contenScroll = new ScrollPane();
         background.getStyleClass().add("black");
         background.getStyleClass().add("border");
         background.relocate(xMargin,0);
         background.setPrefHeight(height);
         background.setViewOrder(-1);
-        root.getChildren().add(background);
+        contenScroll.setContent(contentPane);
+        root.getChildren().add(contenScroll);
         this.mainInputField = mainInputField;
         this.expandButton = expandButton;
         initiateButtons();
@@ -42,6 +54,11 @@ public class ExpandMenu implements Hideble{
             }
             else {
                 lastCaretPos++;
+            }
+        });
+        topTarget.localToParentTransformProperty().addListener((obs, oldVal, newVal) -> {
+            if (!isAnimating) {
+                background.setLayoutY(topTarget.getLayoutY()+370);
             }
         });
     }
@@ -75,13 +92,28 @@ public class ExpandMenu implements Hideble{
     }
 
     private void animateEntrance(boolean showUp) {
-        background.setVisible(true);
-        int yOffset = (showUp) ? 400 : -400;
+        isAnimating = true;
+        if (showUp) {
+            background.setVisible(true);
+        }
+        TranslateTransition transition = new TranslateTransition(Duration.millis(75),background);
+        background.setLayoutY(bottomTarget.getLayoutY());
+        transition.setByY((showUp)? (topTarget.getLayoutY()-bottomTarget.getLayoutY()) : -(topTarget.getLayoutY()-bottomTarget.getLayoutY()));
+        transition.setCycleCount(1);
+        transition.play();
+        transition.setOnFinished(e ->{
+            isAnimating = false;
+            background.setVisible(showUp);
+            background.setLayoutY(topTarget.getLayoutY()+370);
+        });
     }
 
     public boolean hide() {
         if (!background.hoverProperty().getValue() && !expandButton.hoverProperty().getValue() && !mainInputField.hoverProperty().getValue()) {
-            background.setVisible(false);
+            if (background.isVisible()) {
+                animateEntrance(false);
+                isUp = false;
+            }
             return true;
         }
         return false;
@@ -96,10 +128,14 @@ public class ExpandMenu implements Hideble{
 
     public void dissappear() {
         background.setVisible(false);
+        isUp = false;
     }
 
     public void flipVisibility() {
-        background.setVisible(!background.isVisible());
+        if(!isAnimating) {
+            animateEntrance(!isUp);
+            isUp = !isUp;
+        }
     }
 }
 
@@ -114,7 +150,7 @@ class MathButton {
     public MathButton(ExpandMenu parentMenu, String displayImagePath, String inputString, int cursorPosOffset, TwoDVec<Double> scale) {
         baseButton = new Button();
         baseButton.getStyleClass().add("black");
-        baseButton.getStyleClass().add("border");
+        baseButton.getStyleClass().add("thin-border");
         baseButton.getStyleClass().add("image-button");
         baseButton.setStyle("-fx-background-image: url('" + displayImagePath + "');");
         baseButton.getStyleClass().add("math-button");

@@ -13,6 +13,12 @@
     -fx-border-color: "white";
 }
 
+.thin-border {
+    -fx-border-style: dashed;
+    -fx-border-width: 2px;
+    -fx-border-color: "white";
+}
+
 .yellow-border {
     -fx-border-color: "#D9CD23";
 }
