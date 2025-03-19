@@ -82,8 +82,7 @@ public class ApplicationController implements MenuHaver {
 
   public void addEquation(EquationTree equation, String equationText, int colorIndex) {
     int len = listElements.size();
-    EquationVisElement newElement = new EquationVisElement(equation, equationText, equationList, root, scrollPane,
-            30 + len * 100, this, colorIndex);
+    EquationVisElement newElement = new EquationVisElement(equation, equationText, equationList, root, scrollPane, 30 + len * 100, this, colorIndex);
     listElements.add(newElement);
     hideOnClick.add(newElement.colorPicker);
     minEquationListHeight += 100;
@@ -92,8 +91,7 @@ public class ApplicationController implements MenuHaver {
     }
     anchors.add(new Anchor(newElement.pane, scrollPane, new TwoDVec<Double>(-46.0, 0.0), "scale", false, true));
     anchors.get(anchors.size() - 1).applyAnchor();
-    anchors.add(
-            new Anchor(newElement.funcDisplay, newElement.pane, new TwoDVec<Double>(-76.0, 0.0), "scale", false, true));
+    anchors.add(new Anchor(newElement.funcDisplay, newElement.pane, new TwoDVec<Double>(-76.0, 0.0), "scale", false, true));
     anchors.get(anchors.size() - 1).applyAnchor();
 
   }
@@ -104,7 +102,9 @@ public class ApplicationController implements MenuHaver {
     equationInputPane.getChildren().add(mainColorPicker.displayButton);
     hideOnClick.add(mainColorPicker);
 
-    expandMenu = new ExpandMenu(root,equationInput);
+    expandMenu = new ExpandMenu(root,equationInput,extraInputButton);
+    hideOnClick.add(expandMenu);
+    expandMenu.dissappear();
 
     graphViewLabel.setViewOrder(-1);
 

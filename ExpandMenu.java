@@ -1,12 +1,13 @@
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Pane;
 
 import java.util.ArrayList;
 
 
-public class ExpandMenu{
+public class ExpandMenu implements Hideble{
     public Pane background;
     public TextField mainInputField;
     private double xMargin = 60;
@@ -17,10 +18,10 @@ public class ExpandMenu{
     private ArrayList<MathButton> mathButtons = new ArrayList<MathButton>();
     private String standardPath = "/resources/MathIcons/";
     private String standardImageFormat = ".png";
-
+    private Button expandButton;
     public int lastCaretPos = 0;
 
-    public ExpandMenu(Pane root, TextField mainInputField) {
+    public ExpandMenu(Pane root, TextField mainInputField, Button expandButton) {
         background = new Pane();
         background.getStyleClass().add("black");
         background.getStyleClass().add("border");
@@ -29,13 +30,19 @@ public class ExpandMenu{
         background.setViewOrder(-1);
         root.getChildren().add(background);
         this.mainInputField = mainInputField;
+        this.expandButton = expandButton;
         initiateButtons();
 
         mainInputField.setOnMouseClicked(e ->{
             lastCaretPos = mainInputField.getCaretPosition();
         });
         mainInputField.setOnKeyPressed(e ->{
-            lastCaretPos++;
+            if (e.getCode() == KeyCode.LEFT) {
+                lastCaretPos--;
+            }
+            else {
+                lastCaretPos++;
+            }
         });
     }
 
@@ -67,6 +74,19 @@ public class ExpandMenu{
         }
     }
 
+    private void animateEntrance(boolean showUp) {
+        background.setVisible(true);
+        int yOffset = (showUp) ? 400 : -400;
+    }
+
+    public boolean hide() {
+        if (!background.hoverProperty().getValue() && !expandButton.hoverProperty().getValue() && !mainInputField.hoverProperty().getValue()) {
+            background.setVisible(false);
+            return true;
+        }
+        return false;
+    }
+
     private MathButton initiateButton(String filename, String inputString) {
         return new MathButton(this,standardPath + filename + standardImageFormat,inputString,0,standardButtonSize);
     }
@@ -74,6 +94,9 @@ public class ExpandMenu{
         return new MathButton(this,standardPath + filename + standardImageFormat,inputString,cursorPos,standardButtonSize);
     }
 
+    public void dissappear() {
+        background.setVisible(false);
+    }
 
     public void flipVisibility() {
         background.setVisible(!background.isVisible());
