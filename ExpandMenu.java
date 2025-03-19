@@ -1,4 +1,5 @@
 import javafx.animation.TranslateTransition;
+import javafx.event.ActionEvent;
 import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
@@ -7,6 +8,8 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.util.Duration;
 
+import javax.swing.*;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
 
@@ -26,8 +29,8 @@ public class ExpandMenu implements Hideble{
     private String standardPath = "/resources/MathIcons/";
     private String standardImageFormat = ".png";
     private Button expandButton;
-    public int lastCaretPos = 0;
     private boolean isAnimating = false;
+    public int lastCaretPos = 0;
     private boolean isUp = false;
 
     public ExpandMenu(Pane root, TextField mainInputField, Button expandButton) {
@@ -51,17 +54,12 @@ public class ExpandMenu implements Hideble{
         this.expandButton = expandButton;
         initiateButtons();
 
-        mainInputField.setOnMouseClicked(e ->{
-            lastCaretPos = mainInputField.getCaretPosition();
-        });
-        mainInputField.setOnKeyPressed(e ->{
-            if (e.getCode() == KeyCode.LEFT) {
-                lastCaretPos--;
-            }
-            else {
-                lastCaretPos++;
+        mainInputField.focusedProperty().addListener((obs, oldVal, newVal) -> {
+            if (!newVal) {
+                lastCaretPos = mainInputField.getCaretPosition();
             }
         });
+
         topTarget.localToParentTransformProperty().addListener((obs, oldVal, newVal) -> {
             if (!isAnimating) {
                 background.setLayoutY(topTarget.getLayoutY()+370);
@@ -87,6 +85,8 @@ public class ExpandMenu implements Hideble{
         mathButtons.add(initiateButton("exponent","^"));
         mathButtons.add(initiateButton("sqrt","sqrt()",-1));
         mathButtons.add(initiateButton("root","root(,)",-2));
+        mathButtons.add(initiateButton("abs","abs()",-1));
+        mathButtons.add(initiateButton("mod","mod"));
         mathButtons.add(initiateButton("log","log(,)",-2));
         mathButtons.add(initiateButton("log1o","log(10,)",-1));
         mathButtons.add(initiateButton("ln","ln()",-1));
@@ -190,8 +190,8 @@ class MathButton {
         inputField.requestFocus();
         inputField.positionCaret(parentMenu.lastCaretPos);
         inputField.insertText(inputField.getCaretPosition(),inputString);
+        System.out.println(inputField.getCaretPosition() + cursorPosOffset);
         inputField.positionCaret(inputField.getCaretPosition() + cursorPosOffset);
-        parentMenu.lastCaretPos = inputField.getCaretPosition();
     }
 
 
