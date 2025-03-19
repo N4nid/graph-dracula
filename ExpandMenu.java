@@ -190,7 +190,6 @@ class MathButton {
         inputField.requestFocus();
         inputField.positionCaret(parentMenu.lastCaretPos);
         inputField.insertText(inputField.getCaretPosition(),inputString);
-        System.out.println(inputField.getCaretPosition() + cursorPosOffset);
         inputField.positionCaret(inputField.getCaretPosition() + cursorPosOffset);
     }
 
