@@ -34,13 +34,19 @@ public class ExpandMenu implements Hideble{
         background = new Pane();
         contentPane = new Pane();
         contenScroll = new ScrollPane();
+        contenScroll.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        contenScroll.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        contenScroll.relocate(3,3);
+        contenScroll.getStyleClass().add("no-border");
         background.getStyleClass().add("black");
         background.getStyleClass().add("border");
+        contentPane.getStyleClass().add("black");
         background.relocate(xMargin,0);
         background.setPrefHeight(height);
         background.setViewOrder(-1);
         contenScroll.setContent(contentPane);
-        root.getChildren().add(contenScroll);
+        background.getChildren().add(contenScroll);
+        root.getChildren().add(background);
         this.mainInputField = mainInputField;
         this.expandButton = expandButton;
         initiateButtons();
@@ -61,6 +67,14 @@ public class ExpandMenu implements Hideble{
                 background.setLayoutY(topTarget.getLayoutY()+370);
             }
         });
+        background.widthProperty().addListener((obs, oldVal, newVal) -> {
+            buttonColloms = calculateColloms();
+            positionButtons();
+        });
+    }
+
+    private int calculateColloms(){
+        return  (int) ((background.getPrefWidth() + 10)/(standardButtonSize.x+buttonDistXY));
     }
 
     private void initiateButtons() {
@@ -83,7 +97,10 @@ public class ExpandMenu implements Hideble{
         mathButtons.add(initiateButton("sin_ex","sin()^-1",-4));
         mathButtons.add(initiateButton("cos_ex","cos()^-1",-4));
         mathButtons.add(initiateButton("tan_ex","tan()^-1",-4));
+        positionButtons();
+    }
 
+    private void positionButtons() {
         for (int i = 0; i < mathButtons.size(); i++) {
             TwoDVec<Integer> posIndex = new TwoDVec<Integer>(i % buttonColloms,(int) (i / buttonColloms));
             TwoDVec<Double> pos = new TwoDVec<Double>(buttonDistXY + posIndex.x * (standardButtonSize.x + buttonDistXY),buttonDistXY + posIndex.y * (standardButtonSize.y + buttonDistXY));
@@ -163,7 +180,7 @@ class MathButton {
         baseButton.setOnAction(e -> {
             actionProcessor();
         });
-        parentMenu.background.getChildren().add(baseButton);
+        parentMenu.contentPane.getChildren().add(baseButton);
     }
 
     private void actionProcessor() {
