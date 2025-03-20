@@ -33,32 +33,33 @@ public class ApplicationController implements MenuHaver {
   private MenuOption recenterButton;
   private ExpandMenu expandMenu;
   ArrayList<EquationVisElement> listElements = new ArrayList<EquationVisElement>();
-
+  
   public RoundColorPicker mainColorPicker;
 
   public Scene scene;
-
+  
   public double minEquationListHeight = 20f;
   private int editIndex = -1;
   private EquationTree previewEquation;
-
+  
   private static TwoDVec<Double> defaultGraphViewPanePos;
   private static TwoDVec<Double> defaultGraphViewPaneSize;
   private static TwoDVec<Double> defaultScrollPaneSize;
   private static double viewListHorizontalRatio;
   private static double viewListHorizontalDist;
-
+  
   private static final double defaultSceneHeight = 1080;
   private static final double defaultSceneWidth = 1920;
   private static final double defaultButtonSize = 70;
   public static double zoomSensitivity = 0.0015;
-
+  
   private ArrayList<Anchor> anchors = new ArrayList<Anchor>();
-  private FunctionRenderer funcDrawer = new FunctionRenderer(new TwoDVec<Integer>(1920, 1080), new TwoDVec<Double>(0.02, 0.02), new TwoDVec<Double>(0.0, 0.0));
+  RenderValues renderValues = new RenderValues(new TwoDVec<Integer>(1920, 1080), new TwoDVec<Double>(0.02, 0.02), new TwoDVec<Double>(0.0, 0.0));
+  private FunctionRenderer funcDrawer = new FunctionRenderer(renderValues);
   private EquationRenderer equationRenderer;
   private static TwoDVec<Double> mouseMindpointOffset;
   boolean firstDrag = true;
-
+  
   @FXML
   protected void onAddButtonClick() {
     equationRenderer.lastZoom = new TwoDVec<Double>(-1.0, -1.0);
@@ -82,7 +83,7 @@ public class ApplicationController implements MenuHaver {
     updateInputBarColor();
     updateRenderCanvas();
   }
-
+  
   public void addEquation(EquationTree equation, String equationText, int colorIndex) {
     int len = listElements.size();
     EquationVisElement newElement = new EquationVisElement(equation, equationText, equationList, root, scrollPane, 30 + len * 100, this, colorIndex);
@@ -96,9 +97,9 @@ public class ApplicationController implements MenuHaver {
     anchors.get(anchors.size() - 1).applyAnchor();
     anchors.add(new Anchor(newElement.funcDisplay, newElement.pane, new TwoDVec<Double>(-76.0, 0.0), "scale", false, true));
     anchors.get(anchors.size() - 1).applyAnchor();
-
+    
   }
-
+  
   public void setup() {
 
     renderer = new Renderer();
@@ -137,7 +138,7 @@ public class ApplicationController implements MenuHaver {
     Effects.addDefaultHoverEffect(previewButton);
     root.getChildren().add(previewButton);
     previewButton.setOnAction(e -> addPreviewEquation());
-
+    
     anchors.add(new Anchor(extraInputButton, root, new TwoDVec<Double>(0.0, -138.0), "scale->pos", true, false));
     anchors.add(new Anchor(addButton, root, new TwoDVec<Double>(-98.0, -138.0), "scale->pos"));
     anchors.add(new Anchor(equationInputPane, root, new TwoDVec<Double>(-226.0, 0.0), "scale", false, true));
@@ -165,17 +166,17 @@ public class ApplicationController implements MenuHaver {
     scene.widthProperty().addListener((obs, oldVal, newVal) -> {
       resize();
     });
-
+    
     scene.heightProperty().addListener((obs, oldVal, newVal) -> {
       resize();
     });
-
+    
     scene.setOnKeyPressed(e -> {
       if (e.getCode() == KeyCode.ENTER && equationInput.isFocused()) {
         onAddButtonClick();
       }
     });
-
+    
     scene.setOnMouseClicked(e -> {
       if (e.getButton() == MouseButton.SECONDARY) {
         if (renderer.mainCanvas.isHover()) {
@@ -192,32 +193,33 @@ public class ApplicationController implements MenuHaver {
         }
       }
     });
-
+    
     scrollPane.setOnScroll(scrollEvent -> updateListElementTransform());
-
-    renderer.mainCanvas.setOnScroll(scrollEvent -> {
-      double avgZoom = (funcDrawer.zoom.x + funcDrawer.zoom.y) / 2;
-      funcDrawer.zoom.setPos(funcDrawer.zoom.x - avgZoom * scrollEvent.getDeltaY() * zoomSensitivity,
-              funcDrawer.zoom.y - avgZoom * scrollEvent.getDeltaY() * zoomSensitivity);
+    
+    mainCanvas.setOnScroll(scrollEvent -> {
+      double avgZoom = (renderValues.zoom.x + renderValues.zoom.y) / 2;
+      renderValues.zoom.setPos(renderValues.zoom.x - avgZoom * scrollEvent.getDeltaY() * zoomSensitivity,
+      renderValues.zoom.y - avgZoom * scrollEvent.getDeltaY() * zoomSensitivity);
       updateRenderCanvas();
     });
-
-    renderer.mainCanvas.setOnMouseReleased(e -> {
+    
+    mainCanvas.setOnMouseReleased(e -> {
       firstDrag = true;
     });
     renderer.mainCanvas.setOnMouseDragged(e -> {
       if (firstDrag) {
-        mouseMindpointOffset = new TwoDVec<Double>((e.getX() - funcDrawer.midpoint.x),
-                e.getY() - funcDrawer.midpoint.y);
+        mouseMindpointOffset = new TwoDVec<Double>((e.getX() - renderValues.midpoint.x),
+        e.getY() - renderValues.midpoint.y);
         firstDrag = false;
       }
-      TwoDVec<Double> newPos = new TwoDVec<Double>((e.getX() - mouseMindpointOffset.x), (e.getY() - mouseMindpointOffset.y));
-      if (graphOffsetInBounds(0.1, funcDrawer)) {
+      TwoDVec<Double> newPos = new TwoDVec<Double>((e.getX() - mouseMindpointOffset.x),
+      (e.getY() - mouseMindpointOffset.y));
+      if (graphOffsetInBounds(0.1, renderValues)) {
         recenterButton.optionPane.setVisible(false);
       } else {
         recenterButton.optionPane.setVisible(true);
       }
-      funcDrawer.midpoint.setPos(newPos.x, newPos.y);
+      renderValues.midpoint.setPos(newPos.x, newPos.y);
       updateRenderCanvas();
     });
 
@@ -236,26 +238,26 @@ public class ApplicationController implements MenuHaver {
     return null;
   }
 
-  public static boolean graphOffsetInBounds(double margin, FunctionRenderer funcDrawer) {
-    double minX = funcDrawer.resolution.x * margin;
-    double maxX = funcDrawer.resolution.x - funcDrawer.resolution.x * margin;
-    double minY = funcDrawer.resolution.y * margin;
-    double maxY = funcDrawer.resolution.y - funcDrawer.resolution.y * margin;
-
-    boolean isInXBounds = funcDrawer.midpoint.x > minX && funcDrawer.midpoint.x < maxX;
-    boolean isInYBounds = funcDrawer.midpoint.y > minY && funcDrawer.midpoint.y < maxY;
-
+  public static boolean graphOffsetInBounds(double margin, RenderValues renderValues) {
+    double minX = renderValues.resolution.x * margin;
+    double maxX = renderValues.resolution.x - renderValues.resolution.x * margin;
+    double minY = renderValues.resolution.y * margin;
+    double maxY = renderValues.resolution.y - renderValues.resolution.y * margin;
+    
+    boolean isInXBounds = renderValues.midpoint.x > minX && renderValues.midpoint.x < maxX;
+    boolean isInYBounds = renderValues.midpoint.y > minY && renderValues.midpoint.y < maxY;
+    
     return isInXBounds && isInYBounds;
   }
 
   public void executeMenuOption(String menuOption) {
     if (menuOption.equals("recenter")) {
-      funcDrawer.centerCoordinateSystem();
+      renderValues.midpoint.setPos((double)(renderValues.resolution.x / 2), (double)(renderValues.resolution.y / 2));
       updateRenderCanvas();
       recenterButton.optionPane.setVisible(false);
     }
     if (menuOption.equals("reset zoom")) {
-      funcDrawer.zoom.setUniform(0.01);
+      renderValues.zoom.setUniform(0.01);
       updateRenderCanvas();
     }
   }
@@ -273,17 +275,17 @@ public class ApplicationController implements MenuHaver {
     double screenHeight = scene.getWindow().getHeight();
     double vertDiff = defaultSceneHeight - screenHeight;
     double horzDiff = defaultSceneWidth - screenWidth;
-
+    
     root.setPrefWidth(root.getWidth());
     root.setPrefHeight(root.getHeight());
-
+    
     TwoDVec<Double> graphViewPaneSize = new TwoDVec<Double>(
-            defaultGraphViewPaneSize.x - viewListHorizontalRatio * horzDiff, defaultGraphViewPaneSize.y - vertDiff);
+    defaultGraphViewPaneSize.x - viewListHorizontalRatio * horzDiff, defaultGraphViewPaneSize.y - vertDiff);
     TwoDVec<Double> scrollPanePos = new TwoDVec<Double>(
-            graphViewPane.getLayoutX() + graphViewPaneSize.x + viewListHorizontalDist, defaultGraphViewPanePos.y);
+    graphViewPane.getLayoutX() + graphViewPaneSize.x + viewListHorizontalDist, defaultGraphViewPanePos.y);
     TwoDVec<Double> scrollPaneSize = new TwoDVec<Double>(
-            defaultScrollPaneSize.x - (1 - viewListHorizontalRatio) * horzDiff, defaultScrollPaneSize.y - vertDiff);
-
+    defaultScrollPaneSize.x - (1 - viewListHorizontalRatio) * horzDiff, defaultScrollPaneSize.y - vertDiff);
+    
     moveTo(scrollPanePos, scrollPane);
     graphViewPane.setPrefWidth(graphViewPaneSize.x);
     graphViewPane.setPrefHeight(graphViewPaneSize.y);
@@ -294,7 +296,7 @@ public class ApplicationController implements MenuHaver {
     if (equationList.getPrefHeight() < minEquationListHeight) {
       equationList.setPrefHeight(minEquationListHeight);
     }
-
+    
     updateListElementTransform();
   }
 
@@ -306,8 +308,9 @@ public class ApplicationController implements MenuHaver {
     long startTime = System.nanoTime();
     GraphicsContext gc = renderer.mainCanvas.getGraphicsContext2D();
     gc.clearRect(0, 0, gc.getCanvas().getWidth(), gc.getCanvas().getHeight());
-    funcDrawer.resolution = res;
-
+    renderValues.resolution = res;
+    res.printInt();
+    
     ArrayList<EquationTree> allEquations = new ArrayList<EquationTree>();
     ArrayList<EquationTree> equations = new ArrayList<EquationTree>();
     ArrayList<EquationTree> functions = new ArrayList<EquationTree>();
@@ -328,13 +331,12 @@ public class ApplicationController implements MenuHaver {
       }
     }
     if (equations.size() > 0) {
-      Image equationRender = equationRenderer.drawEquations(equations);
-      if (equationRenderer.doImageWriting) {
-        TwoDVec<Double> imagePos = new TwoDVec<Double>(-graphViewPane.getPrefWidth() + funcDrawer.midpoint.x, -graphViewPane.getPrefHeight() + funcDrawer.midpoint.y);
-        TwoDVec<Double> tempImageSize = new TwoDVec<Double>(graphViewPane.getPrefWidth() * 2 / (funcDrawer.zoom.x * 50), graphViewPane.getPrefHeight() * 2 / (funcDrawer.zoom.y * 50));
-        TwoDVec<Double> tempImageZoomOffset = new TwoDVec<Double>(-(tempImageSize.x / 2 - graphViewPane.getPrefWidth()),-(tempImageSize.y / 2 - graphViewPane.getPrefHeight()));
-        renderer.mainCanvas.getGraphicsContext2D().drawImage(equationRender, imagePos.x + tempImageZoomOffset.x, imagePos.y + tempImageZoomOffset.y, tempImageSize.x, tempImageSize.y);
-      }
+      equationRenderer.drawEquations(equations);
+      /*TwoDVec<Double> imagePos = new TwoDVec<Double>(-graphViewPane.getPrefWidth() + renderValues.midpoint.x, -graphViewPane.getPrefHeight() + renderValues.midpoint.y);
+      System.out.println(renderValues.zoom.y * 50);
+      TwoDVec<Double> tempImageSize = new TwoDVec<Double>(graphViewPane.getPrefWidth() * 2 / (renderValues.zoom.x * 50), graphViewPane.getPrefHeight() * 2 / (renderValues.zoom.y * 50));
+      TwoDVec<Double> tempImageZoomOffset = new TwoDVec<Double>(-(tempImageSize.x / 2 - graphViewPane.getPrefWidth()),-(tempImageSize.y / 2 - graphViewPane.getPrefHeight()));
+      mainCanvas.getGraphicsContext2D().drawImage(equationRender, imagePos.x + tempImageZoomOffset.x, imagePos.y + tempImageZoomOffset.y, tempImageSize.x, tempImageSize.y); */
     }
     funcDrawer.drawFunctions(renderer.mainCanvas.getGraphicsContext2D(), functions);
     if (previewEquation != null) {
@@ -424,9 +426,9 @@ public class ApplicationController implements MenuHaver {
 
   private static String toRGBCode(Color color) {
     return String.format("#%02X%02X%02X",
-            (int) (color.getRed() * 255),
-            (int) (color.getGreen() * 255),
-            (int) (color.getBlue() * 255));
+    (int) (color.getRed() * 255),
+    (int) (color.getGreen() * 255),
+    (int) (color.getBlue() * 255));
   }
 
 }

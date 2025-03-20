@@ -1,9 +1,15 @@
 import javafx.scene.canvas.Canvas;
 import javafx.scene.paint.Color;
+import java.util.ArrayList;
 
 import java.util.ArrayList;
 
 public class EquationTree{
+  
+  public EquationNode root;
+  public Color graphColor = Color.BLACK;
+  public boolean isFunction = false;
+  public String name;
 
     public EquationNode root;
     public Color graphColor = Color.BLACK;

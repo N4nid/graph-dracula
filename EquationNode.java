@@ -28,22 +28,22 @@ public class EquationNode {
 
   }
 
-  public double calculate(double x, double y, Variable[] parameters) {
+  public double calculate(TwoDVec<Double> realCoord, Variable[] parameters) {
     if (state == 0) {
       return Double.parseDouble((String) value);
       // return (double) value;
     } else if (state == 1) {
       String varName = (String) value;
       if (varName.equals("x")) {
-        return x;
+        return realCoord.x;
       } else if (varName.equals("y")) {
-        return y;
+        return realCoord.y;
       } else {
         return readVar(parameters, varName);
       }
     } else if (state == 2 && left != null && right != null) {
-      double part1 = left.calculate(x, y, parameters);
-      double part2 = right.calculate(x, y, parameters);
+      double part1 = left.calculate(realCoord, parameters);
+      double part2 = right.calculate(realCoord, parameters);
       String op = (String) value;
       if (op.equals("+")) {
         return part1 + part2;
@@ -66,7 +66,7 @@ public class EquationNode {
       }
     } else if (state == 3 && right != null) {
       String op = (String) value;
-      double calVal = right.calculate(x, y, parameters);
+      double calVal = right.calculate(realCoord, parameters);
       if (op.equals("sin")) {
         return Math.sin(calVal);
       } else if (op.equals("cos")) {

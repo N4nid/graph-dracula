@@ -1,6 +1,5 @@
 import javafx.scene.image.*;
 import javafx.scene.paint.Color;
-
 import java.util.ArrayList;
 
 /**
@@ -12,31 +11,23 @@ import java.util.ArrayList;
  */
 
 public class EquationRenderer {
-
-  int breite = 1800;
-  int hoehe = 900;
-  Color render[][] = new Color[breite * 2][hoehe * 2];
-  public WritableImage image = new WritableImage(breite * 2, hoehe * 2);
-  double scaling;
-  int X0 = breite;     //x = 0 des Funktions-Koord.-systems in Abh. von render
-  int Y0 = hoehe;      //y = 0 des Funktions-Koord.-systems in Abh. von render
-  ArrayList<EquationTree> functions = new ArrayList<EquationTree>();
+  RenderValues renderValues;
+  GraphPixel graphPixel[][];
+  ArrayList<EquationTree> equations = new ArrayList<EquationTree>();
+  
   public TwoDVec<Double> lastPos = new TwoDVec<Double>(-1.0, -1.0);
   public TwoDVec<Double> lastZoom = new TwoDVec<Double>(-1.0, -1.0);
-  long startTime;
-  int counter = 0;
-  public boolean doImageWriting = true;
+  ArrayList<TwoDVec<TwoDVec<Double>>> linePoints = new ArrayList<TwoDVec<TwoDVec<Double>>>();
 
-  public EquationRenderer(int breite, int hoehe, double scaling) {
-    this.breite = breite;
-    this.hoehe = hoehe;
-    this.scaling = scaling;
-    render = new Color[breite * 2][hoehe * 2];
-    image = new WritableImage(breite * 2, hoehe * 2);
-    X0 = breite;     //x = 0 des Funktions-Koord.-systems in Abh. von render
-    Y0 = hoehe;
+  public EquationRenderer(RenderValues renderValues) {
+    this.renderValues = renderValues;
+    graphPixel = new GraphPixel[renderValues.resolution.x * 2][renderValues.resolution.y * 2];
+    for (int x = 0; x < graphPixel.length; x++) {
+      for (int y = 0; y < graphPixel[0].length; y++) {
+        graphPixel[x][y] = new GraphPixel();
+    }
+    }
   }
-
 
   public class MyThread extends Thread {
     boolean[][][] storage;
@@ -48,9 +39,10 @@ public class EquationRenderer {
     }
 
     public void run() {
-      for (int x = 0; x < breite * 2; x++) {                //laeuft ueber das Pixelarray (breite*2/hoehe*2)
-        for (int y = 0; y < hoehe * 2; y++) {
-          storage[i][x][y] = (functions.get(i).calculate((x - X0) * scaling, -(y - Y0) * scaling, new Variable[0]) >= 0) ? true : false;
+      for (int x = 0; x < renderValues.resolution.x * 2; x++) {                
+        for (int y = 0; y < renderValues.resolution.y * 2; y++) {
+          storage[i][x][y] = (equations.get(i).calculate(renderValues.screenCoordToRealCoord(new TwoDVec<Integer>(x,y)),
+          new Variable[0]) >= 0) ? true : false;
         }
       }
     }
@@ -58,7 +50,7 @@ public class EquationRenderer {
 
 
   private boolean[][][] getNegPosMaps(ArrayList<EquationTree> functions) {
-    boolean[][][] negPosMaps = new boolean[functions.size()][breite * 2][hoehe * 2];
+    boolean[][][] negPosMaps = new boolean[functions.size()][renderValues.resolution.x * 2][renderValues.resolution.y * 2];
     for (int i = 0; i < functions.size(); i++) {
       MyThread thread = new MyThread(negPosMaps, i);
       thread.start();
@@ -73,51 +65,70 @@ public class EquationRenderer {
     return negPosMaps;
   }
 
-  public void initialiseImage() {
-    for (int x = 0; x < breite * 2; x++) {
-      for (int y = 0; y < hoehe * 2; y++) {
-        Color color = Color.web("#242424");
-        image.getPixelWriter().setColor(x, y, color);
-      }
-    }
-  }
-
-  private Image drawNewFunctions(boolean[][][] negPosMaps) {
-    //zeichnet neue Funktionen aus negPosMaps in render & auf's image
-    for (int x = 1; x < breite * 2 - 1; x++) {
-      for (int y = 1; y < hoehe * 2 - 1; y++) {
-        for (int i = 0; i < functions.size(); i++) {
+  private void drawNewEquations(boolean[][][] negPosMaps) {
+    //zeichnet neue Funktionen aus negPosMaps in eine Pixelmap
+    for (int i = 0; i < equations.size(); i++) {
+      for (int x = 1; x < renderValues.resolution.x * 2 - 1; x++) {
+        for (int y = 1; y < renderValues.resolution.y * 2 - 1; y++) {
           if (isPartOfFunction(x, y, negPosMaps, i)) {
-            if (doImageWriting) {
-              image.getPixelWriter().setColor(x, y, functions.get(i).graphColor);
-            }
-            counter++;
+            graphPixel[x][y].graph = true;
           } // end of if
         }
       }
+      selectLinePoints();
+      equations.get(i).renderEquation(linePoints);
+      linePoints.clear();
     }
-    long endTime = System.nanoTime();
-    System.out.println("RenderTIme: " + (endTime - startTime));
-    System.out.println("useless counter: " + counter);
-    return image;
   }
-
-  public Image drawEquations(ArrayList<EquationTree> equations) {
-    startTime = System.nanoTime();
-    if (lastZoom.x != scaling) {
-      if (doImageWriting) {
-        initialiseImage();
+  
+  public void selectLinePoints() {
+    for (int x = 0; x < graphPixel.length; x++) {
+      for (int y = 0; y < graphPixel[0].length; y++) {
+        if (graphPixel[x][y].graph && !graphPixel[x][y].visited) {
+          connectNeighbours(x,y);
+        } // end of if
       }
-      this.functions = equations;
-      this.lastZoom = new TwoDVec<Double>(scaling, scaling);
-      this.lastPos = new TwoDVec<Double>((double) X0, (double) Y0);
-      return drawNewFunctions(getNegPosMaps(equations));
-    } else {
-      return image;
+    }
+  }
+  
+  public void connectNeighbours(int x, int y) {   //checks the eight neighbouring pixels for if they're part of the graph
+    if (graphPixel[x+1][y].graph && !graphPixel[x+1][y].visited) {
+      TwoDVec<TwoDVec> line = new TwoDVec<TwoDVec>(new TwoDVec(x,y),new TwoDVec(x+1,y));
+    } // end of if
+    if (graphPixel[x+1][y+1].graph && !graphPixel[x+1][y+1].visited) {
+      TwoDVec<TwoDVec> line = new TwoDVec<TwoDVec>(new TwoDVec(x,y),new TwoDVec(x+1,y));
+    } // end of if
+    if (graphPixel[x][y+1].graph && !graphPixel[x][y+1].visited) {
+      TwoDVec<TwoDVec> line = new TwoDVec<TwoDVec>(new TwoDVec(x,y),new TwoDVec(x+1,y));
+    } // end of if
+    if (graphPixel[x-1][y+1].graph && !graphPixel[x-1][y+1].visited) {
+      TwoDVec<TwoDVec> line = new TwoDVec<TwoDVec>(new TwoDVec(x,y),new TwoDVec(x+1,y));
+    } // end of if
+    if (graphPixel[x-1][y].graph && !graphPixel[x-1][y+1].visited) {
+      TwoDVec<TwoDVec> line = new TwoDVec<TwoDVec>(new TwoDVec(x,y),new TwoDVec(x+1,y));
+    } // end of if
+    if (graphPixel[x-1][y-1].graph && !graphPixel[x-1][y-1].visited) {
+      TwoDVec<TwoDVec> line = new TwoDVec<TwoDVec>(new TwoDVec(x,y),new TwoDVec(x+1,y));
+    } // end of if
+    if (graphPixel[x][y-1].graph && !graphPixel[x][y-1].visited) {
+      TwoDVec<TwoDVec> line = new TwoDVec<TwoDVec>(new TwoDVec(x,y),new TwoDVec(x+1,y));
+    } // end of if
+    if (graphPixel[x+1][y-1].graph && !graphPixel[x+1][y-1].visited) {
+      TwoDVec<TwoDVec> line = new TwoDVec<TwoDVec>(new TwoDVec(x,y),new TwoDVec(x+1,y));
+    } // end of if
+    graphPixel[x][y].visited = true;
+  }
+
+  public void drawEquations(ArrayList<EquationTree> equations) {               
+    if (lastZoom.x != renderValues.zoom.x) {
+      this.equations = equations;
+      this.lastZoom = new TwoDVec<Double>(renderValues.zoom.x, renderValues.zoom.y);
+      this.lastPos = new TwoDVec<Double>(renderValues.midpoint.x, (double) renderValues.midpoint.y);
+      drawNewEquations(getNegPosMaps(equations));
     }
   }
 
-  public boolean isPartOfFunction(int x, int y, boolean[][][] negPosMap, int i) {
+  public boolean isPartOfFunction(int x, int y, boolean[][][] negPosMap, int i) {   //returns true if function runs through pixel
     return ((negPosMap[i][x][y] == negPosMap[i][x + 1][y]) && (negPosMap[i][x][y - 1] == negPosMap[i][x + 1][y - 1]) && (negPosMap[i][x][y] == negPosMap[i][x][y - 1])) ? false : true;
   }
 }
