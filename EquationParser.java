@@ -197,7 +197,7 @@ public class EquationParser {
       operators.printStack();
       if (root != null) {
         root.recursivePrint(""); // For debugging
-        double res = root.calculate(0, 0, new Variable[1]);
+        double res = root.calculate(new TwoDVec<Double>(0.0,0.0), new Variable[1]);
         System.out.println(res);
       }
     }

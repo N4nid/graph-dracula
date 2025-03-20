@@ -128,7 +128,7 @@ public class Main extends Application {
     for (int i = 0; i < test.length; i++) {
       System.out.println("-----------------");
       EquationTree root = EquationParser.parseString(test[i]);
-      double res = root.calculate(0, 0, new Variable[1]);
+      double res = root.calculate(new TwoDVec<Double>(0.0,0.0), new Variable[1]);
       System.out.println("calc:" + res + "  - should: " + results[i]);
       if (res == results[i]) {
         System.out.println("### TEST PASSED ###");
