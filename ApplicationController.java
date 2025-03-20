@@ -56,7 +56,7 @@ public class ApplicationController implements MenuHaver {
   private ArrayList<Anchor> anchors = new ArrayList<Anchor>();
   RenderValues renderValues = new RenderValues(new TwoDVec<Integer>(1920, 1080), new TwoDVec<Double>(0.02, 0.02), new TwoDVec<Double>(0.0, 0.0));
   private FunctionRenderer funcDrawer = new FunctionRenderer(renderValues);
-  private EquationRenderer equationRenderer;
+  private EquationRenderer equationRenderer = new EquationRenderer(renderValues);
   private static TwoDVec<Double> mouseMindpointOffset;
   boolean firstDrag = true;
   
@@ -161,7 +161,6 @@ public class ApplicationController implements MenuHaver {
     resize();
 
     funcDrawer.centerCoordinateSystem();
-    equationRenderer = new EquationRenderer((int) graphViewPane.getPrefWidth(), (int) graphViewPane.getPrefHeight(), funcDrawer.zoom.x);
     updateRenderCanvas();
     scene.widthProperty().addListener((obs, oldVal, newVal) -> {
       resize();

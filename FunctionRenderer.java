@@ -109,6 +109,10 @@ public class FunctionRenderer {
     drawYCoords(gc,unitDistanceY);
   }
 
+  public void centerCoordinateSystem() {
+    renderValues.midpoint.setPos((double)(renderValues.resolution.x / 2), (double)(renderValues.resolution.y / 2));
+  }
+
   private double fixUnitDistance(double unitDistance, boolean isX){
     double axisRes = 1000;
     while (axisRes / unitDistance < 10) {
