@@ -18,6 +18,7 @@ public class EquationRenderer {
   public TwoDVec<Double> lastPos = new TwoDVec<Double>(-1.0, -1.0);
   public TwoDVec<Double> lastZoom = new TwoDVec<Double>(-1.0, -1.0);
   ArrayList<TwoDVec<TwoDVec<Double>>> linePoints = new ArrayList<TwoDVec<TwoDVec<Double>>>();
+  ArrayList<ArrayList<TwoDVec<TwoDVec<Double>>>> equationLineCache = new ArrayList<ArrayList<TwoDVec<TwoDVec<Double>>>>();
 
   public EquationRenderer(RenderValues renderValues) {
     this.renderValues = renderValues;
@@ -65,8 +66,9 @@ public class EquationRenderer {
     return negPosMaps;
   }
 
-  private void drawNewEquations(boolean[][][] negPosMaps) {
+  private ArrayList<ArrayList<TwoDVec<TwoDVec<Double>>>> drawNewEquations(boolean[][][] negPosMaps) {
     //zeichnet neue Funktionen aus negPosMaps in eine Pixelmap
+    ArrayList<ArrayList<TwoDVec<TwoDVec<Double>>>> returnEquationLines = new ArrayList<ArrayList<TwoDVec<TwoDVec<Double>>>>();
     for (int i = 0; i < equations.size(); i++) {
       for (int x = 1; x < renderValues.resolution.x * 2 - 1; x++) {
         for (int y = 1; y < renderValues.resolution.y * 2 - 1; y++) {
@@ -76,9 +78,11 @@ public class EquationRenderer {
         }
       }
       selectLinePoints();
-      equations.get(i).renderEquation(linePoints);
+      returnEquationLines.add(linePoints);
       linePoints.clear();
     }
+    equationLineCache = returnEquationLines;
+    return returnEquationLines;
   }
   
   public void selectLinePoints() {
@@ -119,13 +123,14 @@ public class EquationRenderer {
     graphPixel[x][y].visited = true;
   }
 
-  public void drawEquations(ArrayList<EquationTree> equations) {               
+  public ArrayList<ArrayList<TwoDVec<TwoDVec<Double>>>> calculateLinePoints(ArrayList<EquationTree> equations) {
     if (lastZoom.x != renderValues.zoom.x) {
       this.equations = equations;
       this.lastZoom = new TwoDVec<Double>(renderValues.zoom.x, renderValues.zoom.y);
       this.lastPos = new TwoDVec<Double>(renderValues.midpoint.x, (double) renderValues.midpoint.y);
-      drawNewEquations(getNegPosMaps(equations));
+      return drawNewEquations(getNegPosMaps(equations));
     }
+    return equationLineCache;
   }
 
   public boolean isPartOfFunction(int x, int y, boolean[][][] negPosMap, int i) {   //returns true if function runs through pixel

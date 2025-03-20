@@ -28,13 +28,13 @@ public class ApplicationController implements MenuHaver {
   public Button addButton;
   public ScrollPane scrollPane;
   public Label expandMenuLabel;
-  public Renderer renderer;
   private Button previewButton = new Button();
   private MenuOption recenterButton;
   private ExpandMenu expandMenu;
   ArrayList<EquationVisElement> listElements = new ArrayList<EquationVisElement>();
   
   public RoundColorPicker mainColorPicker;
+  public Renderer renderer = new Renderer(this);
 
   public Scene scene;
   
@@ -54,9 +54,8 @@ public class ApplicationController implements MenuHaver {
   public static double zoomSensitivity = 0.0015;
   
   private ArrayList<Anchor> anchors = new ArrayList<Anchor>();
-  RenderValues renderValues = new RenderValues(new TwoDVec<Integer>(1920, 1080), new TwoDVec<Double>(0.02, 0.02), new TwoDVec<Double>(0.0, 0.0));
-  private FunctionRenderer funcDrawer = new FunctionRenderer(renderValues);
-  private EquationRenderer equationRenderer = new EquationRenderer(renderValues);
+  private FunctionRenderer funcDrawer = new FunctionRenderer(renderer.renderValues);
+  private EquationRenderer equationRenderer = new EquationRenderer(renderer.renderValues);
   private static TwoDVec<Double> mouseMindpointOffset;
   boolean firstDrag = true;
   
@@ -101,8 +100,7 @@ public class ApplicationController implements MenuHaver {
   }
   
   public void setup() {
-
-    renderer = new Renderer();
+    
     TwoDVec<Double> colorPickPos = new TwoDVec<Double>(1650.0, 15.0);
     mainColorPicker = new RoundColorPicker(colorPickPos.x, colorPickPos.y, 0, new Random().nextInt(15), true, root, this);
     equationInputPane.getChildren().add(mainColorPicker.displayButton);
@@ -160,7 +158,7 @@ public class ApplicationController implements MenuHaver {
     anchors.add(new Anchor(expandMenuLabel, expandMenu.background, new TwoDVec<Double>(15.0, -385.0), "pos"));
     resize();
 
-    funcDrawer.centerCoordinateSystem();
+    renderer.centerCoordinateSystem();
     updateRenderCanvas();
     scene.widthProperty().addListener((obs, oldVal, newVal) -> {
       resize();
@@ -195,30 +193,30 @@ public class ApplicationController implements MenuHaver {
     
     scrollPane.setOnScroll(scrollEvent -> updateListElementTransform());
     
-    mainCanvas.setOnScroll(scrollEvent -> {
-      double avgZoom = (renderValues.zoom.x + renderValues.zoom.y) / 2;
-      renderValues.zoom.setPos(renderValues.zoom.x - avgZoom * scrollEvent.getDeltaY() * zoomSensitivity,
-      renderValues.zoom.y - avgZoom * scrollEvent.getDeltaY() * zoomSensitivity);
+    renderer.mainCanvas.setOnScroll(scrollEvent -> {
+      double avgZoom = (renderer.renderValues.zoom.x + (renderer.renderValues.zoom.y) / 2);
+      renderer.renderValues.zoom.setPos(renderer.renderValues.zoom.x - avgZoom * scrollEvent.getDeltaY() * zoomSensitivity,
+      renderer.renderValues.zoom.y - avgZoom * scrollEvent.getDeltaY() * zoomSensitivity);
       updateRenderCanvas();
     });
     
-    mainCanvas.setOnMouseReleased(e -> {
+    renderer.mainCanvas.setOnMouseReleased(e -> {
       firstDrag = true;
     });
     renderer.mainCanvas.setOnMouseDragged(e -> {
       if (firstDrag) {
-        mouseMindpointOffset = new TwoDVec<Double>((e.getX() - renderValues.midpoint.x),
-        e.getY() - renderValues.midpoint.y);
+        mouseMindpointOffset = new TwoDVec<Double>((e.getX() - renderer.renderValues.midpoint.x),
+        e.getY() - renderer.renderValues.midpoint.y);
         firstDrag = false;
       }
       TwoDVec<Double> newPos = new TwoDVec<Double>((e.getX() - mouseMindpointOffset.x),
       (e.getY() - mouseMindpointOffset.y));
-      if (graphOffsetInBounds(0.1, renderValues)) {
+      if (graphOffsetInBounds(0.1, renderer.renderValues)) {
         recenterButton.optionPane.setVisible(false);
       } else {
         recenterButton.optionPane.setVisible(true);
       }
-      renderValues.midpoint.setPos(newPos.x, newPos.y);
+      renderer.renderValues.midpoint.setPos(newPos.x, newPos.y);
       updateRenderCanvas();
     });
 
@@ -251,12 +249,12 @@ public class ApplicationController implements MenuHaver {
 
   public void executeMenuOption(String menuOption) {
     if (menuOption.equals("recenter")) {
-      renderValues.midpoint.setPos((double)(renderValues.resolution.x / 2), (double)(renderValues.resolution.y / 2));
+      renderer.renderValues.midpoint.setPos((double)(renderer.renderValues.resolution.x / 2), (double)(renderer.renderValues.resolution.y / 2));
       updateRenderCanvas();
       recenterButton.optionPane.setVisible(false);
     }
     if (menuOption.equals("reset zoom")) {
-      renderValues.zoom.setUniform(0.01);
+      renderer.renderValues.zoom.setUniform(0.01);
       updateRenderCanvas();
     }
   }
@@ -306,10 +304,8 @@ public class ApplicationController implements MenuHaver {
     TwoDVec<Integer> res = new TwoDVec<Integer>((int) renderer.mainCanvas.getWidth(), (int) renderer.mainCanvas.getHeight());
     long startTime = System.nanoTime();
     GraphicsContext gc = renderer.mainCanvas.getGraphicsContext2D();
-    gc.clearRect(0, 0, gc.getCanvas().getWidth(), gc.getCanvas().getHeight());
-    renderValues.resolution = res;
-    res.printInt();
-    
+    renderer.renderValues.resolution = res;
+    renderer.renderEquations(null);
     ArrayList<EquationTree> allEquations = new ArrayList<EquationTree>();
     ArrayList<EquationTree> equations = new ArrayList<EquationTree>();
     ArrayList<EquationTree> functions = new ArrayList<EquationTree>();
@@ -330,7 +326,7 @@ public class ApplicationController implements MenuHaver {
       }
     }
     if (equations.size() > 0) {
-      equationRenderer.drawEquations(equations);
+      equationRenderer.calculateLinePoints(equations);
       /*TwoDVec<Double> imagePos = new TwoDVec<Double>(-graphViewPane.getPrefWidth() + renderValues.midpoint.x, -graphViewPane.getPrefHeight() + renderValues.midpoint.y);
       System.out.println(renderValues.zoom.y * 50);
       TwoDVec<Double> tempImageSize = new TwoDVec<Double>(graphViewPane.getPrefWidth() * 2 / (renderValues.zoom.x * 50), graphViewPane.getPrefHeight() * 2 / (renderValues.zoom.y * 50));

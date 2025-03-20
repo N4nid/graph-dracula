@@ -7,24 +7,20 @@ import java.util.ArrayList;
 public class FunctionRenderer {
   RenderValues renderValues;
   
-  private TwoDVec<Integer> axisNumbersDecimalPlaces = new TwoDVec<Integer>(0,0);
 
-  private Font defaultFont;
-  private static final double defaultFontSize = 17;
   private static final double slopeBreakThreshhold = 400;
 
   private ArrayList<RenderBreakpoints> equationBreakpoints = new ArrayList<RenderBreakpoints>();
 
   public FunctionRenderer(RenderValues renderValues) {
     this.renderValues = renderValues;
-    defaultFont = Font.loadFont("file:resources/SourceCodePro-Regular.ttf",defaultFontSize);
   }
 
   public double[] calculateFunctionValues(EquationTree equation) {
     double[] returnValues = new double[renderValues.resolution.x];
     for (int i = 0; i < renderValues.resolution.x; i++) {
-      double yValue = equation.calculate(new TwoDVec<Double>(pixelXtoRealX(i, renderValues.midpoint.x,renderValues.zoom.x),0.0),null);
-      returnValues[i] = realYToPixelY(yValue, renderValues.midpoint.y, renderValues.zoom.y);
+      double yValue = equation.calculate(new TwoDVec<Double>(renderValues.screenCoordToRealCoord(new TwoDVec<Integer>(i,0)).x,0.0),null);
+      returnValues[i] = renderValues.realCoordToScreenCoord(new TwoDVec<Double>(0.0,yValue)).y;
     }
     return returnValues;
   }
@@ -38,7 +34,7 @@ public class FunctionRenderer {
   }
 
   public void drawFunctions(GraphicsContext gc, ArrayList<EquationTree> functions) {
-    drawCoordinateSystem(gc);
+    System.out.println("real: " + gc);
     double[] xValues = getXArray(); 
     for (int i = 0; i < functions.size(); i++) {
       double[] functionValues = calculateFunctionValues(functions.get(i));
@@ -90,95 +86,7 @@ public class FunctionRenderer {
       }
     }
   }
-  
-  public void drawCoordinateSystem(GraphicsContext gc) {
-    double unitDistanceX = 1 / renderValues.zoom.x;
-    double unitDistanceY = 1 / renderValues.zoom.y;
-    axisNumbersDecimalPlaces = new TwoDVec<Integer>(0,0);
-    unitDistanceX = fixUnitDistance(unitDistanceX, true);
-    unitDistanceY = fixUnitDistance(unitDistanceY, false);
 
-    gc.setStroke(Color.WHITE);
-    gc.setLineWidth(1);
-    gc.strokeLine(0,renderValues.midpoint.y, renderValues.resolution.x,renderValues.midpoint.y);
-    gc.strokeLine(renderValues.midpoint.x,0,renderValues.midpoint.x,renderValues.resolution.y);
-
-    gc.setStroke(Effects.changeBrightness(Color.WHITE,0.3));
-    gc.setFont(defaultFont);
-    drawXCoords(gc,unitDistanceX);
-    drawYCoords(gc,unitDistanceY);
-  }
-
-  public void centerCoordinateSystem() {
-    renderValues.midpoint.setPos((double)(renderValues.resolution.x / 2), (double)(renderValues.resolution.y / 2));
-  }
-
-  private double fixUnitDistance(double unitDistance, boolean isX){
-    double axisRes = 1000;
-    while (axisRes / unitDistance < 10) {
-      unitDistance /= 2;
-      if (isX) {
-        axisNumbersDecimalPlaces.x += 1;
-      }
-      else {
-        axisNumbersDecimalPlaces.y += 1;
-      }
-    }
-    while (axisRes / unitDistance > 20) {
-      unitDistance *= 2;
-    }
-    return unitDistance;
-  }
-
-  private void drawXCoords(GraphicsContext gc, double unitDistanceX) {
-    int startNumb = (int)Math.round((- renderValues.midpoint.x) / unitDistanceX) - 1;
-    int endNumb = (int)Math.round(startNumb + renderValues.resolution.x /unitDistanceX)  + 1;
-    //System.out.println(startNumb);
-    //System.out.println(endNumb);
-    int currentX = (int) (startNumb * unitDistanceX + renderValues.midpoint.x);
-    int iterator = startNumb;
-    gc.setFill(Color.WHITE);
-
-    while (iterator <= endNumb) {
-      if (iterator != 0) {
-        gc.strokeLine(currentX, 0, currentX, renderValues.resolution.y);
-
-        String labelString = String.format("%." + axisNumbersDecimalPlaces.x + "f", renderValues.screenCoordToRealCoord(new TwoDVec<Integer>(currentX,0)).x);
-        int stringLenght = labelString.length();
-        gc.fillText(labelString, currentX - 0.3 * defaultFontSize * stringLenght, renderValues.midpoint.y + 1.2 * defaultFontSize);
-      }
-      currentX += unitDistanceX;
-      iterator++;
-    }
-  }
-
-  private void drawYCoords(GraphicsContext gc, double unitDistanceY) {
-    int endNumb = (int)Math.round(( renderValues.midpoint.y) / unitDistanceY) + 2;
-    int startNumb = (int) (endNumb - renderValues.resolution.y / unitDistanceY) - 2;
-    /*System.out.println(startNumb);
-    System.out.println(endNumb);*/
-    int currentY = (int) (- startNumb * unitDistanceY + renderValues.midpoint.y);
-    int iterator = startNumb;
-    gc.setFill(Color.WHITE);
-    while (iterator <= endNumb) {
-      if (iterator != 0) {
-        gc.strokeLine(0, currentY, renderValues.resolution.x, currentY);
-
-        String labelString = String.format("%." + axisNumbersDecimalPlaces.y + "f", renderValues.screenCoordToRealCoord(new TwoDVec<Integer>(0,currentY)).y);
-        int stringLenght = labelString.length();
-        gc.fillText(labelString, renderValues.midpoint.x - (0.8 * stringLenght) * defaultFontSize, currentY + 0.3 * defaultFontSize);
-      }
-      currentY -= unitDistanceY;
-      iterator++;
-    }
-  }
-
-  private static double pixelXtoRealX(int pixelX, double midX, double zoomX) {
-    return (pixelX - midX) * zoomX;
-  }
-  private static double realYToPixelY(double realY, double midY, double zoomY) {
-    return - realY / zoomY + midY;
-  }
 }
 
 class RenderBreakpoints {
