@@ -64,5 +64,10 @@
             <Font name="Source Code Pro" size="10.0" />
          </font>
       </Label>
+      <Label fx:id="expandMenuLabel" alignment="TOP_LEFT" blendMode="SRC_ATOP" layoutX="0.0" layoutY="0.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="overlay-tx" text="//expand-menu" textFill="WHITE">
+         <font>
+            <Font name="Source Code Pro" size="10.0" />
+         </font>
+      </Label>
    </children>
 </Pane>

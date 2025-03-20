@@ -1,6 +1,7 @@
 import javafx.animation.TranslateTransition;
 import javafx.event.ActionEvent;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
@@ -19,6 +20,7 @@ public class ExpandMenu implements Hideble{
     public ScrollPane contenScroll;
     public Region bottomTarget = new Region();
     public Region topTarget = new Region();
+    private Label label;
     public TextField mainInputField;
     private double xMargin = 60;
     private double height = 215;
@@ -33,7 +35,7 @@ public class ExpandMenu implements Hideble{
     public int lastCaretPos = 0;
     private boolean isUp = false;
 
-    public ExpandMenu(Pane root, TextField mainInputField, Button expandButton) {
+    public ExpandMenu(Pane root, TextField mainInputField, Button expandButton, Label label) {
         background = new Pane();
         contentPane = new Pane();
         contenScroll = new ScrollPane();
@@ -52,6 +54,7 @@ public class ExpandMenu implements Hideble{
         root.getChildren().add(background);
         this.mainInputField = mainInputField;
         this.expandButton = expandButton;
+        this.label = label;
         initiateButtons();
 
         mainInputField.focusedProperty().addListener((obs, oldVal, newVal) -> {
@@ -115,6 +118,9 @@ public class ExpandMenu implements Hideble{
         if (showUp) {
             background.setVisible(true);
         }
+        if (!showUp) {
+            label.setVisible(false);
+        }
         TranslateTransition transition = new TranslateTransition(Duration.millis(75),background);
         background.setLayoutY(bottomTarget.getLayoutY());
         transition.setByY((showUp)? (topTarget.getLayoutY()-bottomTarget.getLayoutY()) : -(topTarget.getLayoutY()-bottomTarget.getLayoutY()));
@@ -123,6 +129,7 @@ public class ExpandMenu implements Hideble{
         transition.setOnFinished(e ->{
             isAnimating = false;
             background.setVisible(showUp);
+            label.setVisible(showUp);
             background.setLayoutY(topTarget.getLayoutY()+370);
         });
     }
@@ -147,6 +154,7 @@ public class ExpandMenu implements Hideble{
 
     public void dissappear() {
         background.setVisible(false);
+        label.setVisible(false);
         isUp = false;
     }
 

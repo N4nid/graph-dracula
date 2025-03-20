@@ -27,6 +27,7 @@ public class ApplicationController implements MenuHaver {
   public Button extraInputButton;
   public Button addButton;
   public ScrollPane scrollPane;
+  public Label expandMenuLabel;
   private Button previewButton = new Button();
   private MenuOption recenterButton;
   public Canvas mainCanvas;
@@ -106,11 +107,12 @@ public class ApplicationController implements MenuHaver {
     equationInputPane.getChildren().add(mainColorPicker.displayButton);
     hideOnClick.add(mainColorPicker);
 
-    expandMenu = new ExpandMenu(root,equationInput,extraInputButton);
+    expandMenu = new ExpandMenu(root,equationInput,extraInputButton,expandMenuLabel);
     hideOnClick.add(expandMenu);
     expandMenu.dissappear();
 
     graphViewLabel.setViewOrder(-1);
+    expandMenuLabel.setViewOrder(-2);
 
     Effects.addDefaultHoverEffect(addButton);
     Effects.addDefaultHoverEffect(extraInputButton);
@@ -154,6 +156,7 @@ public class ApplicationController implements MenuHaver {
     anchors.add(new Anchor(expandMenu.bottomTarget,root,new TwoDVec<Double>(0.0,2.0),"scale->pos",true,false));
     anchors.add(new Anchor(expandMenu.contenScroll, expandMenu.background, new TwoDVec<Double>(-6.0, -6.0), "scale"));
     anchors.add(new Anchor(expandMenu.contentPane, expandMenu.contenScroll, new TwoDVec<Double>(0.0, 0.0), "scale",false,true));
+    anchors.add(new Anchor(expandMenuLabel, expandMenu.background, new TwoDVec<Double>(15.0, -385.0), "pos"));
     resize();
 
     funcDrawer.centerCoordinateSystem();
@@ -221,6 +224,7 @@ public class ApplicationController implements MenuHaver {
     extraInputButton.setOnAction(e->{
       expandMenu.flipVisibility();
     });
+
   }
 
   public EquationVisElement getHoveredEquationVisElement() {
