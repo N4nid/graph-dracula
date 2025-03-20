@@ -50,13 +50,17 @@ public class FunctionRenderer {
   }
 
 
-  public void drawFunction(GraphicsContext gc, double[] xValues, double[] functionValues, Color color,EquationTree function) {
-    gc.setStroke(color);
-    gc.setLineWidth(2);
-    RenderBreakpoints associatedBreakpoints = RenderBreakpoints.findFunctionBreakpoints(equationBreakpoints,function);
-    if (associatedBreakpoints!=null){
+  public ArrayList<TwoDVec<TwoDVec<Double>>> calculateFunctionLines(EquationTree function) {
+    double[] xValues = getXArray();
+    ArrayList<TwoDVec<TwoDVec<Double>>> currentFunctionLines = new ArrayList<TwoDVec<TwoDVec<Double>>>();
+    double[] functionValues = calculateFunctionValues(function);
+    fixValues(functionValues, function);
+    for (int j = 0; j < functionValues.length-1; j++) {
+      TwoDVec<Double> fromCoord = new TwoDVec<Double>(xValues[j],functionValues[j]);
+      TwoDVec<Double> toCoord = new TwoDVec<Double>(xValues[j+1],functionValues[j+1]);
+      currentFunctionLines.add(new TwoDVec<TwoDVec<Double>>(fromCoord,toCoord));
     }
-    gc.strokePolyline(xValues,functionValues, xValues.length);
+    return currentFunctionLines;
   }
 
   private void fixValues(double[] fixableValues, EquationTree fixableFunction) {

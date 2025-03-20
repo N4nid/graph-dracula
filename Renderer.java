@@ -13,6 +13,11 @@ public class Renderer {
     CoordinateSystemRenderer coordinateSystemRenderer;
     private FunctionRenderer funcDrawer;
     private EquationRenderer equationRenderer;
+
+    ArrayList<EquationTree> allEquations = new ArrayList<EquationTree>();
+    ArrayList<EquationTree> equations = new ArrayList<EquationTree>();
+    ArrayList<EquationTree> functions = new ArrayList<EquationTree>();
+
     public Renderer(ApplicationController controller) {
         mainCanvas = new Canvas();
         this.controller = controller;
@@ -22,12 +27,52 @@ public class Renderer {
         equationRenderer = new EquationRenderer(renderValues);
     }
 
-    public void renderEquations(ArrayList<EquationTree> allEquations) {
+    public void refreshEquationRenderer() {
+        equationRenderer.lastZoom = new TwoDVec<>(-1.0,-1.0);
+    }
+
+    public void renderEquations(ArrayList<EquationVisElement> listElements, EquationTree previewEquation) {
         mainCanvas.getGraphicsContext2D().clearRect(0, 0, mainCanvas.getWidth(), mainCanvas.getHeight());
         coordinateSystemRenderer.drawCoordinateSystem();
+        orderEquations(listElements,previewEquation);
 
-        ArrayList<EquationTree> equations = new ArrayList<EquationTree>();
-        ArrayList<EquationTree> functions = new ArrayList<EquationTree>();
+        if (equations.size() > 0) {
+            ArrayList<ArrayList<TwoDVec<TwoDVec<Double>>>> equationsLines = equationRenderer.calculateEquationsLinePoints(equations);
+            equationsLines.get(0).get(0).x.printDouble();
+            for (int i = 0; i < equationsLines.size(); i++) {
+                renderLines(equations.get(i).graphColor, equationsLines.get(i));
+            }
+        }
+        ArrayList<ArrayList<TwoDVec<TwoDVec<Double>>>> functionsLines = funcDrawer.calculateFunctionsLines(functions);
+        for (int i = 0; i < functionsLines.size(); i++) {
+            renderLines(functions.get(i).graphColor, functionsLines.get(i));
+        }
+
+        if (previewEquation != null) {
+            previewEquation.graphColor = controller.mainColorPicker.colorValue;
+            if (previewEquation.isFunction) {
+                renderLines(previewEquation.graphColor,funcDrawer.calculateFunctionLines(previewEquation));
+            }
+            else {
+                renderLines(previewEquation.graphColor,equationRenderer.calculateEquationLinePoints(previewEquation));
+            }
+        }
+    }
+
+    private void orderEquations(ArrayList<EquationVisElement> listElements, EquationTree previewEquation) {
+        allEquations = new ArrayList<EquationTree>();
+        equations = new ArrayList<EquationTree>();
+        functions = new ArrayList<EquationTree>();
+        for (int i = 0; i < listElements.size(); i++) {
+            if (!(previewEquation != null && i == controller.editIndex)) {
+                allEquations.add(listElements.get(i).equation);
+                allEquations.get(allEquations.size() - 1).graphColor = listElements.get(i).colorPicker.colorValue;
+            } else {
+                allEquations.add(EquationParser.parseString(controller.equationInput.getText()));
+                allEquations.get(allEquations.size() - 1).graphColor = controller.mainColorPicker.colorValue;
+            }
+        }
+
         for (int i = 0; i < allEquations.size(); i++) {
             if (allEquations.get(i).isFunction) {
                 functions.add(allEquations.get(i));
@@ -35,17 +80,10 @@ public class Renderer {
                 equations.add(allEquations.get(i));
             }
         }
-        if (equations.size() > 0) {
-            equationRenderer.calculateLinePoints(equations);
-        }
-
-        ArrayList<ArrayList<TwoDVec<TwoDVec<Double>>>> functionsLines = funcDrawer.calculateFunctionsLines(functions);
-        for (int i = 0; i < functionsLines.size(); i++) {
-            renderLines(functions.get(i).graphColor, functionsLines.get(i));
-        }
     }
 
     public void renderLines(Color graphColor, ArrayList<TwoDVec<TwoDVec<Double>>> lines) {
+        mainCanvas.getGraphicsContext2D().setLineWidth(2);
         for (int i = 0; i < lines.size(); i++) {
             mainCanvas.getGraphicsContext2D().setStroke(graphColor);
             TwoDVec<TwoDVec<Double>> currentLine = lines.get(i);

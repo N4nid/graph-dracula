@@ -38,8 +38,8 @@ public class ApplicationController implements MenuHaver {
   public Scene scene;
   
   public double minEquationListHeight = 20f;
-  private int editIndex = -1;
-  private EquationTree previewEquation;
+  public int editIndex = -1;
+  public EquationTree previewEquation;
   
   private static TwoDVec<Double> defaultGraphViewPanePos;
   private static TwoDVec<Double> defaultGraphViewPaneSize;
@@ -53,19 +53,19 @@ public class ApplicationController implements MenuHaver {
   public static double zoomSensitivity = 0.0015;
   
   private ArrayList<Anchor> anchors = new ArrayList<Anchor>();
-  private FunctionRenderer funcDrawer = new FunctionRenderer(renderer.renderValues);
-  private EquationRenderer equationRenderer = new EquationRenderer(renderer.renderValues);
   private static TwoDVec<Double> mouseMindpointOffset;
   boolean firstDrag = true;
   
   @FXML
   protected void onAddButtonClick() {
-    equationRenderer.lastZoom = new TwoDVec<Double>(-1.0, -1.0);
     previewEquation = null;
     EquationTree inputEquation = EquationParser.parseString(equationInput.getText());
     if (inputEquation.root == null) {
       System.out.println("Invalid equation! Please try again.");
       return;
+    }
+    if (!inputEquation.isFunction) {
+      renderer.refreshEquationRenderer();
     }
     if (editIndex == -1) {
       addEquation(inputEquation, equationInput.getText(), mainColorPicker.colorIndex);
@@ -301,29 +301,10 @@ public class ApplicationController implements MenuHaver {
     renderer.mainCanvas.setHeight(graphViewPane.getPrefHeight() - 6);
     renderer.mainCanvas.relocate(graphViewPane.getLayoutX()+3, graphViewPane.getLayoutY()+3);
     TwoDVec<Integer> res = new TwoDVec<Integer>((int) renderer.mainCanvas.getWidth(), (int) renderer.mainCanvas.getHeight());
-    long startTime = System.nanoTime();
     GraphicsContext gc = renderer.mainCanvas.getGraphicsContext2D();
     renderer.renderValues.resolution = res;
-    ArrayList<EquationTree> allEquations = new ArrayList<EquationTree>();
-    ArrayList<EquationTree> equations = new ArrayList<EquationTree>();
-    ArrayList<EquationTree> functions = new ArrayList<EquationTree>();
-    for (int i = 0; i < listElements.size(); i++) {
-      if (!(previewEquation != null && i == editIndex)) {
-        allEquations.add(listElements.get(i).equation);
-        allEquations.get(allEquations.size() - 1).graphColor = listElements.get(i).colorPicker.colorValue;
-      } else {
-        allEquations.add(EquationParser.parseString(equationInput.getText()));
-        allEquations.get(allEquations.size() - 1).graphColor = mainColorPicker.colorValue;
-      }
-    }
-    renderer.renderEquations(allEquations);
-    if (previewEquation != null) {
-      funcDrawer.drawFunction(renderer.mainCanvas.getGraphicsContext2D(), funcDrawer.getXArray(),
-              funcDrawer.calculateFunctionValues(previewEquation), mainColorPicker.colorValue, previewEquation);
-    }
-    long endTime = System.nanoTime();
-    long totalTime = endTime - startTime;
-    // System.out.println(totalTime);
+
+    renderer.renderEquations(listElements,previewEquation);
   }
 
   private void updateListElementTransform() {

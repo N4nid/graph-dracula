@@ -66,7 +66,8 @@ public class EquationRenderer {
     return negPosMaps;
   }
 
-  private ArrayList<ArrayList<TwoDVec<TwoDVec<Double>>>> calculateNewEquations(boolean[][][] negPosMaps) {
+
+  private ArrayList<ArrayList<TwoDVec<TwoDVec<Double>>>> calculateNewEquations(boolean[][][] negPosMaps, boolean overrideCache) {
     //zeichnet neue Funktionen aus negPosMaps in eine Pixelmap
     ArrayList<ArrayList<TwoDVec<TwoDVec<Double>>>> returnEquationLines = new ArrayList<ArrayList<TwoDVec<TwoDVec<Double>>>>();
     for (int i = 0; i < equations.size(); i++) {
@@ -81,7 +82,9 @@ public class EquationRenderer {
       returnEquationLines.add(linePoints);
       linePoints.clear();
     }
-    equationLineCache = returnEquationLines;
+    if (overrideCache) {
+      equationLineCache = returnEquationLines;
+    }
     return returnEquationLines;
   }
   
@@ -123,17 +126,24 @@ public class EquationRenderer {
     graphPixel[x][y].visited = true;
   }
 
-  public ArrayList<ArrayList<TwoDVec<TwoDVec<Double>>>> calculateLinePoints(ArrayList<EquationTree> equations) {
+  public ArrayList<ArrayList<TwoDVec<TwoDVec<Double>>>> calculateEquationsLinePoints(ArrayList<EquationTree> equations) {
     if (lastZoom.x != renderValues.zoom.x) {
       this.equations = equations;
       this.lastZoom = new TwoDVec<Double>(renderValues.zoom.x, renderValues.zoom.y);
       this.lastPos = new TwoDVec<Double>(renderValues.midpoint.x, (double) renderValues.midpoint.y);
-      return calculateNewEquations(getNegPosMaps(equations));
+      return calculateNewEquations(getNegPosMaps(equations),true);
     }
     return equationLineCache;
+  }
+
+  public ArrayList<TwoDVec<TwoDVec<Double>>> calculateEquationLinePoints(EquationTree equation) {
+    this.equations = new ArrayList<EquationTree>();
+    equations.add(equation);
+    return calculateNewEquations(getNegPosMaps(equations),false).get(0);
   }
 
   public boolean isPartOfFunction(int x, int y, boolean[][][] negPosMap, int i) {   //returns true if function runs through pixel
     return ((negPosMap[i][x][y] == negPosMap[i][x + 1][y]) && (negPosMap[i][x][y - 1] == negPosMap[i][x + 1][y - 1]) && (negPosMap[i][x][y] == negPosMap[i][x][y - 1])) ? false : true;
   }
+
 }
