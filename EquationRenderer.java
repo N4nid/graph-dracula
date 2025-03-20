@@ -66,7 +66,7 @@ public class EquationRenderer {
     return negPosMaps;
   }
 
-  private ArrayList<ArrayList<TwoDVec<TwoDVec<Double>>>> drawNewEquations(boolean[][][] negPosMaps) {
+  private ArrayList<ArrayList<TwoDVec<TwoDVec<Double>>>> calculateNewEquations(boolean[][][] negPosMaps) {
     //zeichnet neue Funktionen aus negPosMaps in eine Pixelmap
     ArrayList<ArrayList<TwoDVec<TwoDVec<Double>>>> returnEquationLines = new ArrayList<ArrayList<TwoDVec<TwoDVec<Double>>>>();
     for (int i = 0; i < equations.size(); i++) {
@@ -128,7 +128,7 @@ public class EquationRenderer {
       this.equations = equations;
       this.lastZoom = new TwoDVec<Double>(renderValues.zoom.x, renderValues.zoom.y);
       this.lastPos = new TwoDVec<Double>(renderValues.midpoint.x, (double) renderValues.midpoint.y);
-      return drawNewEquations(getNegPosMaps(equations));
+      return calculateNewEquations(getNegPosMaps(equations));
     }
     return equationLineCache;
   }

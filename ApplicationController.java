@@ -9,7 +9,6 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
-import javafx.stage.Stage;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -305,7 +304,6 @@ public class ApplicationController implements MenuHaver {
     long startTime = System.nanoTime();
     GraphicsContext gc = renderer.mainCanvas.getGraphicsContext2D();
     renderer.renderValues.resolution = res;
-    renderer.renderEquations(null);
     ArrayList<EquationTree> allEquations = new ArrayList<EquationTree>();
     ArrayList<EquationTree> equations = new ArrayList<EquationTree>();
     ArrayList<EquationTree> functions = new ArrayList<EquationTree>();
@@ -318,22 +316,7 @@ public class ApplicationController implements MenuHaver {
         allEquations.get(allEquations.size() - 1).graphColor = mainColorPicker.colorValue;
       }
     }
-    for (int i = 0; i < allEquations.size(); i++) {
-      if (allEquations.get(i).isFunction) {
-        functions.add(allEquations.get(i));
-      } else {
-        equations.add(allEquations.get(i));
-      }
-    }
-    if (equations.size() > 0) {
-      equationRenderer.calculateLinePoints(equations);
-      /*TwoDVec<Double> imagePos = new TwoDVec<Double>(-graphViewPane.getPrefWidth() + renderValues.midpoint.x, -graphViewPane.getPrefHeight() + renderValues.midpoint.y);
-      System.out.println(renderValues.zoom.y * 50);
-      TwoDVec<Double> tempImageSize = new TwoDVec<Double>(graphViewPane.getPrefWidth() * 2 / (renderValues.zoom.x * 50), graphViewPane.getPrefHeight() * 2 / (renderValues.zoom.y * 50));
-      TwoDVec<Double> tempImageZoomOffset = new TwoDVec<Double>(-(tempImageSize.x / 2 - graphViewPane.getPrefWidth()),-(tempImageSize.y / 2 - graphViewPane.getPrefHeight()));
-      mainCanvas.getGraphicsContext2D().drawImage(equationRender, imagePos.x + tempImageZoomOffset.x, imagePos.y + tempImageZoomOffset.y, tempImageSize.x, tempImageSize.y); */
-    }
-    funcDrawer.drawFunctions(renderer.mainCanvas.getGraphicsContext2D(), functions);
+    renderer.renderEquations(allEquations);
     if (previewEquation != null) {
       funcDrawer.drawFunction(renderer.mainCanvas.getGraphicsContext2D(), funcDrawer.getXArray(),
               funcDrawer.calculateFunctionValues(previewEquation), mainColorPicker.colorValue, previewEquation);

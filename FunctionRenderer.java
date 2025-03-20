@@ -1,6 +1,5 @@
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
 
 import java.util.ArrayList;
 
@@ -33,15 +32,23 @@ public class FunctionRenderer {
     return xs;
   }
 
-  public void drawFunctions(GraphicsContext gc, ArrayList<EquationTree> functions) {
-    System.out.println("real: " + gc);
+  public ArrayList<ArrayList<TwoDVec<TwoDVec<Double>>>> calculateFunctionsLines(ArrayList<EquationTree> functions) {
+    ArrayList<ArrayList<TwoDVec<TwoDVec<Double>>>> functionsLines = new ArrayList<ArrayList<TwoDVec<TwoDVec<Double>>>>();
     double[] xValues = getXArray(); 
     for (int i = 0; i < functions.size(); i++) {
+      ArrayList<TwoDVec<TwoDVec<Double>>> currentFunctionLines = new ArrayList<TwoDVec<TwoDVec<Double>>>();
       double[] functionValues = calculateFunctionValues(functions.get(i));
       fixValues(functionValues, functions.get(i));
-      drawFunction(gc,xValues,functionValues,functions.get(i).graphColor,functions.get(i));
+      for (int j = 0; j < functionValues.length-1; j++) {
+        TwoDVec<Double> fromCoord = new TwoDVec<Double>(xValues[j],functionValues[j]);
+        TwoDVec<Double> toCoord = new TwoDVec<Double>(xValues[j+1],functionValues[j+1]);
+        currentFunctionLines.add(new TwoDVec<TwoDVec<Double>>(fromCoord,toCoord));
+      }
+      functionsLines.add(currentFunctionLines);
     }
+    return functionsLines;
   }
+
 
   public void drawFunction(GraphicsContext gc, double[] xValues, double[] functionValues, Color color,EquationTree function) {
     gc.setStroke(color);

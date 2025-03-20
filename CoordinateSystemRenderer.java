@@ -20,7 +20,6 @@ public class CoordinateSystemRenderer {
 
     public void drawCoordinateSystem() {
         this.gc = renderer.mainCanvas.getGraphicsContext2D();
-        System.out.println(gc);
         double unitDistanceX = 1 / renderValues.zoom.x;
         double unitDistanceY = 1 / renderValues.zoom.y;
         axisNumbersDecimalPlaces = new TwoDVec<Integer>(0,0);
