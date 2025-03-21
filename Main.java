@@ -3,8 +3,10 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
+
 import java.util.Scanner;
 
 import java.io.IOException;
@@ -20,6 +22,9 @@ public class Main extends Application {
     String css = this.getClass().getResource("/resources/application.css").toExternalForm();
     scene.getStylesheets().add(css);
 
+    Image logo = new Image("/resources/graph_dracula_logo_v2.png");
+    stage.getIcons().add(logo);
+
     scene.addEventFilter(MouseEvent.MOUSE_PRESSED, new EventHandler<MouseEvent>() {
       @Override
       public void handle(MouseEvent mouseEvent) {
@@ -27,7 +32,7 @@ public class Main extends Application {
       }
     });
 
-    stage.setTitle("Graph Dracula");
+    stage.setTitle("graph_dracula");
     stage.setScene(scene);
     stage.show();
     stage.setMinWidth(500);
