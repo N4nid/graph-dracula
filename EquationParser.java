@@ -36,12 +36,19 @@ public class EquationParser {
       if(!parseBetweenBrackets)
         input += "-y";
       isFunction = false;
+      if(debug)
+        System.out.println("not a function");
     }
     else if(checkIfFunction(input)){
       input = input.split("=")[1]+"-y";
+      if(debug)
+        System.out.println("is a function");
     }else if(input.contains("=")){
       String[] split = input.split("=");
       input = split[0]+"-("+split[1]+")";
+      isFunction = false;
+      if(debug)
+        System.out.println("is not a function");
     }
 
     // FIXME workaround when equation starts with brackets (20-2)*2
@@ -52,7 +59,8 @@ public class EquationParser {
       input = "0" + input;
     }
 
-    System.out.println("input after TRANSFORM: "+input);
+    if(debug)
+      System.out.println("input after TRANSFORM: "+input);
     return input;
   }
 
@@ -73,33 +81,30 @@ public class EquationParser {
       Object val = currentNode.value;
       Byte state = currentNode.state;
       Byte opLevel = currentNode.opLevel;
+      currentNode.bracketDepth = bracketDepth;
+
+      if(addInvisibleMultiplikation(currentNode,lastNode,in)){
+        bracketDepth = currentNode.bracketDepth; // since it could have been updated
+        currentNode = getNextNode(in);
+        //System.out.println("doskip");
+        continue;
+      }
 
       if (state == 0 || state == 1) { // is either a num or variable
-        System.out.println("xurrent: "+val+"|"+lastNode.value);
+        //System.out.println("NUMORVAR: "+val+"| "+lastNode.value+" "+lastNode.bracketDepth);
         if (lastNode.state >= 2) {
           lastNode.right = currentNode;
-        }else if(lastNode.state == (1-state)){ // something like 2x, x2
-          System.out.println("########## TRIGGERD ADVANCED INPUT PARSING - 1"); 
-          System.out.println("--| "+in);
-          in.insert(0,"*"+val);
-          System.out.println("--| "+in);
-          currentNode = getNextNode(in);
-          continue; 
-        }else if(lastNode.bracketDepth > bracketDepth){ // something like )2
-          System.out.println("########## TRIGGERD ADVANCED INPUT PARSING - 2"); 
-          System.out.println("--| "+in);
-          in.insert(0,"*"+val);
-          System.out.println("--| "+in);
         }
 
         lastNode = currentNode;
-        System.out.println("setting lastnode="+val);
+        //lastNode.bracketDepth = bracketDepth;
+        //System.out.println("setting lastnode="+val);
         if (root == null) {
           if (debug)
             System.out.println("setin rooot");
           root = currentNode;
         }
-      } else if (state == 3) {
+      } else if (state == 3) { // is speacialFunction
         if (debug)
           System.out.println("current: " + val + " | " + bracketDepth);
         OperatorStackElement stackTop = operators.getLast(bracketDepth, opLevel);
@@ -123,7 +128,7 @@ public class EquationParser {
         } else {
           bracketDepth--;
         }
-      } else if (state == 4) {
+      } else if (state == 4) { // is "speacial" operator (root log)
         currentNode.state = 2; // change state because it will be treated like a operator in calculate()
         OperatorStackElement stackTop = operators.getLast(bracketDepth, opLevel);
         String[] betweenBrackts = getBetweenBrackets(in);
@@ -164,14 +169,14 @@ public class EquationParser {
         operators.add(currentNode, bracketDepth);
         lastNode = currentNode;
 
-      } else if (state == 2) {
+      } else if (state == 2) { // is operator (+-*/)
         if (debug)
           System.out.println("current: " + val + " | " + bracketDepth);
         OperatorStackElement stackTop = operators.getLast(bracketDepth, opLevel);
 
         if (stackTop != null) {
 
-          if (lastNode.value.equals("(") && val.equals("-")) { // so that negative numbers work
+          if ((lastNode.bracketDepth < bracketDepth) && val.equals("-")) { // so that negative numbers work
             if (debug)
               System.out.println("neg. number fix " + lastNode.value);
             lastNode.right = new EquationNode((byte) 0, "0");
@@ -220,7 +225,7 @@ public class EquationParser {
 
       currentNode = getNextNode(in);// might be null now, dont use after this line
     }
-    System.out.println("done");
+    //System.out.println("done");
     // root = operators.getRoot();
 
     // fix workaround
@@ -232,17 +237,55 @@ public class EquationParser {
       }
     }
 
-    if (debug) {
+    if(debug){
       operators.printStack();
       if (root != null) {
         root.recursivePrint(""); // For debugging
-        double res = root.calculate(new TwoDVec<Double>(0.0,0.0), new Variable[1]);
-        System.out.println(res);
+        //double res = root.calculate(0, 0, new Variable[1]);
+        //System.out.println(res);
       }
     }
     // debugging
 
     return new EquationTree(root,name,isFunction);
+  }
+
+  private static boolean addInvisibleMultiplikation(EquationNode currentNode, EquationNode lastNode, StringBuffer input) {
+    // should recognize the following and add a multiplikation inbetween:
+    // 2(, )2, 2x, x2, 2sin, xsin, )sin, 
+    byte state = currentNode.state;
+    //cant do add the multiplikation -> return
+    if(state == 2 || state == -1 || lastNode.state >= 2 || lastNode.state == -1 ){ // either a operator or a bracket
+                                                                                   // lastnode can only be a num or var
+      return false;
+    }
+    int bracketDepth = currentNode.bracketDepth;
+    boolean doContinue = false;
+    Object val = currentNode.value;
+
+//    System.out.println("try ADVANCED PARSING curren: "+val+"|"+bracketDepth+" - "+lastNode.value+"|"+lastNode.bracketDepth);
+//    System.out.println("CURRENT INP "+input);
+
+    //handeling brackets 
+    if(lastNode.bracketDepth != bracketDepth){
+      //System.out.println("bracketParse");
+      if(lastNode.bracketDepth < bracketDepth){ // before bracket 2(
+       // System.out.println("before brack");
+        input.insert(0,"*("+val);
+        currentNode.bracketDepth--;
+      }else{
+        input.insert(0,"*"+val); // after bracket )2
+        //System.out.println("after brack");
+      }
+      doContinue = true;
+    }else if(lastNode.state != state){ // handle 2x x2 etc
+//      System.out.println("handle other");
+      input.insert(0,"*"+val);
+      doContinue = true;
+    }
+
+ //   System.out.println("INP AFTER "+input);
+      return doContinue;
   }
 
   private static boolean checkIfFunction(String input){
@@ -254,7 +297,7 @@ public class EquationParser {
       isFunction = true;
       return true;
     }
-    
+
     return false;
   }
 
@@ -318,7 +361,7 @@ public class EquationParser {
     char next = input.charAt(counter);
     byte nextState = getState(next);
 
-    if (state == -1 || (state == 2 || state == 1 && nextState != state)) {// is a operator or variable -> no further
+    if (state == -1 || (state == 2 || state == 1 && (nextState != state || first == 'x' || first == 'y'))) {// is a operator or variable -> no further
       input = input.delete(0, 1);
       opLevel = getOpLevel(value);
       result = new EquationNode(state, value);
@@ -348,6 +391,8 @@ public class EquationParser {
         state = 4; // So that i can treat it differently -> will be changed to 2 later
         opLevel = 3; // XXX CHECK IF WORKS THAT WAY
       }else {
+        if(debug)
+          System.out.println("invalid input getNode()");
         return null; // invalid input
       }
     }
