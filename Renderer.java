@@ -38,11 +38,11 @@ public class Renderer {
 
         if (equations.size() > 0) {
             ArrayList<ArrayList<TwoDVec<TwoDVec<Double>>>> equationsLines = equationRenderer.calculateEquationsLinePoints(equations);
-            equationsLines.get(0).get(0).x.printDouble();
             for (int i = 0; i < equationsLines.size(); i++) {
                 renderLines(equations.get(i).graphColor, equationsLines.get(i));
             }
         }
+
         ArrayList<ArrayList<TwoDVec<TwoDVec<Double>>>> functionsLines = funcDrawer.calculateFunctionsLines(functions);
         for (int i = 0; i < functionsLines.size(); i++) {
             renderLines(functions.get(i).graphColor, functionsLines.get(i));
