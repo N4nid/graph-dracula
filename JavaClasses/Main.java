@@ -22,7 +22,7 @@ public class Main extends Application {
     String css = this.getClass().getResource("/resources/application.css").toExternalForm();
     scene.getStylesheets().add(css);
 
-    Image logo = new Image("/resources/graph_dracula_logo_v4.png");
+    Image logo = new Image("/resources/graph_dracula_logo_v11.png");
     stage.getIcons().add(logo);
 
     scene.addEventFilter(MouseEvent.MOUSE_PRESSED, new EventHandler<MouseEvent>() {
