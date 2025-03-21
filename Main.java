@@ -124,8 +124,9 @@ public class Main extends Application {
     String test[] = { "3*2^2+1", "1+2*3^2", "2*3^sin(0)+1", "1+sin(0)*2",
         "1+1^3*3+1", "1+2*(3-1)", "(2*2+1)^2", "sin(1-1)+2*(3^(2-1))", "1+2*(1+3*3+1)",
         "3^(sin(2*cos(1/3*3-1)-2)+2)*(1/2)", "cos(sin(1-1)*2)", "sin(2*sin(2-2))", "sin(2*sin(22*0))", "root(2,64)-4",
-        "root(2,root(2,64)/2)*2^1" };
-    double results[] = { 13, 19, 3, 1, 5, 5, 25, 6, 23, 4.5, 1, 0, 0, 4, 4 };
+        "root(2,root(2,64)/2)*2^1", "1+root(2,4)", "sin(2pi)","2sin(pi/2)"
+    };
+    double results[] = { 13, 19, 3, 1, 5, 5, 25, 6, 23, 4.5, 1, 0, 0, 4, 4,3 ,0,2};
     int passed = 0;
     for (int i = 0; i < test.length; i++) {
       System.out.println("-----------------");
