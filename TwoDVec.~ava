@@ -19,6 +19,10 @@ public class TwoDVec<E> {
   }
 
   public void printDouble() {
-    System.out.println("(" + Double.parseDouble(x) + "|" + Double.parseDouble(x) + ")");
+    System.out.println("(" + (Double) x + "|" + (Double) y + ")");
+  }
+  
+  public void printInt() {
+    System.out.println("(" + (Integer) x + "|" + (Integer) y + ")");
   }
 }

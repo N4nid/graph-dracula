@@ -5,7 +5,6 @@ import java.util.ArrayList;
 
 public class FunctionRenderer {
   RenderValues renderValues;
-  
 
   private static final double slopeBreakThreshhold = 400;
 
