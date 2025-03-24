@@ -16,6 +16,10 @@ public class EquationParser {
     // Sanitize and Transform string
     // remove all spaces
     input = input.replaceAll("\\s", "");
+    if(input.equals("")){
+      return "EMPTY INPUT";
+    }
+
     // replace constants
     String uniConstants = "Φ π";
     String constants = "phi pi e"; // must be divided by spaces for split() in getConstant
@@ -316,7 +320,10 @@ public class EquationParser {
   private static boolean checkIfFunction(String input) {
     // only one char functions
     // f(x) and not wow(x)
-    String sub = input.substring(1, 5); // should be (x)=
+    if(input.length() < 4){
+      return false;
+    }
+    String sub = input.substring(1, 5); // should be (x)= 
     if (sub.equals("(x)=")) {
       name = input.charAt(0) + "(x)";
       isFunction = true;
@@ -402,6 +409,9 @@ public class EquationParser {
         next = input.charAt(counter);
         nextState = getState(next);
       }
+      if(value.equals("mod")){//edge case when 2modsin()
+        break;
+      }
     }
     // remove used part
     input = input.delete(0, counter);
@@ -415,7 +425,10 @@ public class EquationParser {
       } else if (operators.contains(value)) {
         state = 4; // So that i can treat it differently -> will be changed to 2 later
         opLevel = 3; // XXX CHECK IF WORKS THAT WAY
-      } else {
+      } else if(value.equals("mod")){ // special case for mod
+        state = 2;
+        opLevel = 1;
+      }else {
         if (debug)
           System.out.println("invalid input getNode()");
         return null; // invalid input
