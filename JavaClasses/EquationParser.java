@@ -17,15 +17,15 @@ public class EquationParser {
     // remove all spaces
     input = input.replaceAll("\\s", "");
     // replace constants
+    String uniConstants = "Φ π";
     String constants = "phi pi e"; // must be divided by spaces for split() in getConstant
                                    // should be sorted by length to avoid replacement with shorter constants
                                    // F.e when there would be a constant like "pie" and "e" is replaced
     Double constValues[] = { 1.6180339887498948, Math.PI, Math.E };
-    String constArr[] = constants.split(" ");
-    for (int i = 0; i < constArr.length; i++) {
-      // System.out.println("Test replace: |"+constArr[i]+"|");
-      input = input.replaceAll(constArr[i], "(" + constValues[i] + ")");
-    }
+    input = replaceConstants(input,constants,constValues);
+    input = replaceConstants(input,uniConstants,constValues);
+    
+
     // replace )( with )*( so something like (2+1)(x-1) works
     input = input.replaceAll("\\)\\(", ")*(");
 
@@ -60,6 +60,16 @@ public class EquationParser {
       System.out.println("input after TRANSFORM: " + input);
     return input;
   }
+
+  private static String replaceConstants(String input, String constants, Double[] constValues){
+    String constArr[] = constants.split(" ");
+    for (int i = 0; i < constArr.length; i++) {
+      // System.out.println("Test replace: |"+constArr[i]+"|");
+      input = input.replaceAll(constArr[i], "(" + constValues[i] + ")");
+    }
+    return input;
+  }
+
 
   public static EquationTree parseString(String input) {
     input = transformString(input);
