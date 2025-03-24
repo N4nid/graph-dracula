@@ -249,8 +249,8 @@ public class EquationParser {
       operators.printStack();
       if (root != null) {
         root.recursivePrint(""); // For debugging
-        // double res = root.calculate(0, 0, new Variable[1]);
-        // System.out.println(res);
+        //double res = root.calculate(new TwoDVec<Double>(0.0,0.0), new Variable[1]);
+        //System.out.println(res);
       }
     }
     // debugging
@@ -270,13 +270,13 @@ public class EquationParser {
       StringBuffer testBuffer = new StringBuffer(input);
       EquationNode nextNode = getNextNode(testBuffer);
       if (nextNode.state == 0) { // is a num
-        System.out.println("-- BUFFERS: ");
-        System.out.println(testBuffer.toString());
-        System.out.println(input.toString());
+//        System.out.println("-- BUFFERS: ");
+//        System.out.println(testBuffer.toString());
+//        System.out.println(input.toString());
 
         input.setLength(0);
         input.append("(0-" + nextNode.value + ")" + testBuffer);
-        System.out.println(input.toString());
+ //       System.out.println(input.toString());
         return true;
       }
     }
@@ -386,12 +386,7 @@ public class EquationParser {
     char next = input.charAt(counter);
     byte nextState = getState(next);
 
-    if (state == -1 || (state == 2 || state == 1 && (nextState != state || first == 'x' || first == 'y'))) {// is a
-                                                                                                            // operator
-                                                                                                            // or
-                                                                                                            // variable
-                                                                                                            // -> no
-                                                                                                            // further
+    if (state == -1 || (state == 2 || state == 1 && (nextState != state || first == 'x' || first == 'y'))) {// is a operator or variable  -> no further
       input = input.delete(0, 1);
       opLevel = getOpLevel(value);
       result = new EquationNode(state, value);
@@ -411,7 +406,7 @@ public class EquationParser {
     // remove used part
     input = input.delete(0, counter);
 
-    String specials = "sin cos tan ln sqrt";
+    String specials = "abs sin cos tan ln sqrt";
     String operators = "root log";
     if (state == 1) {
       if (specials.contains(value)) {
