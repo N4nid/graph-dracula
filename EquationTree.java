@@ -9,6 +9,7 @@ public class EquationTree{
   public EquationNode root;
   public Color graphColor = Color.BLACK;
   public boolean isFunction = false;
+  public boolean isParametric = false;
   public String name;
   
   public EquationTree(byte rootState, String rootValue) {
@@ -33,6 +34,10 @@ public class EquationTree{
   
   public double calculate(TwoDVec<Double> coordinates, Variable[] parameters) {
     return root.calculate(coordinates,parameters);
+  }
+  
+  public TwoDVec<Double> calculateParametrics(double t, Variable[] parameters) {
+    return (new TwoDVec<Double>(root.left.calculateParametric(t,parameters),root.right.calculateParametric(t,parameters)));
   }
   
   

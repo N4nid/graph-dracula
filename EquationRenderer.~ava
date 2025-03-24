@@ -154,6 +154,8 @@ public class EquationRenderer {
   }
 
   public ArrayList<ArrayList<TwoDVec<TwoDVec<Double>>>> calculateEquationsLinePoints(ArrayList<EquationTree> equations) {
+    TwoDVec<Double> test = renderValues.realCoordToScreenCoord(new TwoDVec<Double>(0.0,0.0));
+    System.out.println("("+test.x+", "+test.y+")");
     if (lastZoom.x != renderValues.zoom.x || lastZoom.y != renderValues.zoom.y) {
       this.equations = equations;                                                      //Vergroessern/ Verkleinern
       this.lastZoom = new TwoDVec<Double>(renderValues.zoom.x, renderValues.zoom.y);
@@ -167,14 +169,12 @@ public class EquationRenderer {
         this.lastZoom = new TwoDVec<Double>(renderValues.zoom.x, renderValues.zoom.y);
         this.lastPos = new TwoDVec<Double>(renderValues.midpoint.x, renderValues.midpoint.y);
         moveGraphs(DeltaX,DeltaY);
-        System.out.println("1");
         return equationLineCache;
       } else {
         this.equations = equations;                                                     //Verschieben und neu rendern
         this.lastZoom = new TwoDVec<Double>(renderValues.zoom.x, renderValues.zoom.y);
         this.lastPos = new TwoDVec<Double>(renderValues.midpoint.x, renderValues.midpoint.y);
         this.lastMove = new TwoDVec<Double>(renderValues.midpoint.x, renderValues.midpoint.y);
-        System.out.println("2");
         return calculateNewEquations(getNegPosMaps(equations),true);
       } // end of if-else
     }
