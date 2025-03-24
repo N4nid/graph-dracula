@@ -16,16 +16,20 @@ public class EquationParser {
     // Sanitize and Transform string
     // remove all spaces
     input = input.replaceAll("\\s", "");
+    if(input.equals("")){
+      return "EMPTY INPUT";
+    }
+
     // replace constants
+    String uniConstants = "Φ π";
     String constants = "phi pi e"; // must be divided by spaces for split() in getConstant
                                    // should be sorted by length to avoid replacement with shorter constants
                                    // F.e when there would be a constant like "pie" and "e" is replaced
     Double constValues[] = { 1.6180339887498948, Math.PI, Math.E };
-    String constArr[] = constants.split(" ");
-    for (int i = 0; i < constArr.length; i++) {
-      // System.out.println("Test replace: |"+constArr[i]+"|");
-      input = input.replaceAll(constArr[i], "(" + constValues[i] + ")");
-    }
+    input = replaceConstants(input,constants,constValues);
+    input = replaceConstants(input,uniConstants,constValues);
+    
+
     // replace )( with )*( so something like (2+1)(x-1) works
     input = input.replaceAll("\\)\\(", ")*(");
 
@@ -60,6 +64,16 @@ public class EquationParser {
       System.out.println("input after TRANSFORM: " + input);
     return input;
   }
+
+  private static String replaceConstants(String input, String constants, Double[] constValues){
+    String constArr[] = constants.split(" ");
+    for (int i = 0; i < constArr.length; i++) {
+      // System.out.println("Test replace: |"+constArr[i]+"|");
+      input = input.replaceAll(constArr[i], "(" + constValues[i] + ")");
+    }
+    return input;
+  }
+
 
   public static EquationTree parseString(String input) {
     input = transformString(input);
@@ -239,8 +253,8 @@ public class EquationParser {
       operators.printStack();
       if (root != null) {
         root.recursivePrint(""); // For debugging
-        // double res = root.calculate(0, 0, new Variable[1]);
-        // System.out.println(res);
+        //double res = root.calculate(new TwoDVec<Double>(0.0,0.0), new Variable[1]);
+        //System.out.println(res);
       }
     }
     // debugging
@@ -260,13 +274,13 @@ public class EquationParser {
       StringBuffer testBuffer = new StringBuffer(input);
       EquationNode nextNode = getNextNode(testBuffer);
       if (nextNode.state == 0) { // is a num
-        System.out.println("-- BUFFERS: ");
-        System.out.println(testBuffer.toString());
-        System.out.println(input.toString());
+//        System.out.println("-- BUFFERS: ");
+//        System.out.println(testBuffer.toString());
+//        System.out.println(input.toString());
 
         input.setLength(0);
         input.append("(0-" + nextNode.value + ")" + testBuffer);
-        System.out.println(input.toString());
+ //       System.out.println(input.toString());
         return true;
       }
     }
@@ -306,7 +320,10 @@ public class EquationParser {
   private static boolean checkIfFunction(String input) {
     // only one char functions
     // f(x) and not wow(x)
-    String sub = input.substring(1, 5); // should be (x)=
+    if(input.length() < 4){
+      return false;
+    }
+    String sub = input.substring(1, 5); // should be (x)= 
     if (sub.equals("(x)=")) {
       name = input.charAt(0) + "(x)";
       isFunction = true;
@@ -376,12 +393,7 @@ public class EquationParser {
     char next = input.charAt(counter);
     byte nextState = getState(next);
 
-    if (state == -1 || (state == 2 || state == 1 && (nextState != state || first == 'x' || first == 'y'))) {// is a
-                                                                                                            // operator
-                                                                                                            // or
-                                                                                                            // variable
-                                                                                                            // -> no
-                                                                                                            // further
+    if (state == -1 || (state == 2 || state == 1 && (nextState != state || first == 'x' || first == 'y'))) {// is a operator or variable  -> no further
       input = input.delete(0, 1);
       opLevel = getOpLevel(value);
       result = new EquationNode(state, value);
@@ -397,11 +409,14 @@ public class EquationParser {
         next = input.charAt(counter);
         nextState = getState(next);
       }
+      if(value.equals("mod")){//edge case when 2modsin()
+        break;
+      }
     }
     // remove used part
     input = input.delete(0, counter);
 
-    String specials = "sin cos tan ln sqrt";
+    String specials = "abs sin cos tan ln sqrt";
     String operators = "root log";
     if (state == 1) {
       if (specials.contains(value)) {
@@ -410,7 +425,10 @@ public class EquationParser {
       } else if (operators.contains(value)) {
         state = 4; // So that i can treat it differently -> will be changed to 2 later
         opLevel = 3; // XXX CHECK IF WORKS THAT WAY
-      } else {
+      } else if(value.equals("mod")){ // special case for mod
+        state = 2;
+        opLevel = 1;
+      }else {
         if (debug)
           System.out.println("invalid input getNode()");
         return null; // invalid input
