@@ -1,12 +1,12 @@
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.Pane;
 
-public class ParametrUIList {
+public class CutomVarUIList {
     private Pane backgroundPane;
     private Pane contentPane;
     private ScrollPane scrollPane;
 
-    public ParametrUIList() {
+    public CutomVarUIList() {
         backgroundPane = new Pane();
         contentPane = new Pane();
         scrollPane = new ScrollPane();

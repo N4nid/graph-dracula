@@ -99,6 +99,8 @@ public class ApplicationController implements MenuHaver {
   }
   
   public void setup() {
+
+    CustomVarUIElement test = new CustomVarUIElement("a",root,20);
     
     TwoDVec<Double> colorPickPos = new TwoDVec<Double>(1650.0, 15.0);
     mainColorPicker = new RoundColorPicker(colorPickPos.x, colorPickPos.y, 0, new Random().nextInt(15), true, root, this);

@@ -71,6 +71,22 @@
     -fx-font-family: "source code pro";
 }
 
+.small-text {
+    -fx-font-size: 20px;
+    -fx-text-fill: "white";
+    -fx-font-family: "source code pro";
+}
+
+
+.jfx-slider {
+    -thumb-color: #8faeea ;
+}
+
+.jfx-slider:thumb {
+    -fx-background-color: -thumb-color ;
+}
+
+
 .no-border {
    -fx-border-width: 0px;
    -fx-border: none;
