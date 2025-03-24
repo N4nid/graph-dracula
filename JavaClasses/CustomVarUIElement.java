@@ -2,7 +2,11 @@ import javafx.geometry.Insets;
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
 
 
 public class CustomVarUIElement {
@@ -67,6 +71,8 @@ public class CustomVarUIElement {
         valueSlider.setPrefWidth(defaultWidth - defaultSliderWidthPadding*2);
         valueSlider.setLayoutX(defaultSliderWidthPadding);
         valueSlider.setLayoutY(defaultSliderHeightPadding + defaultHeight/2);
+        //valueSlider.setBackground(new Background(new BackgroundFill(Color.BLACK, CornerRadii.EMPTY,new Insets(0))));
+        valueSlider.getStyleClass().add("default-slider");
         background.getChildren().add(valueSlider);
 
         parent.getChildren().add(background);

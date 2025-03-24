@@ -57,6 +57,10 @@
     -fx-background-color: #242424;
 }
 
+#default-slider .thumb {
+    fx-background-color: #FDBF04;
+}
+
 .overlay-tx {
     -fx-font-size: 20px;
     -fx-text-fill: "#ededed";
@@ -78,13 +82,6 @@
 }
 
 
-.jfx-slider {
-    -thumb-color: #8faeea ;
-}
-
-.jfx-slider:thumb {
-    -fx-background-color: -thumb-color ;
-}
 
 
 .no-border {
