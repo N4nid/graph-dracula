@@ -105,7 +105,7 @@ public class CustomVarUIElement {
         double xPos = (isMax)? (defaultWidth - rangeDisplayWidth - rangeDisplayPadding) : rangeDisplayPadding;
         double displayVal = (isMax)? sliderRange.y : sliderRange.x;
         display.setPrefWidth(rangeDisplayWidth);
-        display.setPrefHeight(defaultHeight/2);
+        display.setPrefHeight(defaultHeight/2-3);
         display.relocate(xPos,defaultHeight/2);
         display.getStyleClass().add("smallest-text");
         display.getStyleClass().add("black");
