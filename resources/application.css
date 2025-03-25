@@ -57,9 +57,15 @@
     -fx-background-color: #242424;
 }
 
-#default-slider .thumb {
-    fx-background-color: #FDBF04;
+.slider .track {
+    -fx-background-color: #3c3c3cff;
+     -fx-background-radius: 0.1em, 0.1em, 0.1em;
 }
+
+.slider .thumb {
+    -fx-background-color: #FDBF04;
+}
+
 
 .overlay-tx {
     -fx-font-size: 20px;
