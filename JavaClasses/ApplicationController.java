@@ -33,8 +33,8 @@ public class ApplicationController implements MenuHaver {
   ArrayList<EquationVisElement> listElements = new ArrayList<EquationVisElement>();
   
   public RoundColorPicker mainColorPicker;
-  public Renderer renderer = new Renderer(this);
-
+  public Renderer renderer;
+  
   public Scene scene;
   
   public double minEquationListHeight = 20f;
@@ -106,24 +106,25 @@ public class ApplicationController implements MenuHaver {
     mainColorPicker = new RoundColorPicker(colorPickPos.x, colorPickPos.y, 0, new Random().nextInt(15), true, root, this);
     equationInputPane.getChildren().add(mainColorPicker.displayButton);
     hideOnClick.add(mainColorPicker);
-
+    
     expandMenu = new ExpandMenu(root,equationInput,extraInputButton,expandMenuLabel);
     hideOnClick.add(expandMenu);
     expandMenu.dissappear();
-
+    
     graphViewLabel.setViewOrder(-1);
     expandMenuLabel.setViewOrder(-2);
-
+    
     Effects.addDefaultHoverEffect(addButton);
     Effects.addDefaultHoverEffect(extraInputButton);
     updateInputBarColor();
     calculateDefaultSizes();
     scene = equationInput.getScene();
 
+    renderer = new Renderer(this);
     renderer.mainCanvas = new Canvas(graphViewPane.getPrefWidth(), graphViewPane.getPrefHeight());
     renderer.mainCanvas.relocate(graphViewPane.getLayoutX(), graphViewPane.getLayoutY());
     GraphicsContext gc = renderer.mainCanvas.getGraphicsContext2D();
-    root.getChildren().add(renderer.mainCanvas);
+    root.getChildren().add(renderer.mainCanvas);    
     mouseMindpointOffset = new TwoDVec<Double>(0.0, 0.0);
     recenterButton = new MenuOption("recenter", new Image("/resources/recenter.png"), 15, 20, this, new TwoDVec<Double>(135.0, 30.0), new TwoDVec<Double>(200.0, 200.0), root);
     recenterButton.optionPane.setVisible(false);
@@ -158,7 +159,7 @@ public class ApplicationController implements MenuHaver {
     anchors.add(new Anchor(expandMenu.contentPane, expandMenu.contenScroll, new TwoDVec<Double>(0.0, 0.0), "scale",false,true));
     anchors.add(new Anchor(expandMenuLabel, expandMenu.background, new TwoDVec<Double>(15.0, -385.0), "pos"));
     resize();
-
+    
     renderer.centerCoordinateSystem();
     updateRenderCanvas();
     scene.widthProperty().addListener((obs, oldVal, newVal) -> {
@@ -194,7 +195,7 @@ public class ApplicationController implements MenuHaver {
     
     scrollPane.setOnScroll(scrollEvent -> updateListElementTransform());
     
-    renderer.mainCanvas.setOnScroll(scrollEvent -> {
+    renderer.mainCanvas.setOnScroll(scrollEvent -> {;
       double avgZoom = (renderer.renderValues.zoom.x + (renderer.renderValues.zoom.y) / 2);
       renderer.renderValues.zoom.setPos(renderer.renderValues.zoom.x - avgZoom * scrollEvent.getDeltaY() * zoomSensitivity,
       renderer.renderValues.zoom.y - avgZoom * scrollEvent.getDeltaY() * zoomSensitivity);
@@ -220,11 +221,11 @@ public class ApplicationController implements MenuHaver {
       renderer.renderValues.midpoint.setPos(newPos.x, newPos.y);
       updateRenderCanvas();
     });
-
+    
     extraInputButton.setOnAction(e->{
       expandMenu.flipVisibility();
     });
-
+    
   }
 
   public EquationVisElement getHoveredEquationVisElement() {
@@ -305,7 +306,7 @@ public class ApplicationController implements MenuHaver {
     TwoDVec<Integer> res = new TwoDVec<Integer>((int) renderer.mainCanvas.getWidth(), (int) renderer.mainCanvas.getHeight());
     GraphicsContext gc = renderer.mainCanvas.getGraphicsContext2D();
     renderer.renderValues.resolution = res;
-
+    
     renderer.renderEquations(listElements,previewEquation);
   }
 
