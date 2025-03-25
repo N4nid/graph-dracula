@@ -170,8 +170,11 @@ public class CustomVarUIElement {
         if (value < valueSlider.getMin()) {
             setSliderRange(new TwoDVec<Double>(value,valueSlider.getMax()));
         }
-        valueInput.setText(""+value);
+        if (countDecimalPlaces(value) > sliderDecimalPlaces) {
+            sliderDecimalPlaces = countDecimalPlaces(value);
+        }
         valueSlider.setValue(value);
+        valueInput.setText("" + value);
     }
 
     private void setSliderRange(TwoDVec<Double> range) {
