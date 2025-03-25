@@ -87,6 +87,12 @@
     -fx-font-family: "source code pro";
 }
 
+.smallest-text {
+    -fx-font-size: 13px;
+    -fx-text-fill: "white";
+    -fx-font-family: "source code pro";
+}
+
 
 
 
