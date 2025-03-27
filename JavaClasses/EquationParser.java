@@ -258,6 +258,7 @@ public class EquationParser {
         double res = root.calculate(coords, new Variable[1]);
         System.out.println(res);
         if((double)coords.x == -1.0){
+          System.out.println("Return null");
           return null;
         }
       }

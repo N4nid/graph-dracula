@@ -60,7 +60,7 @@ public class ApplicationController implements MenuHaver {
   protected void onAddButtonClick() {
     previewEquation = null;
     EquationTree inputEquation = EquationParser.parseString(equationInput.getText());
-    if (inputEquation.root == null) {
+    if (inputEquation == null || inputEquation.root == null) {
       System.out.println("Invalid equation! Please try again.");
       return;
     }
