@@ -12,6 +12,7 @@ public class CustomVarUIElement {
     public double value;
     private int sliderDecimalPlaces = 1;
     private TwoDVec<Double> sliderRange = new TwoDVec<>(-5.0,5.0);
+    public double currentWidth = 268;
 
     private Pane background;
     private Pane labelBox;
@@ -21,8 +22,7 @@ public class CustomVarUIElement {
     private TextField minValDisplay;
     private TextField maxValDisplay;
 
-    private static final int defaultWidth = 268;
-    private static final int defaultHeight = 73;
+    public static final int defaultHeight = 73;
     private static final int labelWidth = 40;
     private static final int labelBoxPadding = 30;
     private static final double defaultSliderHeightPadding = 10;
@@ -42,19 +42,14 @@ public class CustomVarUIElement {
         background.setViewOrder(-10);
         background.getStyleClass().add("black");
         background.getStyleClass().add("border");
-        background.setPrefHeight(defaultHeight);
-        background.setPrefWidth(defaultWidth);
 
         labelBox = new Pane();
-        labelBox.setPrefHeight(defaultHeight/2);
-        labelBox.setPrefWidth(labelWidth + labelBoxPadding);
         labelBox.getStyleClass().add("black");
         labelBox.getStyleClass().add("border");
         background.getChildren().add(labelBox);
 
         nameDisplay.getStyleClass().add("normal-text");
         nameDisplay.relocate(labelPos.x,labelPos.y);
-        nameDisplay.setPrefWidth(labelWidth);
         nameDisplay.setText(name);
         labelBox.getChildren().add(nameDisplay);
 
@@ -62,14 +57,12 @@ public class CustomVarUIElement {
         valueInput.getStyleClass().add("black");
         valueInput.getStyleClass().add("border");
         valueInput.getStyleClass().add("small-text");
-        valueInput.setPrefHeight(defaultHeight/2);
-        valueInput.setPrefWidth(defaultWidth-labelWidth-labelBoxPadding+3);
         valueInput.setLayoutX(labelWidth+labelBoxPadding-3);
         valueInput.setPadding(new Insets(0,8,0,8));
         background.getChildren().add(valueInput);
 
         valueSlider = new Slider(sliderRange.x,sliderRange.y,0);
-        valueSlider.setPrefWidth(defaultWidth - (rangeDisplayPadding + rangeDisplayWidth) * 2);
+        valueSlider.setPrefWidth(currentWidth - (rangeDisplayPadding + rangeDisplayWidth) * 2);
         valueSlider.setLayoutX( +rangeDisplayWidth + rangeDisplayPadding*2);
         valueSlider.setLayoutY(defaultSliderHeightPadding + defaultHeight/2);
         background.getChildren().add(valueSlider);
@@ -80,6 +73,7 @@ public class CustomVarUIElement {
         maxValDisplay = new TextField();
         setupRangeDisplay(maxValDisplay,true);
 
+        resizeUI();
         parent.getChildren().add(background);
 
         valueSlider.valueProperty().addListener((obs, oldVal, newVal) -> {
@@ -102,7 +96,7 @@ public class CustomVarUIElement {
     }
 
     private void setupRangeDisplay(TextField display, boolean isMax) {
-        double xPos = (isMax)? (defaultWidth - rangeDisplayWidth - rangeDisplayPadding) : rangeDisplayPadding;
+        double xPos = (isMax)? (currentWidth - rangeDisplayWidth - rangeDisplayPadding) : rangeDisplayPadding;
         double displayVal = (isMax)? sliderRange.y : sliderRange.x;
         display.setPrefWidth(rangeDisplayWidth);
         display.setPrefHeight(defaultHeight/2-3);
@@ -186,6 +180,16 @@ public class CustomVarUIElement {
         sliderDecimalPlaces = Math.max(countDecimalPlaces(sliderRange.x),countDecimalPlaces(sliderRange.y)) + 1;
     }
 
+    public void resizeUI() {
+        background.setPrefHeight(defaultHeight);
+        background.setPrefWidth(currentWidth);
+        labelBox.setPrefHeight(defaultHeight/2);
+        labelBox.setPrefWidth(labelWidth + labelBoxPadding);
+        nameDisplay.setPrefWidth(labelWidth);
+        valueInput.setPrefHeight(defaultHeight/2);
+        valueInput.setPrefWidth(currentWidth-labelWidth-labelBoxPadding+3);
+    }
+
     private static double round(double value, int places) {
         if (places < 0) throw new IllegalArgumentException();
 
@@ -194,4 +198,5 @@ public class CustomVarUIElement {
         long tmp = Math.round(value);
         return (double) tmp / factor;
     }
+
 }
