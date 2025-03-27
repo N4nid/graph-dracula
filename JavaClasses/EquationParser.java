@@ -17,6 +17,7 @@ public class EquationParser {
     // Sanitize and Transform string
     // remove all spaces
     input = input.replaceAll("\\s", "");
+    input = input.toLowerCase();
     if(input.equals("")){
       return "EMPTY INPUT";
     }
