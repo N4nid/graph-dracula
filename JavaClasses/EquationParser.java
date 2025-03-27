@@ -3,6 +3,7 @@ public class EquationParser {
   static String name = "";
   static boolean isFunction = false;
   private static boolean parseBetweenBrackets = false;
+  private static byte specialOpMagicNum = 6;
 
   // this code could also be in Main.java
   // TODO
@@ -116,7 +117,7 @@ public class EquationParser {
             System.out.println("setin rooot");
           root = currentNode;
         }
-      } else if (state == 3) { // is speacialFunction
+      } else if (state == 3 || state == 4) { // is specialFunction or function
         if (debug)
           System.out.println("current: " + val + " | " + bracketDepth);
         OperatorStackElement stackTop = operators.getLast(bracketDepth, opLevel);
@@ -140,7 +141,7 @@ public class EquationParser {
         } else {
           bracketDepth--;
         }
-      } else if (state == 4) { // is "speacial" operator (root log)
+      } else if (state == specialOpMagicNum) { // is "special" operator (root log)
         currentNode.state = 2; // change state because it will be treated like a operator in calculate()
         OperatorStackElement stackTop = operators.getLast(bracketDepth, opLevel);
         String[] betweenBrackts = getBetweenBrackets(in);
@@ -253,8 +254,12 @@ public class EquationParser {
       operators.printStack();
       if (root != null) {
         root.recursivePrint(""); // For debugging
-        //double res = root.calculate(new TwoDVec<Double>(0.0,0.0), new Variable[1]);
-        //System.out.println(res);
+        TwoDVec coords = new TwoDVec<Double>(0.0,0.0);
+        double res = root.calculate(coords, new Variable[1]);
+        System.out.println(res);
+        if((double)coords.x == -1.0){
+          return null;
+        }
       }
     }
     // debugging
@@ -393,6 +398,13 @@ public class EquationParser {
     char next = input.charAt(counter);
     byte nextState = getState(next);
 
+    if(state == 1 && next == '('){ // edgecase for parsing functions f(
+      input = input.delete(0, 1);
+      result = new EquationNode((byte)4, value);
+      result.opLevel = 3;
+      return result;
+    }
+
     if (state == -1 || (state == 2 || state == 1 && (nextState != state || first == 'x' || first == 'y'))) {// is a operator or variable  -> no further
       input = input.delete(0, 1);
       opLevel = getOpLevel(value);
@@ -423,7 +435,7 @@ public class EquationParser {
         state = 3;
         opLevel = 3;
       } else if (operators.contains(value)) {
-        state = 4; // So that i can treat it differently -> will be changed to 2 later
+        state = specialOpMagicNum; // So that i can treat it differently -> will be changed to 2 later
         opLevel = 3; // XXX CHECK IF WORKS THAT WAY
       } else if(value.equals("mod")){ // special case for mod
         state = 2;
