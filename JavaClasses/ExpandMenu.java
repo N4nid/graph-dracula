@@ -112,6 +112,10 @@ public class ExpandMenu implements Hideble{
     }
 
     private void positionButtons() {
+        buttonColloms = calculateColloms();
+        if (buttonColloms == 0 ) {
+            buttonColloms = 1;
+        }
         int buttonRows = (int) ((mathButtons.size()-1) / buttonColloms) + 1;
         contentPane.setPrefHeight(buttonRows*(standardButtonSize.y+buttonDistXY)+buttonDistXY);
         for (int i = 0; i < mathButtons.size(); i++) {

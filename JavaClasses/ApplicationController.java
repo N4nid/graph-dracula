@@ -1,4 +1,5 @@
 import javafx.fxml.FXML;
+import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
@@ -15,7 +16,6 @@ import java.util.Random;
 
 public class ApplicationController implements MenuHaver {
   public ArrayList<Hideble> hideOnClick = new ArrayList<Hideble>();
-  public Label welcomeText;
   public Pane graphViewPane;
   public TextField equationInput;
   public Pane equationList;
@@ -27,10 +27,13 @@ public class ApplicationController implements MenuHaver {
   public Button addButton;
   public ScrollPane scrollPane;
   public Label expandMenuLabel;
+  public Pane equationListBackground;
   private Button previewButton = new Button();
   private MenuOption recenterButton;
   private ExpandMenu expandMenu;
+
   ArrayList<EquationVisElement> listElements = new ArrayList<EquationVisElement>();
+  public CustomVarUIList customVarList;
   
   public RoundColorPicker mainColorPicker;
   public Renderer renderer;
@@ -43,7 +46,7 @@ public class ApplicationController implements MenuHaver {
   
   private static TwoDVec<Double> defaultGraphViewPanePos;
   private static TwoDVec<Double> defaultGraphViewPaneSize;
-  private static TwoDVec<Double> defaultScrollPaneSize;
+  private static TwoDVec<Double> defaultScrollPaneBackgroundSize;
   private static double viewListHorizontalRatio;
   private static double viewListHorizontalDist;
   
@@ -100,12 +103,11 @@ public class ApplicationController implements MenuHaver {
     anchors.get(anchors.size() - 1).applyAnchor();
     anchors.add(new Anchor(newElement.funcDisplay, newElement.pane, new TwoDVec<Double>(-76.0, 0.0), "scale", false, true));
     anchors.get(anchors.size() - 1).applyAnchor();
-    
+    resize();
   }
   
   public void setup() {
 
-    CustomVarUIElement test = new CustomVarUIElement("a",root,20);
     
     TwoDVec<Double> colorPickPos = new TwoDVec<Double>(1650.0, 15.0);
     mainColorPicker = new RoundColorPicker(colorPickPos.x, colorPickPos.y, 0, new Random().nextInt(15), true, root, this);
@@ -118,6 +120,7 @@ public class ApplicationController implements MenuHaver {
     
     graphViewLabel.setViewOrder(-1);
     expandMenuLabel.setViewOrder(-2);
+    equationListLabel.setViewOrder(-1);
     
     Effects.addDefaultHoverEffect(addButton);
     Effects.addDefaultHoverEffect(extraInputButton);
@@ -143,16 +146,18 @@ public class ApplicationController implements MenuHaver {
     Effects.addDefaultHoverEffect(previewButton);
     root.getChildren().add(previewButton);
     previewButton.setOnAction(e -> addPreviewEquation());
-    
+
+
     anchors.add(new Anchor(extraInputButton, root, new TwoDVec<Double>(0.0, -138.0), "scale->pos", true, false));
     anchors.add(new Anchor(addButton, root, new TwoDVec<Double>(-98.0, -138.0), "scale->pos"));
+    anchors.add(new Anchor(scrollPane, equationListBackground, new TwoDVec<Double>(-6.0, -6.0), "scale"));
     anchors.add(new Anchor(equationInputPane, root, new TwoDVec<Double>(-226.0, 0.0), "scale", false, true));
     anchors.add(new Anchor(equationInputPane, extraInputButton, new TwoDVec<Double>(defaultButtonSize, 0.0), "pos"));
     anchors.add(new Anchor(equationInput, equationInputPane, new TwoDVec<Double>(-50.0, 0.0), "scale", false, true));
     anchors.add(new Anchor(mainColorPicker.displayButton, equationInput, new TwoDVec<Double>(0.0, 0.0), "scale->pos", false, true));
     anchors.add(new Anchor(equationList, scrollPane, new TwoDVec<Double>(0.0, 0.0), "scale"));
     anchors.add(new Anchor(graphViewLabel, graphViewPane, new TwoDVec<Double>(15.0, -13.0), "pos"));
-    anchors.add(new Anchor(equationListLabel, scrollPane, new TwoDVec<Double>(15.0, -13.0), "pos"));
+    anchors.add(new Anchor(equationListLabel, equationListBackground, new TwoDVec<Double>(15.0, -13.0), "pos"));
     anchors.add(new Anchor(recenterButton.optionPane, graphViewPane, new TwoDVec<Double>(0.0, 0.0), "pos"));
     anchors.add(new Anchor(recenterButton.optionPane, graphViewPane, new TwoDVec<Double>(-90.0, 0.0), "scale->pos"));
     anchors.add(new Anchor(previewButton, equationInputPane, new TwoDVec<Double>(0.0, 0.0), "pos"));
@@ -243,6 +248,9 @@ public class ApplicationController implements MenuHaver {
     extraInputButton.setOnAction(e->{
       expandMenu.flipVisibility();
     });
+
+    customVarList = new CustomVarUIList(equationListBackground);
+    resize();
     
   }
 
@@ -282,9 +290,9 @@ public class ApplicationController implements MenuHaver {
   public void calculateDefaultSizes() {
     defaultGraphViewPaneSize = new TwoDVec<Double>(graphViewPane.getWidth(), graphViewPane.getHeight());
     defaultGraphViewPanePos = new TwoDVec<Double>(graphViewPane.getLayoutX(), graphViewPane.getLayoutY());
-    defaultScrollPaneSize = new TwoDVec<Double>(scrollPane.getWidth(), scrollPane.getHeight());
-    viewListHorizontalRatio = graphViewPane.getWidth() / (scrollPane.getWidth() + graphViewPane.getWidth());
-    viewListHorizontalDist = scrollPane.getLayoutX() - graphViewPane.getLayoutX() - graphViewPane.getWidth();
+    defaultScrollPaneBackgroundSize = new TwoDVec<Double>(equationListBackground.getWidth(), equationListBackground.getHeight());
+    viewListHorizontalRatio = graphViewPane.getWidth() / (equationListBackground.getWidth() + graphViewPane.getWidth());
+    viewListHorizontalDist = equationListBackground.getLayoutX() - graphViewPane.getLayoutX() - graphViewPane.getWidth();
   }
 
   public void resize() {
@@ -298,23 +306,30 @@ public class ApplicationController implements MenuHaver {
     
     TwoDVec<Double> graphViewPaneSize = new TwoDVec<Double>(
     defaultGraphViewPaneSize.x - viewListHorizontalRatio * horzDiff, defaultGraphViewPaneSize.y - vertDiff);
-    TwoDVec<Double> scrollPanePos = new TwoDVec<Double>(
+    TwoDVec<Double> scrollPaneBackgroundPos = new TwoDVec<Double>(
     graphViewPane.getLayoutX() + graphViewPaneSize.x + viewListHorizontalDist, defaultGraphViewPanePos.y);
-    TwoDVec<Double> scrollPaneSize = new TwoDVec<Double>(
-    defaultScrollPaneSize.x - (1 - viewListHorizontalRatio) * horzDiff, defaultScrollPaneSize.y - vertDiff);
+    TwoDVec<Double> scrollPaneBackgroundSize = new TwoDVec<Double>(
+    defaultScrollPaneBackgroundSize.x - (1 - viewListHorizontalRatio) * horzDiff, defaultScrollPaneBackgroundSize.y - vertDiff);
     
-    moveTo(scrollPanePos, scrollPane);
+    moveTo(scrollPaneBackgroundPos, equationListBackground);
     graphViewPane.setPrefWidth(graphViewPaneSize.x);
     graphViewPane.setPrefHeight(graphViewPaneSize.y);
-    scrollPane.setPrefWidth(scrollPaneSize.x);
-    scrollPane.setPrefHeight(scrollPaneSize.y);
+    equationListBackground.setPrefWidth(scrollPaneBackgroundSize.x);
+    equationListBackground.setPrefHeight(scrollPaneBackgroundSize.y);
     updateRenderCanvas();
     Anchor.applyAnchors(anchors);
     if (equationList.getPrefHeight() < minEquationListHeight) {
       equationList.setPrefHeight(minEquationListHeight);
     }
-    
+
     updateListElementTransform();
+    if (customVarList != null) {
+      customVarList.updateListTransform();
+      System.out.println("ScrollPane before height: " + scrollPane.getPrefHeight());
+      scrollPane.setPrefHeight(scrollPane.getPrefHeight()-customVarList.backgroundPane.getPrefHeight());
+    }
+    System.out.println("ScrollPane height: " + scrollPane.getPrefHeight());
+    System.out.println("content height: " + equationList.getPrefHeight());
   }
 
   public void updateRenderCanvas() {
@@ -348,6 +363,7 @@ public class ApplicationController implements MenuHaver {
     equationInput.setText(equation.equationText);
     editIndex = listElements.indexOf(equation);
     setEditModeUI(true);
+    resize();
   }
 
   public void addPreviewEquation() {
@@ -365,14 +381,12 @@ public class ApplicationController implements MenuHaver {
       addButton.setStyle("-fx-background-image: url('/resources/checkmark.png');");
       Anchor equationInputPaneAnchor = Anchor.findAnchorOfObject(equationInputPane, "scale", anchors);
       equationInputPaneAnchor.offsetVec.setPos(-293.0, equationInputPaneAnchor.offsetVec.y);
-      Anchor.applyAnchors(anchors);
       updateInputBarColor();
       previewButton.setVisible(true);
     } else {
       addButton.setStyle("-fx-background-image: url('/resources/addButton.png');");
       Anchor equationInputPaneAnchor = Anchor.findAnchorOfObject(equationInputPane, "scale", anchors);
       equationInputPaneAnchor.offsetVec.setPos(-226.0, equationInputPaneAnchor.offsetVec.y);
-      Anchor.applyAnchors(anchors);
       updateInputBarColor();
       previewButton.setVisible(false);
     }

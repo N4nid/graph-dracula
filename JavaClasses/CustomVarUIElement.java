@@ -14,7 +14,7 @@ public class CustomVarUIElement {
     private TwoDVec<Double> sliderRange = new TwoDVec<>(-5.0,5.0);
     public double currentWidth = 268;
 
-    private Pane background;
+    public Pane background;
     private Pane labelBox;
     private Label nameDisplay;
     private Slider valueSlider;
@@ -30,7 +30,7 @@ public class CustomVarUIElement {
     private static final double rangeDisplayWidth = 50;
     private static final TwoDVec<Double> labelPos = new TwoDVec<Double>(25.0,0.0);
 
-    public CustomVarUIElement(String name, Pane parent, double yPos) {
+    public CustomVarUIElement(String name) {
         this.name = name;
         value = 0;
 
@@ -39,7 +39,6 @@ public class CustomVarUIElement {
         valueSlider = new Slider();
         valueInput = new TextField();
 
-        background.setViewOrder(-10);
         background.getStyleClass().add("black");
         background.getStyleClass().add("border");
 
@@ -49,7 +48,6 @@ public class CustomVarUIElement {
         background.getChildren().add(labelBox);
 
         nameDisplay.getStyleClass().add("normal-text");
-        nameDisplay.relocate(labelPos.x,labelPos.y);
         nameDisplay.setText(name);
         labelBox.getChildren().add(nameDisplay);
 
@@ -57,24 +55,21 @@ public class CustomVarUIElement {
         valueInput.getStyleClass().add("black");
         valueInput.getStyleClass().add("border");
         valueInput.getStyleClass().add("small-text");
-        valueInput.setLayoutX(labelWidth+labelBoxPadding-3);
         valueInput.setPadding(new Insets(0,8,0,8));
         background.getChildren().add(valueInput);
 
         valueSlider = new Slider(sliderRange.x,sliderRange.y,0);
-        valueSlider.setPrefWidth(currentWidth - (rangeDisplayPadding + rangeDisplayWidth) * 2);
-        valueSlider.setLayoutX( +rangeDisplayWidth + rangeDisplayPadding*2);
-        valueSlider.setLayoutY(defaultSliderHeightPadding + defaultHeight/2);
         background.getChildren().add(valueSlider);
         valueInput.setText("" + value);
 
         minValDisplay = new TextField();
         setupRangeDisplay(minValDisplay,false);
+        background.getChildren().add(minValDisplay);
         maxValDisplay = new TextField();
         setupRangeDisplay(maxValDisplay,true);
+        background.getChildren().add(maxValDisplay);
 
-        resizeUI();
-        parent.getChildren().add(background);
+        refresheUI();
 
         valueSlider.valueProperty().addListener((obs, oldVal, newVal) -> {
             value = round(valueSlider.getValue(),sliderDecimalPlaces);
@@ -106,7 +101,6 @@ public class CustomVarUIElement {
         display.setPadding(new Insets(0,5,0,5));
         display.setAlignment(Pos.CENTER);
         display.setText("" + displayVal);
-        background.getChildren().add(display);
 
         display.focusedProperty().addListener((obs, oldVal, newVal) -> {
             double newRangeValue = (isMax)? sliderRange.y : sliderRange.x;
@@ -180,14 +174,21 @@ public class CustomVarUIElement {
         sliderDecimalPlaces = Math.max(countDecimalPlaces(sliderRange.x),countDecimalPlaces(sliderRange.y)) + 1;
     }
 
-    public void resizeUI() {
+    public void refresheUI() {
         background.setPrefHeight(defaultHeight);
         background.setPrefWidth(currentWidth);
+        nameDisplay.relocate(labelPos.x,labelPos.y);
+        valueSlider.setLayoutX(rangeDisplayWidth + rangeDisplayPadding);
+        valueSlider.setLayoutY(defaultSliderHeightPadding + defaultHeight/2);
+        valueSlider.setPrefWidth(currentWidth - (rangeDisplayPadding + rangeDisplayWidth) * 2);
+        valueInput.setLayoutX(labelWidth+labelBoxPadding-3);
         labelBox.setPrefHeight(defaultHeight/2);
         labelBox.setPrefWidth(labelWidth + labelBoxPadding);
         nameDisplay.setPrefWidth(labelWidth);
         valueInput.setPrefHeight(defaultHeight/2);
         valueInput.setPrefWidth(currentWidth-labelWidth-labelBoxPadding+3);
+        setupRangeDisplay(minValDisplay,false);
+        setupRangeDisplay(maxValDisplay,true);
     }
 
     private static double round(double value, int places) {
