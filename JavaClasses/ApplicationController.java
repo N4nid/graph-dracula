@@ -5,10 +5,10 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.MouseButton;
+import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.stage.Stage;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -51,6 +51,11 @@ public class ApplicationController implements MenuHaver {
   private static final double defaultSceneWidth = 1920;
   private static final double defaultButtonSize = 70;
   public static double zoomSensitivity = 0.0015;
+
+  private static final KeyCharacterCombination insertFunctionShortcut = new KeyCharacterCombination("f",KeyCharacterCombination.CONTROL_DOWN);
+  private static final KeyCodeCombination goToLineEndShortcut = new KeyCodeCombination(KeyCode.L, KeyCombination.CONTROL_DOWN);
+  private static final KeyCharacterCombination expandMenuShortcut = new KeyCharacterCombination("e",KeyCharacterCombination.CONTROL_DOWN);
+  private static final KeyCodeCombination closeWindowShortcut = new KeyCodeCombination(KeyCode.W, KeyCombination.CONTROL_DOWN);
   
   private ArrayList<Anchor> anchors = new ArrayList<Anchor>();
   private static TwoDVec<Double> mouseMindpointOffset;
@@ -173,6 +178,19 @@ public class ApplicationController implements MenuHaver {
     scene.setOnKeyPressed(e -> {
       if (e.getCode() == KeyCode.ENTER && equationInput.isFocused()) {
         onAddButtonClick();
+      }
+      if (insertFunctionShortcut.match(e)) {
+        expandMenu.triggerButton("f(x)=");
+      }
+      if (goToLineEndShortcut.match(e)) {
+        equationInput.positionCaret(equationInput.getText().length());
+      }
+      if (expandMenuShortcut.match(e)) {
+        expandMenu.flipVisibility();
+      }
+      if (closeWindowShortcut.match(e)) {
+        Stage window = (Stage) equationInput.getScene().getWindow();
+        window.close();
       }
     });
     

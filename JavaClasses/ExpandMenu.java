@@ -74,6 +74,14 @@ public class ExpandMenu implements Hideble{
         });
     }
 
+    public void triggerButton(String inputString) {
+        for (int i = 0; i < mathButtons.size(); i++) {
+            if (mathButtons.get(i).inputString.equals(inputString)) {
+                mathButtons.get(i).actionProcessor();
+            }
+        }
+    }
+
     private int calculateColloms(){
         return  (int) ((background.getPrefWidth() + 10)/(standardButtonSize.x+buttonDistXY));
     }
@@ -169,7 +177,7 @@ public class ExpandMenu implements Hideble{
 class MathButton {
     private ExpandMenu parentMenu;
 
-    private String inputString;
+    public String inputString;
     private int cursorPosOffset;
 
     private Button baseButton;
@@ -193,7 +201,7 @@ class MathButton {
         parentMenu.contentPane.getChildren().add(baseButton);
     }
 
-    private void actionProcessor() {
+    public void actionProcessor() {
         TextField inputField =  parentMenu.mainInputField;
         inputField.requestFocus();
         inputField.positionCaret(parentMenu.lastCaretPos);
