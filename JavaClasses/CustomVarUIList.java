@@ -1,3 +1,4 @@
+import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.Pane;
 
@@ -7,6 +8,7 @@ public class CustomVarUIList {
     public Pane backgroundPane;
     private Pane contentPane;
     private ScrollPane scrollPane;
+    private Label listLabel;
     public Pane parentPane;
 
     private int lastCustomVarsSize = -1;
@@ -15,8 +17,11 @@ public class CustomVarUIList {
     private ArrayList<Anchor> UIAnchors = new ArrayList<>();
 
     private static final double customVarElementHeightPadding = 20;
-    private static final double customVarElementTopPadding = 10;
+    private static final double customVarElementTopPadding = 20;
     private static final double customVarElementWidthPadding = 10;
+    private static final int maxCustomVarVisibleElements = 2;
+    private static final double maxVisibleListHeight = customVarElementTopPadding +(customVarElementHeightPadding + CustomVarUIElement.defaultHeight) * maxCustomVarVisibleElements;
+    private static final TwoDVec<Double> labelPos = new TwoDVec<Double>(20.0,-13.0);
 
     public CustomVarUIList(Pane parentPane) {
         this.parentPane = parentPane;
@@ -38,9 +43,17 @@ public class CustomVarUIList {
         scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
 
+        listLabel = new Label();
+        listLabel.getStyleClass().add("small-text");
+        listLabel.getStyleClass().add("black");
+        listLabel.setText("//custom-variables");
+        listLabel.setViewOrder(-2);
+        listLabel.relocate(labelPos.x,labelPos.y);
+        backgroundPane.getChildren().add(listLabel);
+
         UIAnchors.add(new Anchor(backgroundPane, parentPane, new TwoDVec<Double>(0.0, 0.0), "scale", false, true));
         UIAnchors.add(new Anchor(scrollPane, backgroundPane, new TwoDVec<Double>(-6.0, -6.0), "scale"));
-        UIAnchors.add(new Anchor(contentPane, scrollPane, new TwoDVec<Double>(0.0, 0.0), "scale"));
+        UIAnchors.add(new Anchor(contentPane, scrollPane, new TwoDVec<Double>(0.0, 0.0), "scale",false,true));
 
         updateListTransform();
 
@@ -51,6 +64,24 @@ public class CustomVarUIList {
             customVars.add(new CustomVarUIElement(name));
             updateListTransform();
         }
+    }
+
+    public void removeCustomVar(String name) {
+        for (int i = 0; i < customVars.size(); i++) {
+            if (customVars.get(i).name.equals(name)) {
+                customVars.remove(i);
+                updateListTransform();
+                return;
+            }
+        }
+    }
+
+    public ArrayList<Variable> getAllCustomVars() {
+        ArrayList<Variable> customVariableObjects = new ArrayList<>();
+        for (int i = 0; i < customVars.size(); i++) {
+            customVariableObjects.add(new Variable(customVars.get(i).name,customVars.get(i).value));
+        }
+        return customVariableObjects;
     }
 
     public boolean customVarExists(String name) {
@@ -77,6 +108,7 @@ public class CustomVarUIList {
                 backgroundPane.setVisible(false);
             }
             contentPane.getChildren().clear();
+            contentPane.setPrefHeight(customVarElementTopPadding +(customVarElementHeightPadding + CustomVarUIElement.defaultHeight) * customVars.size());
 
             for (int i = 0; i < customVars.size(); i++) {
                 Pane currentCustomVarElement = customVars.get(i).background;
@@ -86,5 +118,8 @@ public class CustomVarUIList {
             lastCustomVarsSize = customVars.size();
         }
         Anchor.applyAnchors(UIAnchors);
+        if (backgroundPane.getPrefHeight() > maxVisibleListHeight) {
+            backgroundPane.setPrefHeight(maxVisibleListHeight);
+        }
     }
 }

@@ -66,6 +66,7 @@ public class ApplicationController implements MenuHaver {
   
   @FXML
   protected void onAddButtonClick() {
+    resize();
     previewEquation = null;
     EquationTree inputEquation = EquationParser.parseString(equationInput.getText());
     if (inputEquation.root == null) {
@@ -104,6 +105,7 @@ public class ApplicationController implements MenuHaver {
     anchors.add(new Anchor(newElement.funcDisplay, newElement.pane, new TwoDVec<Double>(-76.0, 0.0), "scale", false, true));
     anchors.get(anchors.size() - 1).applyAnchor();
     resize();
+
   }
   
   public void setup() {
@@ -150,7 +152,7 @@ public class ApplicationController implements MenuHaver {
 
     anchors.add(new Anchor(extraInputButton, root, new TwoDVec<Double>(0.0, -138.0), "scale->pos", true, false));
     anchors.add(new Anchor(addButton, root, new TwoDVec<Double>(-98.0, -138.0), "scale->pos"));
-    anchors.add(new Anchor(scrollPane, equationListBackground, new TwoDVec<Double>(-6.0, -6.0), "scale"));
+    anchors.add(new Anchor(scrollPane, equationListBackground, new TwoDVec<Double>(-6.0, 0.0), "scale",false,true));
     anchors.add(new Anchor(equationInputPane, root, new TwoDVec<Double>(-226.0, 0.0), "scale", false, true));
     anchors.add(new Anchor(equationInputPane, extraInputButton, new TwoDVec<Double>(defaultButtonSize, 0.0), "pos"));
     anchors.add(new Anchor(equationInput, equationInputPane, new TwoDVec<Double>(-50.0, 0.0), "scale", false, true));
@@ -318,18 +320,22 @@ public class ApplicationController implements MenuHaver {
     equationListBackground.setPrefHeight(scrollPaneBackgroundSize.y);
     updateRenderCanvas();
     Anchor.applyAnchors(anchors);
-    if (equationList.getPrefHeight() < minEquationListHeight) {
-      equationList.setPrefHeight(minEquationListHeight);
-    }
 
     updateListElementTransform();
     if (customVarList != null) {
       customVarList.updateListTransform();
-      System.out.println("ScrollPane before height: " + scrollPane.getPrefHeight());
-      scrollPane.setPrefHeight(scrollPane.getPrefHeight()-customVarList.backgroundPane.getPrefHeight());
+      scrollPane.setPrefHeight(equationListBackground.getPrefHeight() - 6 -customVarList.backgroundPane.getPrefHeight());
     }
-    System.out.println("ScrollPane height: " + scrollPane.getPrefHeight());
-    System.out.println("content height: " + equationList.getPrefHeight());
+    if (equationList.getPrefHeight() < minEquationListHeight) {
+      equationList.setPrefHeight(minEquationListHeight);
+    }
+
+    if (equationList.getPrefHeight() > minEquationListHeight && equationList.getPrefHeight() > scrollPane.getPrefHeight()) {
+      equationList.setPrefHeight(minEquationListHeight);
+      if (equationList.getPrefHeight() +1 < scrollPane.getPrefHeight()) {
+        equationList.setPrefHeight(scrollPane.getPrefHeight());
+      }
+    }
   }
 
   public void updateRenderCanvas() {
