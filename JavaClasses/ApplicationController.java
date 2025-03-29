@@ -66,10 +66,9 @@ public class ApplicationController implements MenuHaver {
   
   @FXML
   protected void onAddButtonClick() {
-    resize();
     previewEquation = null;
     EquationTree inputEquation = EquationParser.parseString(equationInput.getText());
-    if (inputEquation.root == null) {
+    if (inputEquation == null || inputEquation.root == null) {
       System.out.println("Invalid equation! Please try again.");
       return;
     }
@@ -93,6 +92,7 @@ public class ApplicationController implements MenuHaver {
     setEditModeUI(false);
     updateInputBarColor();
     updateRenderCanvas();
+    resize();
   }
   
   public void addEquation(EquationTree equation, String equationText, int colorIndex) {
@@ -109,7 +109,6 @@ public class ApplicationController implements MenuHaver {
     anchors.add(new Anchor(newElement.funcDisplay, newElement.pane, new TwoDVec<Double>(-76.0, 0.0), "scale", false, true));
     anchors.get(anchors.size() - 1).applyAnchor();
     resize();
-
   }
 
   public boolean equationExists(String name) {
