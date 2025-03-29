@@ -390,6 +390,9 @@ public class ApplicationController implements MenuHaver {
 
   public void deleteEquation(EquationVisElement equation) {
     equationList.getChildren().remove(equation.pane);
+    if (listElements.indexOf(equation) == editIndex) {
+      editIndex = -1;
+    }
     listElements.remove(equation);
     minEquationListHeight -= 100;
     resize();
