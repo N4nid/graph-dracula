@@ -73,6 +73,10 @@ public class ApplicationController implements MenuHaver {
       System.out.println("Invalid equation! Please try again.");
       return;
     }
+    if (identifierExists(inputEquation.name) && editIndex == -1) {
+      System.out.println("The name for this function is already in use. Please choose another one!");
+      return;
+    }
     if (!inputEquation.isFunction) {
       renderer.refreshEquationRenderer();
     }
@@ -107,10 +111,32 @@ public class ApplicationController implements MenuHaver {
     resize();
 
   }
-  
-  public void setup() {
 
-    
+  public boolean equationExists(String name) {
+    for (int i = 0; i < listElements.size(); i++) {
+      if (listElements.get(i).equation.name.equals(name)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  public ArrayList<EquationTree> getAllEquations() {
+    ArrayList<EquationTree> allEquations = new ArrayList<>();
+    for (int i = 0; i < listElements.size(); i++) {
+      allEquations.add(listElements.get(i).equation);
+    }
+    return allEquations;
+  }
+
+  public boolean identifierExists(String name) {
+    if (equationExists(name)) {
+      return true;
+    }
+    return customVarList.customVarExists(name);
+  }
+
+  public void setup() {
     TwoDVec<Double> colorPickPos = new TwoDVec<Double>(1650.0, 15.0);
     mainColorPicker = new RoundColorPicker(colorPickPos.x, colorPickPos.y, 0, new Random().nextInt(15), true, root, this);
     equationInputPane.getChildren().add(mainColorPicker.displayButton);
