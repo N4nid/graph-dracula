@@ -232,7 +232,7 @@ public class ApplicationController implements MenuHaver {
     });
     
   }
-
+  
   public EquationVisElement getHoveredEquationVisElement() {
     for (int i = 0; i < listElements.size(); i++) {
       if (listElements.get(i).pane.hoverProperty().getValue()) {
@@ -241,7 +241,7 @@ public class ApplicationController implements MenuHaver {
     }
     return null;
   }
-
+  
   public static boolean graphOffsetInBounds(double margin, RenderValues renderValues) {
     double minX = renderValues.resolution.x * margin;
     double maxX = renderValues.resolution.x - renderValues.resolution.x * margin;
@@ -253,7 +253,7 @@ public class ApplicationController implements MenuHaver {
     
     return isInXBounds && isInYBounds;
   }
-
+  
   public void executeMenuOption(String menuOption) {
     if (menuOption.equals("recenter")) {
       renderer.renderValues.midpoint.setPos((double)(renderer.renderValues.resolution.x / 2), (double)(renderer.renderValues.resolution.y / 2));
@@ -265,7 +265,7 @@ public class ApplicationController implements MenuHaver {
       updateRenderCanvas();
     }
   }
-
+  
   public void calculateDefaultSizes() {
     defaultGraphViewPaneSize = new TwoDVec<Double>(graphViewPane.getWidth(), graphViewPane.getHeight());
     defaultGraphViewPanePos = new TwoDVec<Double>(graphViewPane.getLayoutX(), graphViewPane.getLayoutY());
@@ -273,7 +273,7 @@ public class ApplicationController implements MenuHaver {
     viewListHorizontalRatio = graphViewPane.getWidth() / (scrollPane.getWidth() + graphViewPane.getWidth());
     viewListHorizontalDist = scrollPane.getLayoutX() - graphViewPane.getLayoutX() - graphViewPane.getWidth();
   }
-
+  
   public void resize() {
     double screenWidth = scene.getWindow().getWidth();
     double screenHeight = scene.getWindow().getHeight();
@@ -303,7 +303,7 @@ public class ApplicationController implements MenuHaver {
     
     updateListElementTransform();
   }
-
+  
   public void updateRenderCanvas() {
     renderer.mainCanvas.setWidth(graphViewPane.getPrefWidth() - 6);
     renderer.mainCanvas.setHeight(graphViewPane.getPrefHeight() - 6);
@@ -314,7 +314,7 @@ public class ApplicationController implements MenuHaver {
     
     renderer.renderEquations(listElements);
   }
-
+  
   private void updateListElementTransform() {
     for (int i = 0; i < listElements.size(); i++) {
       int yPos = 30 + i * 100;
@@ -322,14 +322,14 @@ public class ApplicationController implements MenuHaver {
       listElements.get(i).updateTransform();
     }
   }
-
+  
   public void deleteEquation(EquationVisElement equation) {
     equationList.getChildren().remove(equation.pane);
     listElements.remove(equation);
     minEquationListHeight -= 100;
     resize();
   }
-
+  
   public void editEquation(EquationVisElement equation) {
     mainColorPicker.pickColor(equation.colorPicker.colorIndex);
     equationInput.setText(equation.equationText);
@@ -337,7 +337,7 @@ public class ApplicationController implements MenuHaver {
     editIndex = listElements.indexOf(equation);
     setEditModeUI(true);
   }
-
+  
   public void addPreviewEquation() {
     EquationTree previewEquation = EquationParser.parseString(equationInput.getText());
     previewEquation.isPreviewEquation = true;
@@ -356,7 +356,7 @@ public class ApplicationController implements MenuHaver {
     equationInput.setText("");
     updateRenderCanvas();
   }
-
+  
   public void setEditModeUI(boolean isEditMode) {
     if (isEditMode) {
       addButton.setStyle("-fx-background-image: url('/resources/checkmark.png');");
@@ -374,14 +374,14 @@ public class ApplicationController implements MenuHaver {
       previewButton.setVisible(false);
     }
   }
-
+  
   public void updateInputBarColor() {
     equationInputPane.setStyle("-fx-border-color: " + toRGBCode(mainColorPicker.colorValue));
     addButton.setStyle("-fx-border-color: " + toRGBCode(mainColorPicker.colorValue));
     extraInputButton.setStyle("-fx-border-color: " + toRGBCode(mainColorPicker.colorValue));
     previewButton.setStyle("-fx-border-color: " + toRGBCode(mainColorPicker.colorValue));
   }
-
+  
   public void hideRedundantElements() {
     for (int i = 0; i < hideOnClick.size(); i++) {
       boolean hidden = hideOnClick.get(i).hide();
@@ -390,12 +390,12 @@ public class ApplicationController implements MenuHaver {
       }
     }
   }
-
+  
   public void destroyMenu(OverlayMenu menu) {
     root.getChildren().remove(menu.window);
     hideOnClick.remove(menu);
   }
-
+  
   private void moveTo(TwoDVec<Double> pos, Node node) {
     node.setLayoutX(pos.x);
     node.setLayoutY(pos.y);
