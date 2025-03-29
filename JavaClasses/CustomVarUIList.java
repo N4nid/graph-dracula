@@ -10,6 +10,7 @@ public class CustomVarUIList {
     private ScrollPane scrollPane;
     private Label listLabel;
     public Pane parentPane;
+    private ApplicationController controller;
 
     private int lastCustomVarsSize = -1;
 
@@ -23,8 +24,9 @@ public class CustomVarUIList {
     private static final double maxVisibleListHeight = customVarElementTopPadding +(customVarElementHeightPadding + CustomVarUIElement.defaultHeight) * maxCustomVarVisibleElements;
     private static final TwoDVec<Double> labelPos = new TwoDVec<Double>(20.0,-13.0);
 
-    public CustomVarUIList(Pane parentPane) {
+    public CustomVarUIList(Pane parentPane, ApplicationController controller) {
         this.parentPane = parentPane;
+        this.controller = controller;
 
         backgroundPane = new Pane();
         backgroundPane.setViewOrder(-1);
@@ -61,7 +63,7 @@ public class CustomVarUIList {
 
     public void addCustomVar(String name) {
         if (!customVarExists(name)) {
-            customVars.add(new CustomVarUIElement(name));
+            customVars.add(new CustomVarUIElement(name,controller));
             updateListTransform();
         }
     }
@@ -76,10 +78,10 @@ public class CustomVarUIList {
         }
     }
 
-    public ArrayList<Variable> getAllCustomVars() {
-        ArrayList<Variable> customVariableObjects = new ArrayList<>();
+    public Variable[] getAllCustomVars() {
+        Variable[] customVariableObjects = new Variable[customVars.size()];
         for (int i = 0; i < customVars.size(); i++) {
-            customVariableObjects.add(new Variable(customVars.get(i).name,customVars.get(i).value));
+            customVariableObjects[i] = new Variable(customVars.get(i).name,customVars.get(i).value);
         }
         return customVariableObjects;
     }

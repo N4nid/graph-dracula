@@ -256,7 +256,7 @@ public class EquationParser {
       if (root != null) {
         root.recursivePrint(""); // For debugging
         TwoDVec coords = new TwoDVec<Double>(0.0,0.0);
-        double res = root.calculate(coords, new Variable[1]);
+        double res = root.calculate(coords, null);
         System.out.println(res);
         if((double)coords.x == -1.0){
           System.out.println("Return null");

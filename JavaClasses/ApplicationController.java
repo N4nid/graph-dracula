@@ -1,5 +1,4 @@
 import javafx.fxml.FXML;
-import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
@@ -111,25 +110,31 @@ public class ApplicationController implements MenuHaver {
     resize();
   }
 
-  public boolean equationExists(String name) {
+  public boolean functionExists(String name) {
     for (int i = 0; i < listElements.size(); i++) {
-      if (listElements.get(i).equation.name.equals(name)) {
+      if (listElements.get(i).equation.name.equals(name) && listElements.get(i).equation.isFunction) {
         return true;
       }
     }
     return false;
   }
 
-  public ArrayList<EquationTree> getAllEquations() {
-    ArrayList<EquationTree> allEquations = new ArrayList<>();
+  public EquationTree[] getAllFunctions() {
+    ArrayList<EquationTree> allFunctionList = new ArrayList<>();
     for (int i = 0; i < listElements.size(); i++) {
-      allEquations.add(listElements.get(i).equation);
+      if (listElements.get(i).equation.isFunction) {
+        allFunctionList.add(listElements.get(i).equation);
+      }
     }
-    return allEquations;
+    EquationTree[] allFunctionArray = new EquationTree[allFunctionList.size()];
+    for (int i = 0; i < allFunctionList.size(); i++) {
+      allFunctionArray[i] = allFunctionList.get(i);
+    }
+    return allFunctionArray;
   }
 
   public boolean identifierExists(String name) {
-    if (equationExists(name)) {
+    if (functionExists(name)) {
       return true;
     }
     return customVarList.customVarExists(name);
@@ -276,7 +281,8 @@ public class ApplicationController implements MenuHaver {
       expandMenu.flipVisibility();
     });
 
-    customVarList = new CustomVarUIList(equationListBackground);
+    customVarList = new CustomVarUIList(equationListBackground,this);
+    customVarList.addCustomVar("a");
     resize();
     
   }

@@ -32,8 +32,8 @@ public class EquationTree{
   
   public EquationTree() {}
   
-  public double calculate(TwoDVec<Double> coordinates, Variable[] parameters) {
-    return root.calculate(coordinates,parameters);
+  public double calculate(TwoDVec<Double> coordinates, Variable[] customVariables, EquationTree[] existingEquations) {
+    return root.calculate(coordinates,customVariables);
   }
   
   public TwoDVec<Double> calculateParametrics(double t, Variable[] parameters) {

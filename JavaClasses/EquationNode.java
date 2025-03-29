@@ -157,6 +157,9 @@ public class EquationNode {
   }
 
   private static double readVar(Variable[] vars, String varName) {
+    if (vars == null) {
+      return 0;
+    }
     for (int i = 0; i < vars.length; i++) {
       if (vars[i].name.equals(varName)) {
         return vars[i].value;

@@ -21,6 +21,7 @@ public class CustomVarUIElement {
     private TextField valueInput;
     private TextField minValDisplay;
     private TextField maxValDisplay;
+    private ApplicationController controller;
 
     public static final int defaultHeight = 73;
     private static final int labelWidth = 40;
@@ -30,8 +31,9 @@ public class CustomVarUIElement {
     private static final double rangeDisplayWidth = 50;
     private static final TwoDVec<Double> labelPos = new TwoDVec<Double>(25.0,0.0);
 
-    public CustomVarUIElement(String name) {
+    public CustomVarUIElement(String name,ApplicationController controller) {
         this.name = name;
+        this.controller = controller;
         value = 0;
 
         background = new Pane();
@@ -75,6 +77,7 @@ public class CustomVarUIElement {
             value = round(valueSlider.getValue(),sliderDecimalPlaces);
             valueSlider.setValue(value);
             valueInput.setText("" + value);
+            controller.updateRenderCanvas();
         });
 
         valueInput.focusedProperty().addListener((obs, oldVal, newVal) -> {
@@ -150,6 +153,7 @@ public class CustomVarUIElement {
             newValue = Double.parseDouble(valueInput.getText());
         } catch (Exception e){
             System.out.println("Error: Invalid number inputted (at: valueInput of parameter)");
+            return;
         }
         value = newValue;
         if (value > valueSlider.getMax()) {
@@ -163,6 +167,7 @@ public class CustomVarUIElement {
         }
         valueSlider.setValue(value);
         valueInput.setText("" + value);
+        controller.updateRenderCanvas();
     }
 
     private void setSliderRange(TwoDVec<Double> range) {
