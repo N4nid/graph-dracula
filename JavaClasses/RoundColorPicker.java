@@ -72,7 +72,7 @@ public class RoundColorPicker implements Hideble{
       defaultOffset.setPos((double)- (panelWidth / 2),- (double)panelHeight - (double)panelDistance);
     }
     else {
-      this.parentPane = controller.scrollPane;
+      this.parentPane = controller.equationListBackground;
       defaultOffset.setPos(- (double)panelWidth - (double)panelDistance,- ((double)panelHeight / (double)2) +yOffset + 30);
     }
     colorPickerWindow.getStyleClass().add("border");

@@ -6,12 +6,13 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<Pane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1500.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ApplicationController">
+<Pane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1500.0" xmlns="http://javafx.com/javafx/11.0.14-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ApplicationController">
    <children>
       <Pane fx:id="graphViewPane" layoutX="61.0" layoutY="47.0" prefHeight="820.0" prefWidth="1368.0" styleClass="border">
          <children>
             <ImageView fx:id="graphView" fitHeight="814.0" fitWidth="1362.0" layoutX="3.0" layoutY="3.0" pickOnBounds="true">
             </ImageView>
+            <Pane layoutX="1006.0" layoutY="65.0" prefHeight="200.0" prefWidth="200.0" />
          </children>
       </Pane>
       <Pane fx:id="equationInputPane" layoutX="118.0" layoutY="910.0" prefHeight="73.0" prefWidth="1710.0">
@@ -26,15 +27,6 @@
                </styleClass></TextField>
          </children>
       </Pane>
-      <ScrollPane fx:id="scrollPane" hbarPolicy="NEVER" layoutX="1488.0" layoutY="47.0" prefHeight="820.0" prefWidth="404.0" styleClass="no-border" vbarPolicy="NEVER">
-         <content>
-            <Pane fx:id="equationList" prefHeight="820.0" prefWidth="404.0">
-               <styleClass>
-                  <String fx:value="black" />
-                  <String fx:value="border" />
-               </styleClass>
-            </Pane>
-         </content></ScrollPane>
       <Button fx:id="addButton" layoutX="1822.0" layoutY="910.0" minWidth="49.0" mnemonicParsing="false" onAction="#onAddButtonClick" prefHeight="73.0" prefWidth="73.0" textAlignment="CENTER" textOverrun="CENTER_ELLIPSIS" wrapText="true">
          <font>
             <Font name="Source Code Pro" size="27.0" />
@@ -44,7 +36,6 @@
             <String fx:value="image-button" />
             <String fx:value="add-button" />
             <String fx:value="black" />
-
          </styleClass>
       </Button>
       <Button fx:id="extraInputButton" layoutX="61.0" layoutY="910.0" minWidth="49.0" mnemonicParsing="false" prefHeight="73.0" prefWidth="73.0" textAlignment="CENTER" textOverrun="CENTER_ELLIPSIS" wrapText="true">
@@ -69,5 +60,25 @@
             <Font name="Source Code Pro" size="10.0" />
          </font>
       </Label>
+      <Pane fx:id="equationListBackground" layoutX="1488.0" layoutY="47.0" prefHeight="820.0" prefWidth="404.0">
+         <styleClass>
+            <String fx:value="border" />
+            <String fx:value="black" />
+         </styleClass>
+         <children>
+            <ScrollPane fx:id="scrollPane" hbarPolicy="NEVER" layoutX="3.0" layoutY="3.0" prefHeight="820.0" prefWidth="404.0" vbarPolicy="NEVER">
+               <content>
+                  <Pane fx:id="equationList" prefHeight="820.0" prefWidth="404.0">
+                     <styleClass>
+                        <String fx:value="black" />
+                     </styleClass>
+                  </Pane>
+               </content>
+               <styleClass>
+                  <String fx:value="no-border" />
+                  <String fx:value="black" />
+               </styleClass></ScrollPane>
+         </children>
+      </Pane>
    </children>
 </Pane>

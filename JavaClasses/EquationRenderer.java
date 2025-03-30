@@ -10,6 +10,9 @@ public class EquationRenderer {
   public TwoDVec<Double> lastPos;
   public TwoDVec<Double> lastMove;
   ArrayList<ArrayList<TwoDVec<TwoDVec<Double>>>> equationLineCache = new ArrayList<ArrayList<TwoDVec<TwoDVec<Double>>>>();
+
+  Variable[] customVars;
+  EquationTree[] existingFunctions;
   
   public EquationRenderer(RenderValues renderValues) {
     this.renderValues = renderValues;
@@ -39,7 +42,7 @@ public class EquationRenderer {
           //storage[i][x][y] = (equations.get(i).calculate(renderValues.screenCoordToRealCoord(new TwoDVec<Integer>(x,y)),
           //new Variable[0]) >= 0) ? true : false;
           storage[i][x][y] = (equations.get(i).calculate(new TwoDVec<Double>((x-2*renderValues.midpoint.x)*renderValues.zoom.x,
-          (-y+2*renderValues.midpoint.y)*renderValues.zoom.y),new Variable[0]) >= 0) ? true : false;
+          (-y+2*renderValues.midpoint.y)*renderValues.zoom.y),customVars,existingFunctions) >= 0) ? true : false;
         }
       }
     }
@@ -153,7 +156,9 @@ public class EquationRenderer {
     }
   }
 
-  public ArrayList<ArrayList<TwoDVec<TwoDVec<Double>>>> calculateEquationsLinePoints(ArrayList<EquationTree> equations) {
+  public ArrayList<ArrayList<TwoDVec<TwoDVec<Double>>>> calculateEquationsLinePoints(ArrayList<EquationTree> equations,Variable[] existingVariables, EquationTree[] existingFunctions) {
+    this.customVars = existingVariables;
+    this.existingFunctions = existingFunctions;
     if (lastZoom.x != renderValues.zoom.x || lastZoom.y != renderValues.zoom.y) {
       this.equations = equations;                                                      //Vergroessern/ Verkleinern
       this.lastZoom = new TwoDVec<Double>(renderValues.zoom.x, renderValues.zoom.y);

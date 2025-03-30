@@ -69,9 +69,15 @@ public class Renderer {
     mainCanvas.getGraphicsContext2D().clearRect(0, 0, mainCanvas.getWidth(), mainCanvas.getHeight());
     coordinateSystemRenderer.drawCoordinateSystem();
     orderEquations(listElements);
+
+    Variable[] customVariables = null;
+    if (controller.customVarList != null) {
+      customVariables = controller.customVarList.getAllCustomVars();
+    }
+    EquationTree[] existingFunctions = controller.getAllFunctions();
     
     if (equations.size() > 0) {
-      ArrayList<ArrayList<TwoDVec<TwoDVec<Double>>>> equationsLines = equationRenderer.calculateEquationsLinePoints(equations);
+      ArrayList<ArrayList<TwoDVec<TwoDVec<Double>>>> equationsLines = equationRenderer.calculateEquationsLinePoints(equations,customVariables,existingFunctions);
       for (int i = 0; i < equationsLines.size(); i++) {
         renderLines(equations.get(i).graphColor, equationsLines.get(i));
       }
@@ -79,7 +85,7 @@ public class Renderer {
     }
     
     if (functions.size() > 0) {
-      ArrayList<ArrayList<TwoDVec<TwoDVec<Double>>>> functionsLines = funcDrawer.calculateFunctionsLines(functions);
+      ArrayList<ArrayList<TwoDVec<TwoDVec<Double>>>> functionsLines = funcDrawer.calculateFunctionsLines(functions,customVariables,existingFunctions);
       for (int i = 0; i < functionsLines.size(); i++) {
         renderLines(functions.get(i).graphColor, functionsLines.get(i));
       }

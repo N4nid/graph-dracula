@@ -14,10 +14,10 @@ public class FunctionRenderer {
     this.renderValues = renderValues;
   }
 
-  public double[] calculateFunctionValues(EquationTree equation) {
+  public double[] calculateFunctionValues(EquationTree equation, Variable[] existingVariables, EquationTree[] existingFunctions) {
     double[] returnValues = new double[renderValues.resolution.x];
     for (int i = 0; i < renderValues.resolution.x; i++) {
-      double yValue = equation.calculate(new TwoDVec<Double>(renderValues.screenCoordToRealCoord(new TwoDVec<Integer>(i,0)).x,0.0),null);
+      double yValue = equation.calculate(new TwoDVec<Double>(renderValues.screenCoordToRealCoord(new TwoDVec<Integer>(i,0)).x,0.0),existingVariables,existingFunctions);
       returnValues[i] = renderValues.realCoordToScreenCoord(new TwoDVec<Double>(0.0,yValue)).y;
     }
     return returnValues;
@@ -31,12 +31,12 @@ public class FunctionRenderer {
     return xs;
   }
 
-  public ArrayList<ArrayList<TwoDVec<TwoDVec<Double>>>> calculateFunctionsLines(ArrayList<EquationTree> functions) {
+  public ArrayList<ArrayList<TwoDVec<TwoDVec<Double>>>> calculateFunctionsLines(ArrayList<EquationTree> functions, Variable[] existingVariables, EquationTree[] existingFunctions) {
     ArrayList<ArrayList<TwoDVec<TwoDVec<Double>>>> functionsLines = new ArrayList<ArrayList<TwoDVec<TwoDVec<Double>>>>();
     double[] xValues = getXArray(); 
     for (int i = 0; i < functions.size(); i++) {
       ArrayList<TwoDVec<TwoDVec<Double>>> currentFunctionLines = new ArrayList<TwoDVec<TwoDVec<Double>>>();
-      double[] functionValues = calculateFunctionValues(functions.get(i));
+      double[] functionValues = calculateFunctionValues(functions.get(i),existingVariables,existingFunctions);
       fixValues(functionValues, functions.get(i));
       for (int j = 0; j < functionValues.length-1; j++) {
         TwoDVec<Double> fromCoord = new TwoDVec<Double>(xValues[j],functionValues[j]);
@@ -49,10 +49,10 @@ public class FunctionRenderer {
   }
 
 
-  public ArrayList<TwoDVec<TwoDVec<Double>>> calculateFunctionLines(EquationTree function) {
+  public ArrayList<TwoDVec<TwoDVec<Double>>> calculateFunctionLines(EquationTree function, Variable[] existingVariables, EquationTree[] existingFunctions) {
     double[] xValues = getXArray();
     ArrayList<TwoDVec<TwoDVec<Double>>> currentFunctionLines = new ArrayList<TwoDVec<TwoDVec<Double>>>();
-    double[] functionValues = calculateFunctionValues(function);
+    double[] functionValues = calculateFunctionValues(function,existingVariables,existingFunctions);
     fixValues(functionValues, function);
     for (int j = 0; j < functionValues.length-1; j++) {
       TwoDVec<Double> fromCoord = new TwoDVec<Double>(xValues[j],functionValues[j]);
