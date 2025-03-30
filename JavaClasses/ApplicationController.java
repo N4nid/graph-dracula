@@ -215,6 +215,9 @@ public class ApplicationController implements MenuHaver {
       if (e.getCode() == KeyCode.ENTER && equationInput.isFocused()) {
         onAddButtonClick();
       }
+      if (e.getCode() == KeyCode.ESCAPE && editIndex != -1) {
+        removePreview();
+      }
       if (insertFunctionShortcut.match(e)) {
         expandMenu.triggerButton("f(x)=");
       }
