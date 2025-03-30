@@ -1,6 +1,0 @@
-<<<<<<< HEAD
-import javafx.scene.effect.ColorAdjust;
-=======
-import javafx.scene.effect.ColorAdjust;
->>>>>>> 662fdb38c45f44a52689f3c39c2eeefbed4078bd
-public interface Hideble {public boolean hide();}
