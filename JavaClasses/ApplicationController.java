@@ -70,7 +70,7 @@ public class ApplicationController implements MenuHaver {
       System.out.println("Invalid equation! Please try again.");
       return;
     }
-    if (identifierExists(inputEquation.name) && editIndex == -1) {
+    if (!inputEquation.name.isBlank() && identifierExists(inputEquation.name) && editIndex == -1) {
       System.out.println("The name for this function is already in use. Please choose another one!");
       return;
     }
