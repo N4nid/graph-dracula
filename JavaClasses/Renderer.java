@@ -90,7 +90,7 @@ public class Renderer {
         renderLines(functions.get(i).graphColor, functionsLines.get(i));
       }
       long endTime = System.nanoTime();
-      System.out.println(endTime-startTime);
+      //System.out.println(endTime-startTime);
     }
   }
   

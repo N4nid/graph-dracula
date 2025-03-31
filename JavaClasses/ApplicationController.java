@@ -294,7 +294,6 @@ public class ApplicationController implements MenuHaver {
     });
 
     customVarList = new CustomVarUIList(equationListBackground,this);
-    customVarList.addCustomVar("a");
     resize();
     
   }
