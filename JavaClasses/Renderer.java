@@ -101,7 +101,7 @@ public class Renderer {
       allEquations.add(listElements.get(i).equation);
       allEquations.get(allEquations.size() - 1).graphColor = listElements.get(i).colorPicker.colorValue;
     }
-    
+
     for (int i = 0; i < allEquations.size(); i++) {
       if (allEquations.get(i).isFunction) {
         functions.add(allEquations.get(i));
@@ -116,10 +116,25 @@ public class Renderer {
   public void renderLines(Color graphColor, ArrayList<TwoDVec<TwoDVec<Double>>> lines) {
     mainCanvas.getGraphicsContext2D().setLineWidth(2);
     for (int i = 0; i < lines.size(); i++) {
-      mainCanvas.getGraphicsContext2D().setStroke(graphColor);
-      TwoDVec<TwoDVec<Double>> currentLine = lines.get(i);
-      mainCanvas.getGraphicsContext2D().strokeLine(currentLine.x.x,currentLine.x.y,currentLine.y.x,currentLine.y.y);
+      if (i == 0 || i == lines.size() - 1 || ((i > 0 && i < lines.size() - 1) && checkLineValidity(lines.get(i-1),lines.get(i),lines.get(i+1)))) {
+        mainCanvas.getGraphicsContext2D().setStroke(graphColor);
+        TwoDVec<TwoDVec<Double>> currentLine = lines.get(i);
+        mainCanvas.getGraphicsContext2D().strokeLine(currentLine.x.x,currentLine.x.y,currentLine.y.x,currentLine.y.y);
+      }
     }
+  }
+
+  private boolean checkLineValidity(TwoDVec<TwoDVec<Double>> prevLine,TwoDVec<TwoDVec<Double>> currentLine, TwoDVec<TwoDVec<Double>> nextLine) {
+    double slope = Math.abs(currentLine.x.y - currentLine.y.y);
+    if (slope > 3 || Double.isNaN(slope) || Double.isInfinite(slope)) {
+      //if (slope>600){return false;}
+      double prevSlope = prevLine.y.y - prevLine.x.y;
+      double nextSlope = nextLine.y.y - nextLine.x.y;
+      if (prevSlope > 0 && nextSlope < 0) {return false;}
+      if (prevSlope < 0 && nextSlope > 0) {return false;}
+      System.out.println(currentLine.x.x + " : " + slope + " , " + prevSlope + " , " + nextSlope);
+    }
+    return true;
   }
   
   public void centerCoordinateSystem() {
