@@ -4,6 +4,7 @@ public class EquationParser {
   static boolean isFunction = false;
   private static boolean parseBetweenBrackets = false;
   private static byte specialOpMagicNum = 6;
+  public static ApplicationController controller;
 
   // this code could also be in Main.java
   // TODO
@@ -36,6 +37,7 @@ public class EquationParser {
     input = input.replaceAll("\\)\\(", ")*(");
 
     // Transform
+    name = "";
     if (!input.contains("=") && !input.contains("y")) {
       if (!parseBetweenBrackets)
         input += "-y";
@@ -77,8 +79,9 @@ public class EquationParser {
   }
 
 
-  public static EquationTree parseString(String input) {
+  public static EquationTree parseString(String input, ApplicationController appController) {
     input = transformString(input);
+    controller = appController;
 
     if (debug)
       System.out.println(input);
@@ -108,6 +111,10 @@ public class EquationParser {
         // "+lastNode.bracketDepth);
         if (lastNode.state >= 2) {
           lastNode.right = currentNode;
+        }
+
+        if(state == 1 && !(val.equals("y") || val.equals("x"))){ // handle variables
+          controller.customVarList.addCustomVar(val.toString());
         }
 
         lastNode = currentNode;
@@ -153,11 +160,11 @@ public class EquationParser {
                 .println("leftStr: " + betweenBrackts[0] + " rightStr: " + betweenBrackts[1]);
             System.out.println("---PARSING LEFT----");
           }
-          EquationNode left = parseString(betweenBrackts[0]).root;
+          EquationNode left = parseString(betweenBrackts[0],controller).root;
 
           if (debug)
             System.out.println("---PARSING RIGHT---");
-          EquationNode right = parseString(betweenBrackts[1]).root;
+          EquationNode right = parseString(betweenBrackts[1],controller).root;
 
           if (debug) {
             System.out.println("---PARSING DONE----");
@@ -256,7 +263,8 @@ public class EquationParser {
       if (root != null) {
         root.recursivePrint(""); // For debugging
         TwoDVec coords = new TwoDVec<Double>(0.0,0.0);
-        double res = root.calculate(coords, null);
+        EquationTree[] existingFunctions = controller.getAllFunctions();
+        double res = root.calculate(coords, null,existingFunctions);
         System.out.println(res);
         if((double)coords.x == -1.0){
           System.out.println("Return null");
@@ -401,10 +409,13 @@ public class EquationParser {
     byte nextState = getState(next);
 
     if(state == 1 && next == '('){ // edgecase for parsing functions f(
-      input = input.delete(0, 1);
-      result = new EquationNode((byte)4, value);
-      result.opLevel = 3;
-      return result;
+      if(controller.functionExists(Character.toString(first)+"(x)")) { // check if it is a variables or function; a(x) could also mean a*(x)
+        //System.out.println("YOOOASd THERE IS ARLEADY a funciton");
+        input = input.delete(0, 1);
+        result = new EquationNode((byte)4, value);
+        result.opLevel = 3;
+        return result;
+      }
     }
 
     if (state == -1 || (state == 2 || state == 1 && (nextState != state || first == 'x' || first == 'y'))) {// is a operator or variable  -> no further

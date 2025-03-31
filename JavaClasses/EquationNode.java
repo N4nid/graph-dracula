@@ -86,7 +86,7 @@ public class EquationNode {
     return 0.0;
   }
 
-  public double calculate(TwoDVec<Double> realCoord, Variable[] vars) {
+  public double calculate(TwoDVec<Double> realCoord, Variable[] vars, EquationTree[] existingFunctions) {
     boolean invalid = false;
 
     if (state == 0) {
@@ -102,8 +102,8 @@ public class EquationNode {
         return readVar(vars, varName);
       }
     } else if (state == 2 && left != null && right != null) {
-      double part1 = left.calculate(realCoord, vars);
-      double part2 = right.calculate(realCoord, vars);
+      double part1 = left.calculate(realCoord, vars,existingFunctions);
+      double part2 = right.calculate(realCoord, vars,existingFunctions);
       String op = (String) value;
       if (op.equals("+")) {
         return part1 + part2;
@@ -127,7 +127,7 @@ public class EquationNode {
       }
     } else if (state == 3 && right != null) {
       String op = (String) value;
-      double calVal = right.calculate(realCoord, vars);
+      double calVal = right.calculate(realCoord, vars,existingFunctions);
       if (op.equals("sin")) {
         return Math.sin(calVal);
       } else if (op.equals("cos")) {
@@ -144,7 +144,23 @@ public class EquationNode {
         System.out.println("Invalid special function!");
         invalid = true;
       }
-    } else {
+    }else if(state == 4 && right != null){ // is a function
+      EquationTree function = null;
+      for (int i = 0; i < existingFunctions.length; i++) {
+        if(existingFunctions[i].name.equals(value.toString()+"(x)")){
+          function = existingFunctions[i];
+        }
+      }
+
+      if(function != null){
+        TwoDVec<Double> newCoords = new TwoDVec(right.calculate(realCoord, vars,existingFunctions), realCoord.y);
+        return function.calculate(newCoords, vars,existingFunctions);
+      }else{
+        System.out.println("WHY NOT WORKING -- Function calculate :c");
+        invalid = true;
+      }
+
+    }else {
       System.out.println("Invalid Node!");
       invalid = true;
     }

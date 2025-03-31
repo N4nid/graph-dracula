@@ -10,12 +10,14 @@ import java.util.Scanner;
 import java.io.IOException;
 
 public class Main extends Application {
+  public static ApplicationController controller;
+
   @Override
   public void start(Stage stage) throws IOException {
     FXMLLoader loader = new FXMLLoader(getClass().getResource("/resources/GraphDraculaUI.fxml"));
     Parent root = loader.load();
     // Scene scene = new Scene(fxmlLoader.load(), 1920, 1080);
-    ApplicationController controller = loader.getController();
+    controller = loader.getController();
     Scene scene = new Scene(root);
     String css = this.getClass().getResource("/resources/application.css").toExternalForm();
     scene.getStylesheets().add(css);
@@ -102,26 +104,8 @@ public class Main extends Application {
     return new EquationTree(root);
   }
   
-  public static void quickDebug() {
-    String test = "1+root(2,x)";
-    //String test = "sin(ln(root(3,x)))";
-    //String test = "root(root(2,4),64)";
-    // String test = "1+3*3^2";
-    // String test = "cos(sin(1-1)*2.4)";
-    // String test = "4*4^5+cos(4^2)-1/2*sin(4)+1/4*(4+1)";
-    // String test = "sin(((4^(3))/32)-2*cos(16/31+108/31-4))+42";
-    // String test = "(1-1)+2*(3^(2-1))";
-    // String test = "1+2*(1+3*3+1)";
-    // String test = "cos(sin(1/3)+1)";
-    // String test = "3^(cos(sin(1/3)+1))*(1/2)";
-    // String test = "3^(3+3)*2";
-    // String test = "2+3^(23-1/2)";
-    // String test = "x^3+34/6.5-1/(a^(sin(56)))*3";
-    EquationParser.parseString(test);
-    // EquationParser.getBetweenBrackets(new StringBuffer("(root(2,4),64)+1"));
-  }
   
-  public static void interactiveDemo() {
+  public static void interactiveDemo() { // sadly obsolete 
     String inp = "";
     Scanner scanner = new Scanner(System.in);
     System.out.println("Welcome to the StringParser. Available commads:");
@@ -134,7 +118,7 @@ public class Main extends Application {
         System.out.print("\033\143");
       } else if (!inp.contains("exit")) {
         try {
-          EquationParser.parseString(inp);
+          EquationParser.parseString(inp,controller);
         } catch (Exception e) {
           System.out.println("whopsies: " + e);
         }
@@ -154,7 +138,7 @@ public class Main extends Application {
     int passed = 0;
     for (int i = 0; i < test.length; i++) {
       System.out.println("-----------------");
-      EquationTree root = EquationParser.parseString(test[i]);
+      EquationTree root = EquationParser.parseString(test[i],controller);
       double res = root.calculate(new TwoDVec<Double>(0.0,0.0),null,null);
       System.out.println("calc:" + res + "  - should: " + results[i]);
       if (res == results[i]) {
@@ -180,32 +164,11 @@ public class Main extends Application {
     return new EquationTree(root);
   }
   
-  public static void debugStrinparser(String[] args) {
-    if (args.length >= 1) {
-      System.out.println("--- MODE: " + args[0]);
-      switch (args[0]) {
-        case "test":
-          Main.testParser();
-          break;
-        
-        case "demo":
-          Main.interactiveDemo();
-          break;
-        case "debug":
-          Main.quickDebug();
-          break;
-        
-        default:
-          System.out.println("Use one of the following args: test, demo, debug");
-          break;
-      }
-    }
-  }
   
   public static void main(String[] args) {
     // option to not launch gui
     if (args.length >= 1) {
-      debugStrinparser(args);
+      testParser();
     } else {
       launch();
     }

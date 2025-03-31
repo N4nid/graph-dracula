@@ -65,7 +65,7 @@ public class ApplicationController implements MenuHaver {
   
   @FXML
   protected void onAddButtonClick() {
-    EquationTree inputEquation = EquationParser.parseString(equationInput.getText());
+    EquationTree inputEquation = EquationParser.parseString(equationInput.getText(),this);
     if (inputEquation == null || inputEquation.root == null) {
       System.out.println("Invalid equation! Please try again.");
       return;
@@ -116,6 +116,16 @@ public class ApplicationController implements MenuHaver {
       }
     }
     return false;
+  }
+
+  public EquationTree getFunction(String name){
+
+    for (int i = 0; i < listElements.size(); i++) {
+      if (listElements.get(i).equation.name.equals(name) && listElements.get(i).equation.isFunction) {
+        return listElements.get(i).equation;
+      }
+    }
+    return null;
   }
 
   public EquationTree[] getAllFunctions() {
@@ -410,7 +420,7 @@ public class ApplicationController implements MenuHaver {
   }
   
   public void addPreviewEquation() {
-    EquationTree previewEquation = EquationParser.parseString(equationInput.getText());
+    EquationTree previewEquation = EquationParser.parseString(equationInput.getText(),this);
     previewEquation.isPreviewEquation = true;
     if (previewEquation.root == null) {
       System.out.println("Invalid equation, try again!");
