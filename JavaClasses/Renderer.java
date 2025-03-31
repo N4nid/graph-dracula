@@ -115,31 +115,36 @@ public class Renderer {
   
   public void renderLines(Color graphColor, ArrayList<TwoDVec<TwoDVec<Double>>> lines) {
     mainCanvas.getGraphicsContext2D().setLineWidth(2);
+    correctLines(lines);
     for (int i = 0; i < lines.size(); i++) {
+      if (lines.get(i) != null) {
         mainCanvas.getGraphicsContext2D().setStroke(graphColor);
         TwoDVec<TwoDVec<Double>> currentLine = lines.get(i);
-        mainCanvas.getGraphicsContext2D().strokeLine(currentLine.x.x,currentLine.x.y,currentLine.y.x,currentLine.y.y);
-      
+        mainCanvas.getGraphicsContext2D().strokeLine(currentLine.x.x, currentLine.x.y, currentLine.y.x, currentLine.y.y);
+      }
     }
   }
 
   private void correctLines(ArrayList<TwoDVec<TwoDVec<Double>>> lines) {
-    double realSlopeRange = 0.05;
+    double realSlopeRange = 0.04;
     int pixelSlopeRange = (int)Math.round(realSlopeRange / renderValues.zoom.x);
     double currentSlope = 0;
     for (int i = pixelSlopeRange+2; i < lines.size()-pixelSlopeRange*2 -1; i++) {
-      currentSlope = Math.abs(lines.get(i+pixelSlopeRange).y.y - lines.get(i).x.y);
-      if (currentSlope > 3) {
-        double prevSlope = lines.get(i-1).x.y - lines.get(i-pixelSlopeRange).x.y;
-        double nextSlope = lines.get(i+pixelSlopeRange*2).y.y - lines.get(i+1+pixelSlopeRange).y.y;
-        if ((prevSlope > 0 && nextSlope < 0) || (prevSlope < 0 && nextSlope > 0)) {
+      currentSlope = Math.abs(renderValues.screenCoordDoubleToRealCoord(lines.get(i+pixelSlopeRange).y).y - renderValues.screenCoordDoubleToRealCoord(lines.get(i).x).y);
+      if (currentSlope > 3 || Double.isNaN(currentSlope)) {
+        double prevSlope = renderValues.screenCoordDoubleToRealCoord(lines.get(i-1).x).y - renderValues.screenCoordDoubleToRealCoord(lines.get(i-pixelSlopeRange).x).y;
+        double nextSlope = renderValues.screenCoordDoubleToRealCoord(lines.get(i+pixelSlopeRange*2).y).y - renderValues.screenCoordDoubleToRealCoord(lines.get(i+1+pixelSlopeRange).y).y;
+        if ((prevSlope > 0 && nextSlope < 0) || (prevSlope < 0 && nextSlope > 0) || Double.isNaN(currentSlope)) {
+          System.out.println(renderValues.screenCoordDoubleToRealCoord(lines.get(i).y).x);
           for (int j = i; j < i+pixelSlopeRange; j++) {
             lines.set(i,null);
           }
+          i += pixelSlopeRange;
         }
       }
     }
   }
+
   
   public void centerCoordinateSystem() {
     coordinateSystemRenderer.centerCoordinateSystem();

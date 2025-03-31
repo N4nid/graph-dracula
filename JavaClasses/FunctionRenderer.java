@@ -37,7 +37,7 @@ public class FunctionRenderer {
     for (int i = 0; i < functions.size(); i++) {
       ArrayList<TwoDVec<TwoDVec<Double>>> currentFunctionLines = new ArrayList<TwoDVec<TwoDVec<Double>>>();
       double[] functionValues = calculateFunctionValues(functions.get(i),existingVariables,existingFunctions);
-      fixValues(functionValues, functions.get(i));
+      //fixValues(functionValues, functions.get(i));
       for (int j = 0; j < functionValues.length-1; j++) {
         TwoDVec<Double> fromCoord = new TwoDVec<Double>(xValues[j],functionValues[j]);
         TwoDVec<Double> toCoord = new TwoDVec<Double>(xValues[j+1],functionValues[j+1]);
