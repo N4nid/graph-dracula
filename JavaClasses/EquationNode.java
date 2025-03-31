@@ -6,6 +6,7 @@ public class EquationNode {
   public int bracketDepth;
   public byte opLevel; // to sort operators easier later. -1 if not a operator
   public EquationNode above;
+  boolean invalid = false;
 
   public EquationNode(byte state, String value) {
     this.state = state;
@@ -86,8 +87,7 @@ public class EquationNode {
     return 0.0;
   }
 
-  public double calculate(TwoDVec<Double> realCoord, Variable[] vars) {
-    boolean invalid = false;
+  public double calculate(TwoDVec<Double> realCoord, Variable[] vars, EquationTree[] existingFunctions) {
 
     if (state == 0) {
       return Double.parseDouble((String) value);
@@ -102,8 +102,8 @@ public class EquationNode {
         return readVar(vars, varName);
       }
     } else if (state == 2 && left != null && right != null) {
-      double part1 = left.calculate(realCoord, vars);
-      double part2 = right.calculate(realCoord, vars);
+      double part1 = left.calculate(realCoord, vars,existingFunctions);
+      double part2 = right.calculate(realCoord, vars,existingFunctions);
       String op = (String) value;
       if (op.equals("+")) {
         return part1 + part2;
@@ -127,7 +127,7 @@ public class EquationNode {
       }
     } else if (state == 3 && right != null) {
       String op = (String) value;
-      double calVal = right.calculate(realCoord, vars);
+      double calVal = right.calculate(realCoord, vars,existingFunctions);
       if (op.equals("sin")) {
         return Math.sin(calVal);
       } else if (op.equals("cos")) {
@@ -144,7 +144,36 @@ public class EquationNode {
         System.out.println("Invalid special function!");
         invalid = true;
       }
-    } else {
+    }else if(state == 4 && right != null){ // is a function
+      EquationTree function = null;
+      if(existingFunctions != null){
+        for (int i = 0; i < existingFunctions.length; i++) {
+          if(existingFunctions[i].name.equals(value.toString())){
+            function = existingFunctions[i];
+          }
+        }
+      }
+
+      if(function != null){
+        TwoDVec<Double> newCoords = new TwoDVec(right.calculate(realCoord, vars,existingFunctions), realCoord.y);
+        double result = 0;
+        try {
+          if(!invalid){
+            result = function.calculate(newCoords, vars,existingFunctions);
+          }
+        } catch (StackOverflowError e) {
+          System.out.println("StackOverflowError DONT do recursion");
+          System.out.println("bad function: "+value.toString()+"(x)");
+          invalid = true;
+        }
+        if(!invalid)
+          return result;
+      }else{
+        //System.out.println("WHY NOT WORKING -- Function calculate :c");
+        invalid = true;
+      }
+
+    }else {
       System.out.println("Invalid Node!");
       invalid = true;
     }
