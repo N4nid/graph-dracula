@@ -6,6 +6,7 @@ public class EquationNode {
   public int bracketDepth;
   public byte opLevel; // to sort operators easier later. -1 if not a operator
   public EquationNode above;
+  boolean invalid = false;
 
   public EquationNode(byte state, String value) {
     this.state = state;
@@ -87,7 +88,6 @@ public class EquationNode {
   }
 
   public double calculate(TwoDVec<Double> realCoord, Variable[] vars, EquationTree[] existingFunctions) {
-    boolean invalid = false;
 
     if (state == 0) {
       return Double.parseDouble((String) value);
@@ -146,17 +146,30 @@ public class EquationNode {
       }
     }else if(state == 4 && right != null){ // is a function
       EquationTree function = null;
-      for (int i = 0; i < existingFunctions.length; i++) {
-        if(existingFunctions[i].name.equals(value.toString()+"(x)")){
-          function = existingFunctions[i];
+      if(existingFunctions != null){
+        for (int i = 0; i < existingFunctions.length; i++) {
+          if(existingFunctions[i].name.equals(value.toString()+"(x)")){
+            function = existingFunctions[i];
+          }
         }
       }
 
       if(function != null){
         TwoDVec<Double> newCoords = new TwoDVec(right.calculate(realCoord, vars,existingFunctions), realCoord.y);
-        return function.calculate(newCoords, vars,existingFunctions);
+        double result = 0;
+        try {
+          if(!invalid){
+            result = function.calculate(newCoords, vars,existingFunctions);
+          }
+        } catch (StackOverflowError e) {
+          System.out.println("StackOverflowError DONT do recursion");
+          System.out.println("bad function: "+value.toString()+"(x)");
+          invalid = true;
+        }
+        if(!invalid)
+          return result;
       }else{
-        System.out.println("WHY NOT WORKING -- Function calculate :c");
+        //System.out.println("WHY NOT WORKING -- Function calculate :c");
         invalid = true;
       }
 

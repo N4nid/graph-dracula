@@ -19,7 +19,7 @@ public class EquationParser {
     // remove all spaces
     input = input.replaceAll("\\s", "");
     input = input.toLowerCase();
-    if(input.equals("")){
+    if (input.equals("")) {
       return "EMPTY INPUT";
     }
 
@@ -29,31 +29,30 @@ public class EquationParser {
                                    // should be sorted by length to avoid replacement with shorter constants
                                    // F.e when there would be a constant like "pie" and "e" is replaced
     Double constValues[] = { 1.6180339887498948, Math.PI, Math.E };
-    input = replaceConstants(input,constants,constValues);
-    input = replaceConstants(input,uniConstants,constValues);
-    
+    input = replaceConstants(input, constants, constValues);
+    input = replaceConstants(input, uniConstants, constValues);
 
     // replace )( with )*( so something like (2+1)(x-1) works
     input = input.replaceAll("\\)\\(", ")*(");
 
     // Transform
-    name = "";
-    if (!input.contains("=") && !input.contains("y")) {
-      if (!parseBetweenBrackets)
+    if (!parseBetweenBrackets) {
+      if (!input.contains("=") && !input.contains("y")) {
         input += "-y";
-      isFunction = false;
-      if (debug)
-        System.out.println("not a function");
-    } else if (checkIfFunction(input)) {
-      input = input.split("=")[1] + "-y";
-      if (debug)
-        System.out.println("is a function");
-    } else if (input.contains("=")) {
-      String[] split = input.split("=");
-      input = split[0] + "-(" + split[1] + ")";
-      isFunction = false;
-      if (debug)
-        System.out.println("is not a function");
+        isFunction = false;
+        if (debug)
+          System.out.println("not a function");
+      } else if (checkIfFunction(input)) {
+        input = input.split("=")[1] + "-y";
+        if (debug)
+          System.out.println("is a function");
+      } else if (input.contains("=")) {
+        String[] split = input.split("=");
+        input = split[0] + "-(" + split[1] + ")";
+        isFunction = false;
+        if (debug)
+          System.out.println("is not a function");
+      }
     }
 
     // FIXME workaround when equation starts with brackets (20-2)*2
@@ -69,7 +68,7 @@ public class EquationParser {
     return input;
   }
 
-  private static String replaceConstants(String input, String constants, Double[] constValues){
+  private static String replaceConstants(String input, String constants, Double[] constValues) {
     String constArr[] = constants.split(" ");
     for (int i = 0; i < constArr.length; i++) {
       // System.out.println("Test replace: |"+constArr[i]+"|");
@@ -77,7 +76,6 @@ public class EquationParser {
     }
     return input;
   }
-
 
   public static EquationTree parseString(String input, ApplicationController appController) {
     input = transformString(input);
@@ -113,7 +111,7 @@ public class EquationParser {
           lastNode.right = currentNode;
         }
 
-        if(state == 1 && !(val.equals("y") || val.equals("x"))){ // handle variables
+        if (state == 1 && !(val.equals("y") || val.equals("x"))) { // handle variables
           controller.customVarList.addCustomVar(val.toString());
         }
 
@@ -160,11 +158,11 @@ public class EquationParser {
                 .println("leftStr: " + betweenBrackts[0] + " rightStr: " + betweenBrackts[1]);
             System.out.println("---PARSING LEFT----");
           }
-          EquationNode left = parseString(betweenBrackts[0],controller).root;
+          EquationNode left = parseString(betweenBrackts[0], controller).root;
 
           if (debug)
             System.out.println("---PARSING RIGHT---");
-          EquationNode right = parseString(betweenBrackts[1],controller).root;
+          EquationNode right = parseString(betweenBrackts[1], controller).root;
 
           if (debug) {
             System.out.println("---PARSING DONE----");
@@ -258,18 +256,19 @@ public class EquationParser {
       }
     }
 
-    if (debug) {
+    if (debug)
       operators.printStack();
-      if (root != null) {
-        root.recursivePrint(""); // For debugging
-        TwoDVec coords = new TwoDVec<Double>(0.0,0.0);
-        EquationTree[] existingFunctions = controller.getAllFunctions();
-        double res = root.calculate(coords, null,existingFunctions);
-        System.out.println(res);
-        if((double)coords.x == -1.0){
+    if (root != null) {
+      root.recursivePrint(""); // For debugging
+      TwoDVec coords = new TwoDVec<Double>(0.0, 0.0);
+      EquationTree[] existingFunctions = controller.getAllFunctions();
+      double res = root.calculate(coords, null, existingFunctions);
+      if (debug)
+        System.out.println(res + " name: " + name + " isFunction: " + isFunction);
+      if ((double) coords.x == -1.0) {
+        if (debug)
           System.out.println("Return null");
-          return null;
-        }
+        return null;
       }
     }
     // debugging
@@ -289,13 +288,13 @@ public class EquationParser {
       StringBuffer testBuffer = new StringBuffer(input);
       EquationNode nextNode = getNextNode(testBuffer);
       if (nextNode.state == 0) { // is a num
-//        System.out.println("-- BUFFERS: ");
-//        System.out.println(testBuffer.toString());
-//        System.out.println(input.toString());
+        // System.out.println("-- BUFFERS: ");
+        // System.out.println(testBuffer.toString());
+        // System.out.println(input.toString());
 
         input.setLength(0);
         input.append("(0-" + nextNode.value + ")" + testBuffer);
- //       System.out.println(input.toString());
+        // System.out.println(input.toString());
         return true;
       }
     }
@@ -335,10 +334,10 @@ public class EquationParser {
   private static boolean checkIfFunction(String input) {
     // only one char functions
     // f(x) and not wow(x)
-    if(input.length() < 4){
+    if (input.length() < 4) {
       return false;
     }
-    String sub = input.substring(1, 5); // should be (x)= 
+    String sub = input.substring(1, 5); // should be (x)=
     if (sub.equals("(x)=")) {
       name = input.charAt(0) + "(x)";
       isFunction = true;
@@ -408,17 +407,23 @@ public class EquationParser {
     char next = input.charAt(counter);
     byte nextState = getState(next);
 
-    if(state == 1 && next == '('){ // edgecase for parsing functions f(
-      if(controller.functionExists(Character.toString(first)+"(x)")) { // check if it is a variables or function; a(x) could also mean a*(x)
-        //System.out.println("YOOOASd THERE IS ARLEADY a funciton");
+    if (state == 1 && next == '(') { // edgecase for parsing functions f(
+      if (controller.functionExists(Character.toString(first) + "(x)")) { // check if it is a variables or function;
+                                                                          // a(x) could also mean a*(x)
+        // System.out.println("YOOOASd THERE IS ARLEADY a funciton");
         input = input.delete(0, 1);
-        result = new EquationNode((byte)4, value);
+        result = new EquationNode((byte) 4, value);
         result.opLevel = 3;
         return result;
       }
     }
 
-    if (state == -1 || (state == 2 || state == 1 && (nextState != state || first == 'x' || first == 'y'))) {// is a operator or variable  -> no further
+    if (state == -1 || (state == 2 || state == 1 && (nextState != state || first == 'x' || first == 'y'))) {// is a
+                                                                                                            // operator
+                                                                                                            // or
+                                                                                                            // variable
+                                                                                                            // -> no
+                                                                                                            // further
       input = input.delete(0, 1);
       opLevel = getOpLevel(value);
       result = new EquationNode(state, value);
@@ -434,7 +439,7 @@ public class EquationParser {
         next = input.charAt(counter);
         nextState = getState(next);
       }
-      if(value.equals("mod")){//edge case when 2modsin()
+      if (value.equals("mod")) {// edge case when 2modsin()
         break;
       }
     }
@@ -450,10 +455,10 @@ public class EquationParser {
       } else if (operators.contains(value)) {
         state = specialOpMagicNum; // So that i can treat it differently -> will be changed to 2 later
         opLevel = 3; // XXX CHECK IF WORKS THAT WAY
-      } else if(value.equals("mod")){ // special case for mod
+      } else if (value.equals("mod")) { // special case for mod
         state = 2;
         opLevel = 1;
-      }else {
+      } else {
         if (debug)
           System.out.println("invalid input getNode()");
         return null; // invalid input
