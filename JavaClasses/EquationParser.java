@@ -78,6 +78,10 @@ public class EquationParser {
   }
 
   public static EquationTree parseString(String input, ApplicationController appController) {
+    if (debug && input.equals("debug")) {
+      testParser(appController);
+    }
+
     input = transformString(input);
     controller = appController;
 
@@ -321,13 +325,12 @@ public class EquationParser {
         // System.out.println("after brack");
       }
       doContinue = true;
-    } else if (lastNode.state != state) { // handle 2x x2 etc
+    } else if (lastNode.state != state || val.equals("x") || lastNode.value.equals("x")) { // handle 2x x2 ax xa
       // System.out.println("handle other");
       input.insert(0, "*" + val);
       doContinue = true;
     }
 
-    // System.out.println("INP AFTER "+input);
     return doContinue;
   }
 
@@ -339,7 +342,7 @@ public class EquationParser {
     }
     String sub = input.substring(1, 5); // should be (x)=
     if (sub.equals("(x)=")) {
-      name = input.charAt(0) + "(x)";
+      name = input.charAt(0) + "";
       isFunction = true;
       return true;
     }
@@ -408,9 +411,8 @@ public class EquationParser {
     byte nextState = getState(next);
 
     if (state == 1 && next == '(') { // edgecase for parsing functions f(
-      if (controller.functionExists(Character.toString(first) + "(x)")) { // check if it is a variables or function;
-                                                                          // a(x) could also mean a*(x)
-        // System.out.println("YOOOASd THERE IS ARLEADY a funciton");
+      if (controller.functionExists(value) && !name.equals(value)) {
+        // check if it is a variables or function; a(x) could also mean a*(x)
         input = input.delete(0, 1);
         result = new EquationNode((byte) 4, value);
         result.opLevel = 3;
@@ -418,12 +420,12 @@ public class EquationParser {
       }
     }
 
-    if (state == -1 || (state == 2 || state == 1 && (nextState != state || first == 'x' || first == 'y'))) {// is a
-                                                                                                            // operator
-                                                                                                            // or
-                                                                                                            // variable
-                                                                                                            // -> no
-                                                                                                            // further
+    if (state == -1 ||
+        (state == 2 || state == 1 &&
+            (nextState != state || first == 'x' || first == 'y' || next == 'x' || next == 'y'))) {
+      // should cover the following cases:
+      // (,),ax,ay,x,y,+,-,*,/
+
       input = input.delete(0, 1);
       opLevel = getOpLevel(value);
       result = new EquationNode(state, value);
@@ -498,6 +500,39 @@ public class EquationParser {
     } else {
       return 1; // could be variable or special function
     }
+  }
+
+  public static void testParser(ApplicationController controller) { // todo
+    // brackets
+    String test[] = { "3*2^2+1", "1+2*3^2", "2*3^sin(0)+1", "1+sin(0)*2",
+        "1+1^3*3+1", "1+2*(3-1)", "(2*2+1)^2", "sin(1-1)+2*(3^(2-1))", "1+2*(1+3*3+1)",
+        "3^(sin(2*cos(1/3*3-1)-2)+2)*(1/2)", "cos(sin(1-1)*2)", "sin(2*sin(2-2))", "sin(2*sin(22*0))", "root(2,64)-4",
+        "root(2,root(2,64)/2)*2^1" };
+    double results[] = { 13, 19, 3, 1, 5, 5, 25, 6, 23, 4.5, 1, 0, 0, 4, 4 };
+    int passed = 0;
+    for (int i = 0; i < test.length; i++) {
+      System.out.println("-----------------");
+      EquationTree root = parseString(test[i], controller);
+      TwoDVec coords = new TwoDVec<Double>(0.0, 0.0);
+      EquationTree[] existingFunctions = controller.getAllFunctions();
+      double res = root.calculate(coords, null, existingFunctions);
+      if (debug)
+        System.out.println(res + " name: " + name + " isFunction: " + isFunction);
+      if ((double) coords.x == -1.0) {
+        if (debug)
+          System.out.println("Return null");
+      }
+      System.out.println("calc:" + res + "  - should: " + results[i]);
+      if (res == results[i]) {
+        System.out.println("### TEST PASSED ###");
+        passed++;
+      } else {
+        System.out.println("--- TEST FAILED ---");
+      }
+    }
+    System.out.println("---- RESULTS ----");
+    System.out.println("PASSED: " + test.length + "/" + passed);
+    System.out.println("-----------------");
   }
 
 }

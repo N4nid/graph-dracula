@@ -148,7 +148,7 @@ public class EquationNode {
       EquationTree function = null;
       if(existingFunctions != null){
         for (int i = 0; i < existingFunctions.length; i++) {
-          if(existingFunctions[i].name.equals(value.toString()+"(x)")){
+          if(existingFunctions[i].name.equals(value.toString())){
             function = existingFunctions[i];
           }
         }
