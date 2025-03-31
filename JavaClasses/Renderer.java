@@ -1,7 +1,6 @@
 import javafx.scene.canvas.Canvas;
-import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
+
 import java.util.ArrayList;
 
 public class Renderer {
@@ -85,10 +84,13 @@ public class Renderer {
     }
     
     if (functions.size() > 0) {
+      long startTime = System.nanoTime();
       ArrayList<ArrayList<TwoDVec<TwoDVec<Double>>>> functionsLines = funcDrawer.calculateFunctionsLines(functions,customVariables,existingFunctions);
       for (int i = 0; i < functionsLines.size(); i++) {
         renderLines(functions.get(i).graphColor, functionsLines.get(i));
       }
+      long endTime = System.nanoTime();
+      System.out.println(endTime-startTime);
     }
   }
   
@@ -125,24 +127,29 @@ public class Renderer {
     }
   }
 
+
   private void correctLines(ArrayList<TwoDVec<TwoDVec<Double>>> lines) {
-    double realSlopeRange = 0.04;
-    int pixelSlopeRange = (int)Math.round(realSlopeRange / renderValues.zoom.x);
-    double currentSlope = 0;
-    for (int i = pixelSlopeRange+2; i < lines.size()-pixelSlopeRange*2 -1; i++) {
-      currentSlope = Math.abs(renderValues.screenCoordDoubleToRealCoord(lines.get(i+pixelSlopeRange).y).y - renderValues.screenCoordDoubleToRealCoord(lines.get(i).x).y);
-      if (currentSlope > 3 || Double.isNaN(currentSlope)) {
-        double prevSlope = renderValues.screenCoordDoubleToRealCoord(lines.get(i-1).x).y - renderValues.screenCoordDoubleToRealCoord(lines.get(i-pixelSlopeRange).x).y;
-        double nextSlope = renderValues.screenCoordDoubleToRealCoord(lines.get(i+pixelSlopeRange*2).y).y - renderValues.screenCoordDoubleToRealCoord(lines.get(i+1+pixelSlopeRange).y).y;
-        if ((prevSlope > 0 && nextSlope < 0) || (prevSlope < 0 && nextSlope > 0) || Double.isNaN(currentSlope)) {
-          System.out.println(renderValues.screenCoordDoubleToRealCoord(lines.get(i).y).x);
-          for (int j = i; j < i+pixelSlopeRange; j++) {
-            lines.set(i,null);
-          }
-          i += pixelSlopeRange;
+    for (int i = 0; i < lines.size(); i++) {
+      double currentSlope = Math.abs(lines.get(i).y.y - lines.get(i).x.y);
+      if (currentSlope > renderValues.resolution.y && !yIsOnScreen(lines.get(i).x.y) && !yIsOnScreen(lines.get(i).y.y)) {
+        double midpointY = renderValues.midpoint.y;
+        if (renderValues.zoom.x < 0.02) {
+          midpointY *= (renderValues.zoom.x / 0.02);
+        }
+        //System.out.println(midpointY);
+        //System.out.println(renderValues.screenCoordDoubleToRealCoord(lines.get(i).y).x);
+        //System.out.println(currentSlope);
+        if (midpointY < 1.7 * renderValues.resolution.y && midpointY > -1.7 * renderValues.resolution.y) { //If you go off too far up or down, the valid slopes will be too steep, and I don't wanna invalidate them
+          lines.set(i,null);
         }
       }
     }
+  }
+
+  private boolean yIsOnScreen(double y) {
+    double minY = -renderValues.midpoint.y - (renderValues.resolution.y / 2);
+    double maxY = -renderValues.midpoint.y + (renderValues.resolution.y / 2);
+    return (y < maxY && y > minY);
   }
 
   

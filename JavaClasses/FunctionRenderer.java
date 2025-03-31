@@ -4,6 +4,10 @@ import javafx.scene.paint.Color;
 import java.util.ArrayList;
 
 public class FunctionRenderer {
+  public boolean autoAdjustLOD = true;
+
+  private double pixelsPerPoint;
+
   RenderValues renderValues;
 
   private static final double slopeBreakThreshhold = 400;
@@ -15,29 +19,34 @@ public class FunctionRenderer {
   }
 
   public double[] calculateFunctionValues(EquationTree equation, Variable[] existingVariables, EquationTree[] existingFunctions) {
-    double[] returnValues = new double[renderValues.resolution.x];
-    for (int i = 0; i < renderValues.resolution.x; i++) {
-      double yValue = equation.calculate(new TwoDVec<Double>(renderValues.screenCoordToRealCoord(new TwoDVec<Integer>(i,0)).x,0.0),existingVariables,existingFunctions);
+    double[] returnValues = new double[(int)Math.round((double)renderValues.resolution.x/pixelsPerPoint)];
+    for (int i = 0; i < returnValues.length; i++) {
+      double yValue = equation.calculate(new TwoDVec<Double>(renderValues.screenCoordDoubleToRealCoord(new TwoDVec<Double>((double)i*pixelsPerPoint,0.0)).x,0.0),existingVariables,existingFunctions);
       returnValues[i] = renderValues.realCoordToScreenCoord(new TwoDVec<Double>(0.0,yValue)).y;
     }
     return returnValues;
   }
 
   public double[] getXArray() {
-    double[] xs = new double[Math.abs(renderValues.resolution.x)];
-    for (int i = 0; i < renderValues.resolution.x; i++) {
-      xs[i] = i;
+    double[] xs = new double[Math.abs((int)Math.round((double)renderValues.resolution.x/pixelsPerPoint))];
+    for (int i = 0; i < xs.length; i++) {
+      xs[i] = (double) i * pixelsPerPoint;
     }
     return xs;
   }
 
   public ArrayList<ArrayList<TwoDVec<TwoDVec<Double>>>> calculateFunctionsLines(ArrayList<EquationTree> functions, Variable[] existingVariables, EquationTree[] existingFunctions) {
+    if (renderValues.zoom.x > 0.02) {
+      pixelsPerPoint = 0.01/renderValues.zoom.x;
+    }
+    else {
+      pixelsPerPoint = 1;
+    }
     ArrayList<ArrayList<TwoDVec<TwoDVec<Double>>>> functionsLines = new ArrayList<ArrayList<TwoDVec<TwoDVec<Double>>>>();
     double[] xValues = getXArray(); 
     for (int i = 0; i < functions.size(); i++) {
       ArrayList<TwoDVec<TwoDVec<Double>>> currentFunctionLines = new ArrayList<TwoDVec<TwoDVec<Double>>>();
       double[] functionValues = calculateFunctionValues(functions.get(i),existingVariables,existingFunctions);
-      //fixValues(functionValues, functions.get(i));
       for (int j = 0; j < functionValues.length-1; j++) {
         TwoDVec<Double> fromCoord = new TwoDVec<Double>(xValues[j],functionValues[j]);
         TwoDVec<Double> toCoord = new TwoDVec<Double>(xValues[j+1],functionValues[j+1]);
