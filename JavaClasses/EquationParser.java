@@ -304,9 +304,7 @@ public class EquationParser {
     }
 
     // cant do add the multiplikation -> return
-    if (state == 2 || state == -1 || lastNode.state >= 2 || lastNode.state == -1) { // either a operator or a bracket
-                                                                                    // lastnode can only be a num or
-                                                                                    // var
+    if (lastNode.equals(currentNode) || state == 2 || state == -1 || lastNode.state >= 2 || lastNode.state == -1) {
       return false;
     }
     int bracketDepth = currentNode.bracketDepth;
