@@ -34,7 +34,7 @@ public class CustomVarUIElement {
     public CustomVarUIElement(String name,ApplicationController controller) {
         this.name = name;
         this.controller = controller;
-        value = 0;
+        value = 1;
 
         background = new Pane();
         nameDisplay = new Label();

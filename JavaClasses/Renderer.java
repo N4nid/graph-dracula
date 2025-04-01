@@ -1,7 +1,6 @@
 import javafx.scene.canvas.Canvas;
-import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
+
 import java.util.ArrayList;
 
 public class Renderer {
@@ -85,10 +84,13 @@ public class Renderer {
     }
     
     if (functions.size() > 0) {
+      long startTime = System.nanoTime();
       ArrayList<ArrayList<TwoDVec<TwoDVec<Double>>>> functionsLines = funcDrawer.calculateFunctionsLines(functions,customVariables,existingFunctions);
       for (int i = 0; i < functionsLines.size(); i++) {
         renderLines(functions.get(i).graphColor, functionsLines.get(i));
       }
+      long endTime = System.nanoTime();
+      //System.out.println(endTime-startTime);
     }
   }
   
@@ -101,7 +103,7 @@ public class Renderer {
       allEquations.add(listElements.get(i).equation);
       allEquations.get(allEquations.size() - 1).graphColor = listElements.get(i).colorPicker.colorValue;
     }
-    
+
     for (int i = 0; i < allEquations.size(); i++) {
       if (allEquations.get(i).isFunction) {
         functions.add(allEquations.get(i));
@@ -115,12 +117,41 @@ public class Renderer {
   
   public void renderLines(Color graphColor, ArrayList<TwoDVec<TwoDVec<Double>>> lines) {
     mainCanvas.getGraphicsContext2D().setLineWidth(2);
+    correctLines(lines);
     for (int i = 0; i < lines.size(); i++) {
-      mainCanvas.getGraphicsContext2D().setStroke(graphColor);
-      TwoDVec<TwoDVec<Double>> currentLine = lines.get(i);
-      mainCanvas.getGraphicsContext2D().strokeLine(currentLine.x.x,currentLine.x.y,currentLine.y.x,currentLine.y.y);
+      if (lines.get(i) != null) {
+        mainCanvas.getGraphicsContext2D().setStroke(graphColor);
+        TwoDVec<TwoDVec<Double>> currentLine = lines.get(i);
+        mainCanvas.getGraphicsContext2D().strokeLine(currentLine.x.x, currentLine.x.y, currentLine.y.x, currentLine.y.y);
+      }
     }
   }
+
+
+  private void correctLines(ArrayList<TwoDVec<TwoDVec<Double>>> lines) {
+    for (int i = 0; i < lines.size(); i++) {
+      double currentSlope = Math.abs(lines.get(i).y.y - lines.get(i).x.y);
+      if (currentSlope > renderValues.resolution.y && !yIsOnScreen(lines.get(i).x.y) && !yIsOnScreen(lines.get(i).y.y)) {
+        double midpointY = renderValues.midpoint.y;
+        if (renderValues.zoom.x < 0.02) {
+          midpointY *= (renderValues.zoom.x / 0.02);
+        }
+        //System.out.println(midpointY);
+        //System.out.println(renderValues.screenCoordDoubleToRealCoord(lines.get(i).y).x);
+        //System.out.println(currentSlope);
+        if (midpointY < 1.7 * renderValues.resolution.y && midpointY > -1.7 * renderValues.resolution.y) { //If you go off too far up or down, the valid slopes will be too steep, and I don't wanna invalidate them
+          lines.set(i,null);
+        }
+      }
+    }
+  }
+
+  private boolean yIsOnScreen(double y) {
+    double minY = -renderValues.midpoint.y - (renderValues.resolution.y / 2);
+    double maxY = -renderValues.midpoint.y + (renderValues.resolution.y / 2);
+    return (y < maxY && y > minY);
+  }
+
   
   public void centerCoordinateSystem() {
     coordinateSystemRenderer.centerCoordinateSystem();
