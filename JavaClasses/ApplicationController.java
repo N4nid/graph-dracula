@@ -36,6 +36,7 @@ public class ApplicationController implements MenuHaver {
   public CustomVarUIList customVarList;
   
   public RoundColorPicker mainColorPicker;
+  VisualErrorMessage defaultErrorMessage;
   public Renderer renderer;
   
   public Scene scene;
@@ -67,11 +68,11 @@ public class ApplicationController implements MenuHaver {
   protected void onAddButtonClick() {
     EquationTree inputEquation = EquationParser.parseString(equationInput.getText(),this);
     if (inputEquation == null || inputEquation.root == null) {
-      System.out.println("Invalid equation! Please try again.");
+      defaultErrorMessage.displayError("Invalid equation! Please try again.");
       return;
     }
     if (!inputEquation.name.isBlank() && identifierExists(inputEquation.name) && editIndex == -1) {
-      System.out.println("The name for this function is already in use. Please choose another one!");
+      defaultErrorMessage.displayError("The name for this function is already in use. Please choose another one!");
       return;
     }
     if (!inputEquation.isFunction) {
@@ -158,6 +159,9 @@ public class ApplicationController implements MenuHaver {
     expandMenu = new ExpandMenu(root,equationInput,extraInputButton,expandMenuLabel);
     hideOnClick.add(expandMenu);
     expandMenu.dissappear();
+
+    defaultErrorMessage = new VisualErrorMessage(root,equationInputPane);
+    hideOnClick.add(defaultErrorMessage);
     
     graphViewLabel.setViewOrder(-1);
     expandMenuLabel.setViewOrder(-2);
