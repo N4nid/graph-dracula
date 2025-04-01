@@ -257,7 +257,13 @@ public class ApplicationController implements MenuHaver {
           EquationVisElement hoveringElement = getHoveredEquationVisElement();
           if (hoveringElement != null) {
             TwoDVec<Double> mousePos = new TwoDVec<Double>(e.getX(), e.getY());
-            OverlayMenu rightClickMenu = new OverlayMenu(hoveringElement, "equationElement", mousePos, root);
+            OverlayMenu rightClickMenu;
+            if (hoveringElement.equation.isVisible) {
+              rightClickMenu = new OverlayMenu(hoveringElement, "equationElement", mousePos, root);
+            }
+            else {
+              rightClickMenu = new OverlayMenu(hoveringElement, "hiddenEquationElement", mousePos, root);
+            }
             hideOnClick.add(rightClickMenu);
           }
         }

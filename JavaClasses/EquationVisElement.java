@@ -64,6 +64,14 @@ public class EquationVisElement implements MenuHaver{
     if(option.equals("edit")) {
       controller.editEquation(this);
     }
+    if (option.equals("hide")) {
+      equation.isVisible = true;
+      controller.updateRenderCanvas();
+    }
+    if (option.equals("show")) {
+      equation.isVisible = false;
+      controller.updateRenderCanvas();
+    }
     if (option.equals("delete")) {
       controller.deleteEquation(this);
     }

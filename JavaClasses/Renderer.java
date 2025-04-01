@@ -100,8 +100,10 @@ public class Renderer {
     functions = new ArrayList<EquationTree>();
     parametrics = new ArrayList<EquationTree>();
     for (int i = 0; i < listElements.size(); i++) {
-      allEquations.add(listElements.get(i).equation);
-      allEquations.get(allEquations.size() - 1).graphColor = listElements.get(i).colorPicker.colorValue;
+      if (listElements.get(i).equation.isVisible) {
+        allEquations.add(listElements.get(i).equation);
+        allEquations.get(allEquations.size() - 1).graphColor = listElements.get(i).colorPicker.colorValue;
+      }
     }
 
     for (int i = 0; i < allEquations.size(); i++) {

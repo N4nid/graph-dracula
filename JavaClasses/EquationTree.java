@@ -5,7 +5,9 @@ import java.util.ArrayList;
 import java.util.ArrayList;
 
 public class EquationTree{
-  
+
+  public boolean isVisible = true;
+
   public EquationNode root;
   public Color graphColor = Color.BLACK;
   public boolean isPreviewEquation = false;
