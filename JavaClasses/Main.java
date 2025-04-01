@@ -32,8 +32,8 @@ public class Main extends Application {
     stage.setTitle("Graph Dracula");
     stage.setScene(scene);
     stage.show();
-    stage.setMinWidth(500);
-    stage.setMinHeight(300);
+    stage.setMinWidth(979);
+    stage.setMinHeight(420);
     controller.setup();
   }
 
