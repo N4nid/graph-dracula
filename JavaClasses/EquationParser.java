@@ -1,3 +1,6 @@
+import java.util.HashSet;
+import java.util.Set;
+
 public class EquationParser {
   public static boolean debug = true; // all debugging prints will be removed when there are no issues anymore
   static String name = "";
@@ -20,7 +23,7 @@ public class EquationParser {
     input = input.replaceAll("\\s", "");
     input = input.toLowerCase();
     if (input.equals("")) {
-      return "EMPTY INPUT";
+      return null;
     }
 
     // replace constants
@@ -37,6 +40,7 @@ public class EquationParser {
 
     // Transform
     if (!parseBetweenBrackets) {
+      name = "";
       if (!input.contains("=") && !input.contains("y")) {
         input += "-y";
         isFunction = false;
@@ -83,6 +87,9 @@ public class EquationParser {
     }
 
     input = transformString(input);
+    if (input == null) {
+      return null;
+    }
     controller = appController;
 
     if (debug)
@@ -109,13 +116,16 @@ public class EquationParser {
       }
 
       if (state == 0 || state == 1) { // is either a num or variable
-        // System.out.println("NUMORVAR: "+val+"| "+lastNode.value+"
-        // "+lastNode.bracketDepth);
+        System.out.println("NUMORVAR: " + val + "| " + lastNode.value + " " + lastNode.bracketDepth);
         if (lastNode.state >= 2) {
           lastNode.right = currentNode;
         }
 
-        if (state == 1 && !(val.equals("y") || val.equals("x"))) { // handle variables
+        if (state == 1 && controller.functionExists(val.toString())) {
+          return null;
+        }
+        if (state == 1 && !(val.equals("y") || val.equals("x"))) { // handle
+                                                                   // variables
           controller.customVarList.addCustomVar(val.toString());
         }
 
@@ -157,16 +167,28 @@ public class EquationParser {
         String[] betweenBrackts = getBetweenBrackets(in);
         if (betweenBrackts != null) {
           parseBetweenBrackets = true;
+          EquationTree parsedTree;
           if (debug) {
             System.out
                 .println("leftStr: " + betweenBrackts[0] + " rightStr: " + betweenBrackts[1]);
             System.out.println("---PARSING LEFT----");
           }
-          EquationNode left = parseString(betweenBrackts[0], controller).root;
+          parsedTree = parseString(betweenBrackts[0], controller);
+          if (parsedTree == null) {
+            parseBetweenBrackets = false;
+            return null;
+          }
+          EquationNode left = parsedTree.root;
 
           if (debug)
             System.out.println("---PARSING RIGHT---");
-          EquationNode right = parseString(betweenBrackts[1], controller).root;
+
+          parsedTree = parseString(betweenBrackts[1], controller);
+          if (parsedTree == null) {
+            parseBetweenBrackets = false;
+            return null;
+          }
+          EquationNode right = parsedTree.root;
 
           if (debug) {
             System.out.println("---PARSING DONE----");
@@ -439,16 +461,36 @@ public class EquationParser {
         next = input.charAt(counter);
         nextState = getState(next);
       }
-      if (value.equals("mod")) {// edge case when 2modsin()
+      if (value.contains("mod")) {// edge case when 2modsin()
         break;
       }
     }
     // remove used part
     input = input.delete(0, counter);
 
-    String specials = "abs sin cos tan ln sqrt";
-    String operators = "root log";
+    Set<String> specials = Set.of("abs", "sin", "cos", "tan", "ln", "sqrt");
+    Set<String> operators = Set.of("root", "log");
+    Set<String> all = new HashSet<String>();
+    all.addAll(specials);
+    all.addAll(operators);
+    all.add("mod"); // since mod is handled differently
+
     if (state == 1) {
+      // TODO Handle mod: amod
+      System.out.println("is: " + value);
+
+      for (String element : all) {
+        if (value.contains(element)) {
+          System.out.println(":-- " + element);
+          if (value.length() > element.length()) { // to prevent error when value is only element
+                                                   // fe. value = sin and not asin
+            input.insert(0, element);
+            value = value.split(element)[0]; // get part before special
+            System.out.println("new val: " + value);
+          }
+        }
+      }
+
       if (specials.contains(value)) {
         state = 3;
         opLevel = 3;
@@ -458,11 +500,25 @@ public class EquationParser {
       } else if (value.equals("mod")) { // special case for mod
         state = 2;
         opLevel = 1;
-      } else {
-        if (debug)
-          System.out.println("invalid input getNode()");
-        return null; // invalid input
+      } else { // only customVars -> add multiplikation between
+        String otherVars = "";
+        for (int i = 1; i < value.length(); i++) {
+          otherVars += "*" + value.charAt(i);
+        }
+        state = 1;
+        opLevel = -1;
+        value = value.charAt(0) + "";
+        input.insert(0, otherVars);
+        System.out.println("input: " + input + " this: " + value + "|" + state + "|"
+            + opLevel);
       }
+
+      // else {
+      // if (debug)
+      // System.out.println("invalid input getNode(): " + value);
+      // return null; // invalid input
+      // }
+
     }
 
     result = new EquationNode(state, value);
@@ -505,8 +561,9 @@ public class EquationParser {
     String test[] = { "3*2^2+1", "1+2*3^2", "2*3^sin(0)+1", "1+sin(0)*2",
         "1+1^3*3+1", "1+2*(3-1)", "(2*2+1)^2", "sin(1-1)+2*(3^(2-1))", "1+2*(1+3*3+1)",
         "3^(sin(2*cos(1/3*3-1)-2)+2)*(1/2)", "cos(sin(1-1)*2)", "sin(2*sin(2-2))", "sin(2*sin(22*0))", "root(2,64)-4",
-        "root(2,root(2,64)/2)*2^1" };
-    double results[] = { 13, 19, 3, 1, 5, 5, 25, 6, 23, 4.5, 1, 0, 0, 4, 4 };
+        "root(2,root(2,64)/2)*2^1", "(x/3)^4-2(x/3)^2 -5" };
+
+    double results[] = { 13, 19, 3, 1, 5, 5, 25, 6, 23, 4.5, 1, 0, 0, 4, 4, -5 };
     int passed = 0;
     for (int i = 0; i < test.length; i++) {
       System.out.println("-----------------");

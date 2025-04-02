@@ -1,5 +1,6 @@
 public class EquationNode {
-  public byte state; // 0:IsNumber, 1:IsVariable, 2:IsOperator, 3:IsSpecialFunc, 4:IsEquation, 5:RootOfParametric
+  public byte state; // 0:IsNumber, 1:IsVariable, 2:IsOperator, 3:IsSpecialFunc, 4:IsEquation,
+                     // 5:RootOfParametric
   public Object value;
   public EquationNode left;
   public EquationNode right;
@@ -12,7 +13,7 @@ public class EquationNode {
     this.state = state;
     this.value = value;
   }
-  
+
   public EquationNode(byte state, double value) {
     this.state = state;
     this.value = value;
@@ -26,7 +27,7 @@ public class EquationNode {
     if (right != null) {
       this.right.recursivePrint(helper + "r");
     }
-    
+
   }
 
   public double calculateParametric(double t, Variable[] vars) {
@@ -55,7 +56,7 @@ public class EquationNode {
       } else if (op.equals("^")) {
         return Math.pow(part1, part2);
       } else if (op.equals("mod")) {
-        return part1%part2;
+        return part1 % part2;
       } else if (op.equals("root")) {
         return Math.pow(part2, 1.0 / part1);
       } else if (op.equals("log")) {
@@ -74,7 +75,7 @@ public class EquationNode {
         return Math.tan(calVal);
       } else if (op.equals("ln")) {
         return Math.log(calVal);
-      } else if (op.equals("abs")){
+      } else if (op.equals("abs")) {
         return Math.abs(calVal);
       } else if (op.equals("sqrt")) {
         return Math.sqrt(calVal);
@@ -102,8 +103,8 @@ public class EquationNode {
         return readVar(vars, varName);
       }
     } else if (state == 2 && left != null && right != null) {
-      double part1 = left.calculate(realCoord, vars,existingFunctions);
-      double part2 = right.calculate(realCoord, vars,existingFunctions);
+      double part1 = left.calculate(realCoord, vars, existingFunctions);
+      double part2 = right.calculate(realCoord, vars, existingFunctions);
       String op = (String) value;
       if (op.equals("+")) {
         return part1 + part2;
@@ -116,7 +117,7 @@ public class EquationNode {
       } else if (op.equals("^")) {
         return Math.pow(part1, part2);
       } else if (op.equals("mod")) {
-        return part1%part2;
+        return part1 % part2;
       } else if (op.equals("root")) {
         return Math.pow(part2, 1.0 / part1);
       } else if (op.equals("log")) {
@@ -127,7 +128,7 @@ public class EquationNode {
       }
     } else if (state == 3 && right != null) {
       String op = (String) value;
-      double calVal = right.calculate(realCoord, vars,existingFunctions);
+      double calVal = right.calculate(realCoord, vars, existingFunctions);
       if (op.equals("sin")) {
         return Math.sin(calVal);
       } else if (op.equals("cos")) {
@@ -136,7 +137,7 @@ public class EquationNode {
         return Math.tan(calVal);
       } else if (op.equals("ln")) {
         return Math.log(calVal);
-      } else if (op.equals("abs")){
+      } else if (op.equals("abs")) {
         return Math.abs(calVal);
       } else if (op.equals("sqrt")) {
         return Math.sqrt(calVal);
@@ -144,41 +145,41 @@ public class EquationNode {
         System.out.println("Invalid special function!");
         invalid = true;
       }
-    }else if(state == 4 && right != null){ // is a function
+    } else if (state == 4 && right != null) { // is a function
       EquationTree function = null;
-      if(existingFunctions != null){
+      if (existingFunctions != null) {
         for (int i = 0; i < existingFunctions.length; i++) {
-          if(existingFunctions[i].name.equals(value.toString())){
+          if (existingFunctions[i].name.equals(value.toString())) {
             function = existingFunctions[i];
           }
         }
       }
 
-      if(function != null){
-        TwoDVec<Double> newCoords = new TwoDVec(right.calculate(realCoord, vars,existingFunctions), realCoord.y);
+      if (function != null) {
+        TwoDVec<Double> newCoords = new TwoDVec(right.calculate(realCoord, vars, existingFunctions), realCoord.y);
         double result = 0;
         try {
-          if(!invalid){
-            result = function.calculate(newCoords, vars,existingFunctions);
+          if (!invalid) {
+            result = function.calculate(newCoords, vars, existingFunctions);
           }
         } catch (StackOverflowError e) {
           System.out.println("StackOverflowError DONT do recursion");
-          System.out.println("bad function: "+value.toString()+"(x)");
+          System.out.println("bad function: " + value.toString() + "(x)");
           invalid = true;
         }
-        if(!invalid)
+        if (!invalid)
           return result;
-      }else{
-        //System.out.println("WHY NOT WORKING -- Function calculate :c");
+      } else {
+        // System.out.println("WHY NOT WORKING -- Function calculate :c");
         invalid = true;
       }
 
-    }else {
+    } else {
       System.out.println("Invalid Node!");
       invalid = true;
     }
 
-    if(invalid){
+    if (invalid) {
       realCoord.setUniform(-1.0); // so that i can catch an invalid EquationTree
     }
 
