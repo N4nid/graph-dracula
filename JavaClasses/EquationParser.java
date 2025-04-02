@@ -1,3 +1,6 @@
+import java.util.HashSet;
+import java.util.Set;
+
 public class EquationParser {
   public static boolean debug = true; // all debugging prints will be removed when there are no issues anymore
   static String name = "";
@@ -115,7 +118,11 @@ public class EquationParser {
           lastNode.right = currentNode;
         }
 
-        if (state == 1 && !(val.equals("y") || val.equals("x"))) { // handle variables
+        if (state == 1 && controller.functionExists(val.toString())) {
+          return null;
+        }
+        if (state == 1 && !(val.equals("y") || val.equals("x"))) { // handle
+                                                                   // variables
           controller.customVarList.addCustomVar(val.toString());
         }
 
@@ -439,16 +446,36 @@ public class EquationParser {
         next = input.charAt(counter);
         nextState = getState(next);
       }
-      if (value.equals("mod")) {// edge case when 2modsin()
+      if (value.contains("mod")) {// edge case when 2modsin()
         break;
       }
     }
     // remove used part
     input = input.delete(0, counter);
 
-    String specials = "abs sin cos tan ln sqrt";
-    String operators = "root log";
+    Set<String> specials = Set.of("abs", "sin", "cos", "tan", "ln", "sqrt");
+    Set<String> operators = Set.of("root", "log");
+    Set<String> all = new HashSet<String>();
+    all.addAll(specials);
+    all.addAll(operators);
+    all.add("mod"); // since mod is handled differently
+
     if (state == 1) {
+      // TODO Handle mod: amod
+      System.out.println("is: " + value);
+
+      for (String element : all) {
+        if (value.contains(element)) {
+          System.out.println(":-- " + element);
+          if (value.length() > element.length()) { // to prevent error when value is only element
+                                                   // fe. value = sin and not asin
+            input.insert(0, element);
+            value = value.split(element)[0]; // get part before special
+            System.out.println("new val: " + value);
+          }
+        }
+      }
+
       if (specials.contains(value)) {
         state = 3;
         opLevel = 3;
@@ -458,11 +485,25 @@ public class EquationParser {
       } else if (value.equals("mod")) { // special case for mod
         state = 2;
         opLevel = 1;
-      } else {
-        if (debug)
-          System.out.println("invalid input getNode()");
-        return null; // invalid input
+      } else { // only customVars -> add multiplikation between
+        String otherVars = "";
+        for (int i = 1; i < value.length(); i++) {
+          otherVars += "*" + value.charAt(i);
+        }
+        state = 1;
+        opLevel = -1;
+        value = value.charAt(0) + "";
+        input.insert(0, otherVars);
+        System.out.println("input: " + input + " this: " + value + "|" + state + "|"
+            + opLevel);
       }
+
+      // else {
+      // if (debug)
+      // System.out.println("invalid input getNode(): " + value);
+      // return null; // invalid input
+      // }
+
     }
 
     result = new EquationNode(state, value);
