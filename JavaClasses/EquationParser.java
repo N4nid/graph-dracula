@@ -23,7 +23,7 @@ public class EquationParser {
     input = input.replaceAll("\\s", "");
     input = input.toLowerCase();
     if (input.equals("")) {
-      return "EMPTY INPUT";
+      return null;
     }
 
     // replace constants
@@ -40,6 +40,7 @@ public class EquationParser {
 
     // Transform
     if (!parseBetweenBrackets) {
+      name = "";
       if (!input.contains("=") && !input.contains("y")) {
         input += "-y";
         isFunction = false;
@@ -86,6 +87,9 @@ public class EquationParser {
     }
 
     input = transformString(input);
+    if (input == null) {
+      return null;
+    }
     controller = appController;
 
     if (debug)
@@ -112,8 +116,7 @@ public class EquationParser {
       }
 
       if (state == 0 || state == 1) { // is either a num or variable
-        // System.out.println("NUMORVAR: "+val+"| "+lastNode.value+"
-        // "+lastNode.bracketDepth);
+        System.out.println("NUMORVAR: " + val + "| " + lastNode.value + " " + lastNode.bracketDepth);
         if (lastNode.state >= 2) {
           lastNode.right = currentNode;
         }
@@ -164,16 +167,28 @@ public class EquationParser {
         String[] betweenBrackts = getBetweenBrackets(in);
         if (betweenBrackts != null) {
           parseBetweenBrackets = true;
+          EquationTree parsedTree;
           if (debug) {
             System.out
                 .println("leftStr: " + betweenBrackts[0] + " rightStr: " + betweenBrackts[1]);
             System.out.println("---PARSING LEFT----");
           }
-          EquationNode left = parseString(betweenBrackts[0], controller).root;
+          parsedTree = parseString(betweenBrackts[0], controller);
+          if (parsedTree == null) {
+            parseBetweenBrackets = false;
+            return null;
+          }
+          EquationNode left = parsedTree.root;
 
           if (debug)
             System.out.println("---PARSING RIGHT---");
-          EquationNode right = parseString(betweenBrackts[1], controller).root;
+
+          parsedTree = parseString(betweenBrackts[1], controller);
+          if (parsedTree == null) {
+            parseBetweenBrackets = false;
+            return null;
+          }
+          EquationNode right = parsedTree.root;
 
           if (debug) {
             System.out.println("---PARSING DONE----");
@@ -546,8 +561,9 @@ public class EquationParser {
     String test[] = { "3*2^2+1", "1+2*3^2", "2*3^sin(0)+1", "1+sin(0)*2",
         "1+1^3*3+1", "1+2*(3-1)", "(2*2+1)^2", "sin(1-1)+2*(3^(2-1))", "1+2*(1+3*3+1)",
         "3^(sin(2*cos(1/3*3-1)-2)+2)*(1/2)", "cos(sin(1-1)*2)", "sin(2*sin(2-2))", "sin(2*sin(22*0))", "root(2,64)-4",
-        "root(2,root(2,64)/2)*2^1" };
-    double results[] = { 13, 19, 3, 1, 5, 5, 25, 6, 23, 4.5, 1, 0, 0, 4, 4 };
+        "root(2,root(2,64)/2)*2^1", "(x/3)^4-2(x/3)^2 -5" };
+
+    double results[] = { 13, 19, 3, 1, 5, 5, 25, 6, 23, 4.5, 1, 0, 0, 4, 4, -5 };
     int passed = 0;
     for (int i = 0; i < test.length; i++) {
       System.out.println("-----------------");
