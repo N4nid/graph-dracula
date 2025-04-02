@@ -430,8 +430,7 @@ public class ApplicationController implements MenuHaver {
   
   public void addPreviewEquation() {
     EquationTree previewEquation = EquationParser.parseString(equationInput.getText(),this);
-    previewEquation.isPreviewEquation = true;
-    if (previewEquation.root == null) {
+    if (previewEquation == null || previewEquation.root == null) {
       System.out.println("Invalid equation, try again!");
     } else {
       listElements.get(editIndex).equation = previewEquation;
@@ -444,7 +443,7 @@ public class ApplicationController implements MenuHaver {
     editIndex = -1;
     setEditModeUI(false);
     equationInput.setText("");
-    updateRenderCanvas();
+    resize();
   }
   
   public void setEditModeUI(boolean isEditMode) {

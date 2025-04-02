@@ -10,7 +10,6 @@ public class EquationTree{
 
   public EquationNode root;
   public Color graphColor = Color.BLACK;
-  public boolean isPreviewEquation = false;
   public boolean isFunction = false;
   public boolean isParametric = false;
   public String name;
