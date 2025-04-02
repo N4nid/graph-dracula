@@ -71,7 +71,7 @@ public class ApplicationController implements MenuHaver {
       defaultErrorMessage.displayError("Invalid equation! Please try again.");
       return;
     }
-    if (!inputEquation.name.isBlank() && identifierExists(inputEquation.name) && editIndex == -1) {
+    if (!inputEquation.name.isBlank() && identifierExists(inputEquation.name) && (editIndex != -1 && !listElements.get(editIndex).equation.name.equals(inputEquation.name))) {
       defaultErrorMessage.displayError("The name for this function is already in use. Please choose another one!");
       return;
     }
@@ -431,11 +431,11 @@ public class ApplicationController implements MenuHaver {
   public void addPreviewEquation() {
     EquationTree previewEquation = EquationParser.parseString(equationInput.getText(),this);
     if (previewEquation == null || previewEquation.root == null) {
-      System.out.println("Invalid equation, try again!");
-    } else {
-      listElements.get(editIndex).equation = previewEquation;
-      updateRenderCanvas();
+      defaultErrorMessage.displayError("Invalid equation! Please try again.");
+      return;
     }
+    listElements.get(editIndex).equation = previewEquation;
+    updateRenderCanvas();
   }
   
   public void removePreview() {
