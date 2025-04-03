@@ -90,7 +90,6 @@ public class ApplicationController implements MenuHaver {
     mainColorPicker.pickColor(new Random().nextInt(15));
     setEditModeUI(false);
     updateInputBarColor();
-    updateRenderCanvas();
     resize();
   }
   
