@@ -41,21 +41,31 @@ public class EquationParser {
     // Transform
     if (!parseBetweenBrackets) {
       name = "";
-      if (!input.contains("=") && !input.contains("y")) {
+      if (!input.contains("=") && !input.contains("y")) { // fe. 3x+1
         input += "-y";
-        isFunction = false;
+        isFunction = true;
+        name = "";
         if (debug)
-          System.out.println("not a function");
-      } else if (checkIfFunction(input)) {
+          System.out.println("a function");
+      } else if (checkIfFunction(input)) { // fe. f(x)=x or y=x
         input = input.split("=")[1] + "-y";
         if (debug)
           System.out.println("is a function");
       } else if (input.contains("=")) {
         String[] split = input.split("=");
-        input = split[0] + "-(" + split[1] + ")";
+        if (split.length == 2) {
+          input = split[0] + "-(" + split[1] + ")";
+          isFunction = false;
+          if (debug)
+            System.out.println("is not a function");
+        } else { // invalid input y=
+          return null;
+        }
+      } else { // 3y+1
         isFunction = false;
         if (debug)
-          System.out.println("is not a function");
+          System.out.println("not a function");
+
       }
     }
 
@@ -355,12 +365,22 @@ public class EquationParser {
   }
 
   private static boolean checkIfFunction(String input) {
-    // only one char functions
+    // only one char functions and also y=x
     // f(x) and not wow(x)
-    if (input.length() < 4) {
+    if (input.length() < 3) { // so its not just y=
       return false;
     }
-    String sub = input.substring(1, 5); // should be (x)=
+    String sub = input.substring(0, 2); // should be y=
+    if (sub.equals("y=") && !input.split("=")[1].contains("y")) {
+      name = "";
+      isFunction = true;
+      return true;
+    }
+
+    if (input.length() < 6) { // so its not just f(x)=
+      return false;
+    }
+    sub = input.substring(1, 5); // should be (x)=
     if (sub.equals("(x)=")) {
       name = input.charAt(0) + "";
       isFunction = true;
