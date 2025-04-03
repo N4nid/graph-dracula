@@ -32,7 +32,7 @@ public class EquationNode {
 
   public double calculateParametric(double t, Variable[] vars) {
     if (state == 0) {
-      return Double.parseDouble((String) value);
+      return (Double) value;
       // return (double) value;
     } else if (state == 1) {
       String varName = (String) value;
@@ -91,7 +91,7 @@ public class EquationNode {
   public double calculate(TwoDVec<Double> realCoord, Variable[] vars, EquationTree[] existingFunctions) {
 
     if (state == 0) {
-      return Double.parseDouble((String) value);
+      return (double) value;
       // return (double) value;
     } else if (state == 1) {
       String varName = (String) value;

@@ -224,7 +224,7 @@ public class EquationParser {
           if ((lastNode.bracketDepth < bracketDepth) && val.equals("-")) { // so that negative numbers work
             if (debug)
               System.out.println("neg. number fix " + lastNode.value);
-            lastNode.right = new EquationNode((byte) 0, "0");
+            lastNode.right = new EquationNode((byte) 0, 0);
           }
 
           EquationNode lastOp = stackTop.elem;
@@ -421,7 +421,16 @@ public class EquationParser {
     if (input.length() == 1) { // to prevent out of bounds with the following lines
       input = input.delete(0, 1);
       opLevel = getOpLevel(value);
-      result = new EquationNode(state, value);
+      if (state == 0) {
+        try {
+          result = new EquationNode(state, Double.parseDouble(value));
+        } catch (Exception e) {
+          return null;
+        }
+      }
+      else {
+        result = new EquationNode(state, value);
+      }
       result.opLevel = opLevel;
       return result;
     }
@@ -521,7 +530,16 @@ public class EquationParser {
 
     }
 
-    result = new EquationNode(state, value);
+    if (state == 0) {
+      try {
+        result = new EquationNode(state, Double.parseDouble(value));
+      } catch (Exception e) {
+        return null;
+      }
+    }
+    else {
+      result = new EquationNode(state, value);
+    }
     result.opLevel = opLevel;
     return result;
   }
