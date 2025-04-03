@@ -304,7 +304,7 @@ public class ApplicationController implements MenuHaver {
 
     customVarList = new CustomVarUIList(equationListBackground,this);
     resize();
-    
+    testConditionParser();
   }
   
   public EquationVisElement getHoveredEquationVisElement() {
@@ -492,6 +492,13 @@ public class ApplicationController implements MenuHaver {
     (int) (color.getRed() * 255),
     (int) (color.getGreen() * 255),
     (int) (color.getBlue() * 255));
+  }
+
+  public void testConditionParser() {
+    CondtionTree testTree = CondtitionParser.parseConditon("sin(X)<=0",this);
+    System.out.println("Test condition: ");
+    testTree.root.recursivePrint("");
+    System.out.println(testTree.checkCondition(new TwoDVec<Double>((1.0/2.0)*Math.PI,0.0),null,null));
   }
 
 }

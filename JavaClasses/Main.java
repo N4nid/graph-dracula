@@ -37,6 +37,7 @@ public class Main extends Application {
     controller.setup();
   }
 
+
   public static EquationTree buildTestEquation() { // 2+4*4
     EquationNode root = new EquationNode((byte) 2, "+");
     root.left = new EquationNode((byte) 0, 3);

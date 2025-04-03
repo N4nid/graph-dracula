@@ -85,5 +85,19 @@ public class CondtionNode {
         return 0.0;
     }
 
+    public void recursivePrint(String helper) {
+        if (type.equals(Type.EQUATIONNODE)) {
+            equationNode.recursivePrint("");
+        }
+        else {
+            System.out.println(helper + "   " + value);
+        }
+        if (left != null) {
+            this.left.recursivePrint(helper + "l");
+        }
+        if (right != null) {
+            this.right.recursivePrint(helper + "r");
+        }
+    }
 }
 
