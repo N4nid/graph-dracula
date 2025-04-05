@@ -2,7 +2,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class EquationParser {
-  public static boolean debug = true; // all debugging prints will be removed when there are no issues anymore
+  public static boolean debug = false; // all debugging prints will be removed when there are no issues anymore
   static String name = "";
   static boolean isFunction = false;
   private static boolean parseBetweenBrackets = false;
@@ -110,6 +110,7 @@ public class EquationParser {
     int bracketDepth = 0;
     EquationNode lastNode = currentNode;
     OperatorStack operators = new OperatorStack();
+    operators.debug = false;
     EquationNode root = null;
 
     while (currentNode != null) {
@@ -126,7 +127,9 @@ public class EquationParser {
       }
 
       if (state == 0 || state == 1) { // is either a num or variable
-        System.out.println("NUMORVAR: " + val + "| " + lastNode.value + " " + lastNode.bracketDepth);
+        if (debug) {
+          System.out.println("NUMORVAR: " + val + "| " + lastNode.value + " " + lastNode.bracketDepth);
+        }
         if (lastNode.state >= 2) {
           lastNode.right = currentNode;
         }
@@ -295,7 +298,9 @@ public class EquationParser {
     if (debug)
       operators.printStack();
     if (root != null) {
-      root.recursivePrint(""); // For debugging
+      if (debug) {
+        root.recursivePrint(""); // For debugging
+      }
       TwoDVec coords = new TwoDVec<Double>(0.0, 0.0);
       EquationTree[] existingFunctions = controller.getAllFunctions();
       double res = root.calculate(coords, null, existingFunctions);
@@ -391,7 +396,9 @@ public class EquationParser {
   }
 
   public static String[] getBetweenBrackets(StringBuffer input) {
-    System.out.println("input: " + input);
+    if (debug) {
+      System.out.println("input: " + input);
+    }
     int depth = 1;
     char current;
     String value[] = { "", "" };
@@ -407,8 +414,10 @@ public class EquationParser {
 
       if (depth == 0) {
         input = input.delete(0, i + 1);
-        System.out.println("inp without brackets: " + input);
-        System.out.println("vals: " + value[0] + " | " + value[1]);
+        if (debug) {
+          System.out.println("inp without brackets: " + input);
+          System.out.println("vals: " + value[0] + " | " + value[1]);
+        }
         return value;
       }
       if (current == ',' && depth == 1) {
@@ -506,16 +515,22 @@ public class EquationParser {
 
     if (state == 1) {
       // TODO Handle mod: amod
-      System.out.println("is: " + value);
+      if (debug) {
+        System.out.println("is: " + value);
+      }
 
       for (String element : all) {
         if (value.contains(element)) {
-          System.out.println(":-- " + element);
+          if (debug) {
+            System.out.println(":-- " + element);
+          }
           if (value.length() > element.length()) { // to prevent error when value is only element
                                                    // fe. value = sin and not asin
             input.insert(0, element);
             value = value.split(element)[0]; // get part before special
-            System.out.println("new val: " + value);
+            if (debug) {
+              System.out.println("new val: " + value);
+            }
           }
         }
       }
@@ -538,8 +553,9 @@ public class EquationParser {
         opLevel = -1;
         value = value.charAt(0) + "";
         input.insert(0, otherVars);
-        System.out.println("input: " + input + " this: " + value + "|" + state + "|"
-            + opLevel);
+        if (debug) {
+          System.out.println("input: " + input + " this: " + value + "|" + state + "|" + opLevel);
+        }
       }
 
       // else {

@@ -9,6 +9,7 @@ public class CondtionNode {
     private EquationNode equationNode;
     public CondtionNode left;
     public CondtionNode right;
+    public CondtionNode aboveElement;
 
     public CondtionNode(Type type, String value) {
         if (type != Type.EQUATIONNODE) {
@@ -59,10 +60,6 @@ public class CondtionNode {
                     return !(leftValue && rightValue);
                 case "!or":
                     return !(leftValue || rightValue);
-                case "=":
-                    return leftValue == rightValue;
-                case "!=":
-                    return leftValue != rightValue;
             }
         }
         if (type.equals(Type.BOOLOPERATION) && left != null) {
@@ -87,7 +84,7 @@ public class CondtionNode {
 
     public void recursivePrint(String helper) {
         if (type.equals(Type.EQUATIONNODE)) {
-            equationNode.recursivePrint("");
+            System.out.println(helper + "   " + type);
         }
         else {
             System.out.println(helper + "   " + value);

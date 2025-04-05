@@ -1,5 +1,6 @@
 public class OperatorStack {
   public OperatorStackElement top = null;
+  public boolean debug = false;
 
   public OperatorStackElement getLast(int depth, int lvl) {
     cleanUp(depth);
@@ -13,7 +14,9 @@ public class OperatorStack {
     OperatorStackElement looker = top;
     int levelDiff = looker.elem.opLevel - lvl;
     if (levelDiff <= 1) {
-      System.out.println("last: " + looker.elem.value);
+      if (debug) {
+        System.out.println("last: " + looker.elem.value);
+      }
       return looker;
     }
     OperatorStackElement potentialOption = top;
@@ -25,14 +28,20 @@ public class OperatorStack {
         // System.out.println(" --- right depth");
         levelDiff = looker.elem.opLevel - lvl;
         if (levelDiff == 0) {
-          System.out.println("FOUND last: " + looker.elem.value);
+          if (debug) {
+            System.out.println("FOUND last: " + looker.elem.value);
+          }
           return looker;
         } else if (levelDiff == 1) {
-          System.out.println("found potentialOption: " + looker.elem.value);
+          if (debug) {
+            System.out.println("found potentialOption: " + looker.elem.value);
+          }
           potentialOption = looker;
         }
       } else if (potentialOption.equals(top)) { // this is also for in brackets, might change later FIXME maybe ?
-        System.out.println("Not in bracketDepth");
+        if (debug) {
+          System.out.println("Not in bracketDepth");
+        }
         return top;
       }
       if (looker.next != null) {
@@ -42,12 +51,14 @@ public class OperatorStack {
       }
     }
 
-    System.out.println("notfound last: " + potentialOption.elem.value);
+    if (debug) {
+      System.out.println("notfound last: " + potentialOption.elem.value);
+    }
     return potentialOption; // XXX MIGHT BLOW UP !?
   }
 
   public void printStack() {
-    if (top != null) {
+    if (top != null && debug) {
       System.out.println("------ top");
       top.printStack();
       System.out.println("--- bottom");
