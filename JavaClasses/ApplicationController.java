@@ -79,11 +79,6 @@ public class ApplicationController implements MenuHaver {
       renderer.refreshEquationRenderer();
     }
     if (editIndex == -1) {
-      CondtionTree testTree = CondtitionParser.parseConditon("sin(10X)<=0.5&x>1",this);
-      if (testTree != null) {
-        //testTree.root.recursivePrint("ConditionTree: ");
-        inputEquation.rangeCondition = testTree;
-      }
       addEquation(inputEquation, equationInput.getText(), mainColorPicker.colorIndex);
     } else {
       listElements.get(editIndex).setEquationText(equationInput.getText());

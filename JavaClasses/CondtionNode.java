@@ -24,6 +24,18 @@ public class CondtionNode {
         this.equationNode = value;
     }
 
+    public boolean calculateBoolean(TwoDVec<Double> realCoord, Variable[] customVars, EquationTree[] existingFunctions) {
+        if (type.equals(Type.BOOLOPERATION)) {
+            return calculateBoolMaths(realCoord,customVars,existingFunctions);
+        }
+        if (type.equals(Type.COMPARE)) {
+            return calculateInRange(realCoord,customVars,existingFunctions);
+        }
+        System.out.println("Error: Can't calculate boolean of Equationode!");
+        doError(realCoord);
+        return false;
+    }
+
     public boolean calculateInRange(TwoDVec<Double> realCoord, Variable[] customVars, EquationTree[] existingFunctions) {
         if (type.equals(Type.COMPARE) && left != null && right != null && left.type.equals(Type.EQUATIONNODE) && right.type.equals(Type.EQUATIONNODE)) {
             double leftValue = left.calculateValue(realCoord,customVars,existingFunctions);
@@ -43,14 +55,15 @@ public class CondtionNode {
                     return leftValue != rightValue;
             }
         }
+        doError(realCoord);
         System.out.println("Error: Invalid compare ConditionNode!");
         return false;
     }
 
     public boolean calculateBoolMaths(TwoDVec<Double> realCoord, Variable[] customVars, EquationTree[] existingFunctions) {
-        if (type.equals(Type.BOOLOPERATION) && left != null && right != null && left.type.equals(Type.COMPARE) && right.type.equals(Type.COMPARE)) {
-            boolean leftValue = left.calculateInRange(realCoord,customVars,existingFunctions);
-            boolean rightValue = right.calculateInRange(realCoord,customVars,existingFunctions);
+        if (type.equals(Type.BOOLOPERATION) && left != null && right != null && !left.type.equals(Type.EQUATIONNODE) && !right.type.equals(Type.EQUATIONNODE)) {
+            boolean leftValue = left.calculateBoolean(realCoord,customVars,existingFunctions);
+            boolean rightValue = right.calculateBoolean(realCoord,customVars,existingFunctions);
             switch (value) {
                 case "&":
                     return leftValue && rightValue;
@@ -62,15 +75,8 @@ public class CondtionNode {
                     return !(leftValue || rightValue);
             }
         }
-        if (type.equals(Type.BOOLOPERATION) && left != null) {
-            if (left.type.equals(Type.COMPARE)) {
-                return !left.calculateInRange(realCoord,customVars,existingFunctions);
-            }
-            if (left.type.equals(Type.BOOLOPERATION)) {
-                return !left.calculateBoolMaths(realCoord,customVars,existingFunctions);
-            }
-        }
-        System.out.println("Error: Invalid compare ConditionNode!");
+        doError(realCoord);
+        System.out.println("Error: Invalid boolean ConditionNode!");
         return false;
     }
 
@@ -78,16 +84,17 @@ public class CondtionNode {
         if (type == Type.EQUATIONNODE) {
             return equationNode.calculate(realCoord,customVars,existingFunctions);
         }
+        doError(realCoord);
         System.out.println("Error: Invalid EquationNode ConditionNode!");
         return 0.0;
     }
 
     public void recursivePrint(String helper) {
         if (type.equals(Type.EQUATIONNODE)) {
-            System.out.println(helper + "   " + type);
+            System.out.println(helper + " " + type);
         }
         else {
-            System.out.println(helper + "   " + value);
+            System.out.println(helper + " " + value);
         }
         if (left != null) {
             this.left.recursivePrint(helper + "l");
@@ -95,6 +102,10 @@ public class CondtionNode {
         if (right != null) {
             this.right.recursivePrint(helper + "r");
         }
+    }
+
+    private void doError(TwoDVec<Double> realCord) {
+        realCord.setPos(-1.0,-1.0);
     }
 }
 

@@ -8,6 +8,7 @@ public class CondtionTree {
         if (root != null && root.type.equals(CondtionNode.Type.BOOLOPERATION)) {
             return root.calculateBoolMaths(realCoord,customVars,existingFunctions);
         }
+        doError(realCoord);
         System.out.println("Invalid condition tree!");
         return false;
     }
@@ -24,5 +25,8 @@ public class CondtionTree {
         this.root.right = new CondtionNode(CondtionNode.Type.COMPARE,"<");
         this.root.right.left = new CondtionNode(new EquationNode((byte)1,"x"));
         this.root.right.right = new CondtionNode(new EquationNode((byte) 0,max));
+    }
+    private void doError(TwoDVec<Double> realCord) {
+        realCord.setPos(-1.0,-1.0);
     }
 }
