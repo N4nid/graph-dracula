@@ -5,7 +5,6 @@ public class EquationParser {
   public static boolean debug = false; // all debugging prints will be removed when there are no issues anymore
   static String name = "";
   static boolean isFunction = false;
-  static boolean isParametic = false;
   private static boolean parseBetweenBrackets = false;
   private static byte specialOpMagicNum = 6;
   public static ApplicationController controller;
@@ -41,7 +40,6 @@ public class EquationParser {
 
     // Transform
     if (!parseBetweenBrackets) {
-      isParametic = false;
       name = "";
       if (!input.contains("=") && !input.contains("y")) { // fe. 3x+1
         input += "-y";
@@ -49,12 +47,10 @@ public class EquationParser {
         name = "";
         if (debug)
           System.out.println("a function");
-      } else if (checkIfFunction(input)) { // fe. f(x)=x or y=x or isParametic
-        if (!isParametic)
-          input = input.split("=")[1] + "-y";
-
+      } else if (checkIfFunction(input)) { // fe. f(x)=x or y=x
+        input = input.split("=")[1] + "-y";
         if (debug)
-          System.out.println("is a function or isParametic");
+          System.out.println("is a function");
       } else if (input.contains("=")) {
         String[] split = input.split("=");
         if (split.length == 2) {
@@ -95,51 +91,6 @@ public class EquationParser {
     return input;
   }
 
-  public static EquationTree parseParametics(String input) {
-    // f(t->xy):x=(t),y=(t);for(a<t<b)
-    isParametic = false; // so that i can call parseString without problems
-
-    // check if input is valid
-    String parts[] = input.split(";"); // part 0 and 1 are the equations; part 2 the interval
-    if (!input.contains(";") || parts.length != 3) {
-      if (debug)
-        System.out.println("invalid parametic input");
-      return null;
-    }
-
-    EquationNode root = new EquationNode((byte) 5, "");
-
-    // x and y parts
-    parts[0] = parts[0].substring(9); // remove the f(t->xy):
-    EquationNode left = parseString(parts[0], controller).root;
-    if (left == null)
-      return null;
-    EquationNode right = parseString(parts[1], controller).root;
-    if (right == null)
-      return null;
-
-    root.left = left;
-    root.right = right;
-    EquationTree result = new EquationTree(root, name, false);
-
-    parts[2] = parts[2].substring(4); // remove for(
-    String[] intervalString = parts[2].split("<t<");
-
-    if (intervalString.length == 2) {
-      EquationNode intervalNode = parseString(intervalString[0], controller).root;
-      if (intervalNode == null)
-        return null;
-      result.intervalStart = intervalNode;
-
-      intervalNode = parseString(intervalString[1], controller).root;
-      if (intervalNode == null)
-        return null;
-      result.intervalEnd = intervalNode;
-    }
-
-    return null;
-  }
-
   public static EquationTree parseString(String input, ApplicationController appController) {
     if (debug && input.equals("debug")) {
       testParser(appController);
@@ -150,10 +101,6 @@ public class EquationParser {
       return null;
     }
     controller = appController;
-
-    if (isParametic) {
-      return parseParametics(input);
-    }
 
     if (debug)
       System.out.println(input);
@@ -442,17 +389,6 @@ public class EquationParser {
     if (sub.equals("(x)=")) {
       name = input.charAt(0) + "";
       isFunction = true;
-      return true;
-    }
-
-    if (input.length() < 10) { // so its not just f(t->xy):
-      return false;
-    }
-    sub = input.substring(1, 9); // should be (x)=
-    System.out.println(sub);
-    if (sub.equals("(t->xy):")) {
-      name = input.charAt(0) + "";
-      isParametic = true;
       return true;
     }
 

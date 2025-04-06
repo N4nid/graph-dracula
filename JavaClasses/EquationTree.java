@@ -12,8 +12,6 @@ public class EquationTree{
   public Color graphColor = Color.BLACK;
   public boolean isFunction = false;
   public boolean isParametric = false;
-  public EquationNode intervalStart;
-  public EquationNode intervalEnd;
   public String name;
   public CondtionTree rangeCondition;
   
@@ -33,10 +31,9 @@ public class EquationTree{
   public EquationTree(EquationNode root) {
     this.root = root;
   }
-
-  public EquationTree() {
-  }
-
+  
+  public EquationTree() {}
+  
   public double calculate(TwoDVec<Double> coordinates, Variable[] customVariables, EquationTree[] existingFunctions) {
     if (rangeCondition != null && !rangeCondition.checkCondition(coordinates,customVariables,existingFunctions)) {
       return Double.NaN;
@@ -51,5 +48,6 @@ public class EquationTree{
     }
     return result;
   }
-
+  
+  
 }
