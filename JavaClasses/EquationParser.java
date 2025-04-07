@@ -103,27 +103,32 @@ public class EquationParser {
   }
 
   public static EquationTree parseParametics(String input) {
-    // f(t->xy):x=(t),y=(t);for(a<t<b)
+    // f(t->xy):x=(t);y=(t);for(a<t<b)
     simpleParsing = true; // so that i can call parseString without problems
 
     // check if input is valid
     String parts[] = input.split(";"); // part 0 and 1 are the equations; part 2 the interval
     if (!input.contains(";") || parts.length != 3) {
-      System.out.println("invalid parametic input");
+      System.out.println("invalid parametric input");
       return null;
     }
 
     EquationNode root = new EquationNode((byte) 5, "");
 
     // x and y parts
+    if (parts[0].length()<12 || parts[1].length() < 3) {
+      System.out.println("Error: Invalid parametric input!");
+      return null;
+    }
     parts[0] = parts[0].substring(9); // remove the f(t->xy):
+    parts[0] = parts[0].substring(3,parts[0].length()-1); //remove = and brackets
+    parts[1] = parts[1].substring(3,parts[1].length()-1); //remove = and brackets
     EquationNode left = parseEquation(parts[0], controller).root;
     if (left == null)
       return null;
     EquationNode right = parseEquation(parts[1], controller).root;
     if (right == null)
       return null;
-
     root.left = left;
     root.right = right;
     EquationTree result = new EquationTree(root, name, false);

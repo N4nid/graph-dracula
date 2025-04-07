@@ -8,12 +8,14 @@ public class ParametricsRenderer {
   double DeltaT = (Math.abs(a)+Math.abs(b))/stepNum;
   RenderValues renderValues;
   ArrayList<EquationTree> parametrics = new ArrayList<EquationTree>();
-  
+
+  private ApplicationController controller;
   public TwoDVec<Double> lastPos = new TwoDVec<Double>(-1.0, -1.0);
   public TwoDVec<Double> lastZoom = new TwoDVec<Double>(-1.0, -1.0);
   ArrayList<ArrayList<TwoDVec<TwoDVec<Double>>>> parametricLineCache = new ArrayList<ArrayList<TwoDVec<TwoDVec<Double>>>>();
   
-  public ParametricsRenderer(RenderValues renderValues) {
+  public ParametricsRenderer(RenderValues renderValues, ApplicationController controller) {
+    this.controller = controller;
     this.renderValues = renderValues;
   }
   
@@ -43,20 +45,24 @@ public class ParametricsRenderer {
     //zeichnet neue Funktionen aus negPosMaps in eine Pixelmap
     ArrayList<ArrayList<TwoDVec<TwoDVec<Double>>>> returnParametricsLines = new ArrayList<ArrayList<TwoDVec<TwoDVec<Double>>>>();
     double minLineLenght = 2;
+    Variable[] customVars = controller.customVarList.getAllCustomVars();
+    EquationTree[] existingFunctions = controller.getAllFunctions();
     for (int i = 0; i < parametrics.size(); i++) {
+      a = parametrics.get(i).intervalStart.calculate(new TwoDVec<Double>(0.0,0.0),customVars,existingFunctions);
+      b = parametrics.get(i).intervalEnd.calculate(new TwoDVec<Double>(0.0,0.0),customVars,existingFunctions);
       ArrayList<TwoDVec<TwoDVec<Double>>> linePoints = new ArrayList<TwoDVec<TwoDVec<Double>>>();
       double t = a;
-      TwoDVec<Double> lastGraphPoint = renderValues.realCoordToScreenCoord(parametrics.get(i).calculateParametrics(t,null)); //new TwoDVec<Double>(calculateX(t)/renderValues.zoom.x+renderValues.midpoint.x,calculateY(t)/renderValues.zoom.y+renderValues.midpoint.y);
+      TwoDVec<Double> lastGraphPoint = renderValues.realCoordToScreenCoord(parametrics.get(i).calculateParametrics(t,controller.customVarList.getAllCustomVars(), controller.getAllFunctions())); //new TwoDVec<Double>(calculateX(t)/renderValues.zoom.x+renderValues.midpoint.x,calculateY(t)/renderValues.zoom.y+renderValues.midpoint.y);
       t += DeltaT;
       while (t <= b) { 
-        TwoDVec<Double> coords = renderValues.realCoordToScreenCoord(parametrics.get(i).calculateParametrics(t,null)); //new TwoDVec<Double>(calculateX(t)/renderValues.zoom.x+renderValues.midpoint.x,calculateY(t)/renderValues.zoom.y+renderValues.midpoint.y);
+        TwoDVec<Double> coords = renderValues.realCoordToScreenCoord(parametrics.get(i).calculateParametrics(t,controller.customVarList.getAllCustomVars(), controller.getAllFunctions())); //new TwoDVec<Double>(calculateX(t)/renderValues.zoom.x+renderValues.midpoint.x,calculateY(t)/renderValues.zoom.y+renderValues.midpoint.y);
         if (Math.sqrt(Math.pow(coords.x-lastGraphPoint.x,2)+Math.pow(coords.y-lastGraphPoint.y,2)) > minLineLenght) {      //0.1:=unitDistance
           linePoints.add(new TwoDVec<TwoDVec<Double>>(new TwoDVec<Double>(lastGraphPoint.x,lastGraphPoint.y),new TwoDVec<Double>(coords.x,coords.y)));
           lastGraphPoint.setPos((double)coords.x,(double)coords.y);
         }
         t += DeltaT;
       } // end of while
-      System.out.println(""+linePoints.size());
+      //System.out.println(""+linePoints.size());
       returnParametricsLines.add(linePoints);
     }
     if (overrideCache) {

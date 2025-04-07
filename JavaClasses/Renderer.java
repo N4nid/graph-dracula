@@ -25,7 +25,7 @@ public class Renderer {
     coordinateSystemRenderer = new CoordinateSystemRenderer(this);
     funcDrawer = new FunctionRenderer(renderValues);
     equationRenderer = new EquationRenderer(renderValues);
-    parametricsRenderer = new ParametricsRenderer(renderValues);
+    parametricsRenderer = new ParametricsRenderer(renderValues,controller);
   }
   
   public void refreshEquationRenderer() {
@@ -37,19 +37,19 @@ public class Renderer {
     root.left = new EquationNode((byte) 2, "*");
     root.left.left = new EquationNode((byte) 2, "*");
     root.left.right = new EquationNode((byte) 3, "sin");
-    root.left.left.left = new EquationNode((byte) 0, "4");
+    root.left.left.left = new EquationNode((byte) 0, 4.0);
     root.left.left.right = new EquationNode((byte) 3, "cos");
     root.left.right.right = new EquationNode((byte) 2, "*");
-    root.left.right.right.left = new EquationNode((byte) 0, "4");
+    root.left.right.right.left = new EquationNode((byte) 0, 4.0);
     root.left.right.right.right = new EquationNode((byte) 1, "t");
     root.left.left.right.right = new EquationNode((byte) 1, "t");
     root.right = new EquationNode((byte) 2, "*");
     root.right.left = new EquationNode((byte) 2, "*");
     root.right.right = new EquationNode((byte) 3, "sin");
-    root.right.left.left = new EquationNode((byte) 0, "4");
+    root.right.left.left = new EquationNode((byte) 0, 4.0);
     root.right.left.right = new EquationNode((byte) 3, "sin");
     root.right.right.right = new EquationNode((byte) 2, "*");
-    root.right.right.right.left = new EquationNode((byte) 0, "4");
+    root.right.right.right.left = new EquationNode((byte) 0, 4.0);
     root.right.right.right.right = new EquationNode((byte) 1, "t");
     root.right.left.right.right = new EquationNode((byte) 1, "t");
     return new EquationTree(root);
@@ -74,7 +74,6 @@ public class Renderer {
       customVariables = controller.customVarList.getAllCustomVars();
     }
     EquationTree[] existingFunctions = controller.getAllFunctions();
-    
     if (equations.size() > 0) {
       ArrayList<ArrayList<TwoDVec<TwoDVec<Double>>>> equationsLines = equationRenderer.calculateEquationsLinePoints(equations,customVariables,existingFunctions);
       for (int i = 0; i < equationsLines.size(); i++) {
@@ -83,7 +82,13 @@ public class Renderer {
         }
         renderLines(equations.get(i).graphColor, equationsLines.get(i));
       }
-      //testParametrics();
+    }
+
+    if (parametrics.size() > 0) {
+      ArrayList<ArrayList<TwoDVec<TwoDVec<Double>>>> parametricsLines = parametricsRenderer.calculateParametricsLinePoints(parametrics);
+      for (int i = 0; i < parametricsLines.size(); i++) {
+        renderLines(parametrics.get(i).graphColor,parametricsLines.get(i));
+      }
     }
     
     if (functions.size() > 0) {

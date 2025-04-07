@@ -30,66 +30,7 @@ public class EquationNode {
 
   }
 
-  public double calculateParametric(double t, Variable[] vars) {
-    if (state == 0) {
-      return (Double) value;
-      // return (double) value;
-    } else if (state == 1) {
-      String varName = (String) value;
-      if (varName.equals("t")) {
-        return t;
-      } else {
-        return readVar(vars, varName);
-      }
-    } else if (state == 2 && left != null && right != null) {
-      double part1 = left.calculateParametric(t, vars);
-      double part2 = right.calculateParametric(t, vars);
-      String op = (String) value;
-      if (op.equals("+")) {
-        return part1 + part2;
-      } else if (op.equals("-")) {
-        return part1 - part2;
-      } else if (op.equals("*")) {
-        return part1 * part2;
-      } else if (op.equals("/")) {
-        return part1 / part2;
-      } else if (op.equals("^")) {
-        return Math.pow(part1, part2);
-      } else if (op.equals("mod")) {
-        return part1 % part2;
-      } else if (op.equals("root")) {
-        return Math.pow(part2, 1.0 / part1);
-      } else if (op.equals("log")) {
-        return Math.log(part2) / Math.log(part1);
-      } else {
-        System.out.println("Invalid Operator!");
-      }
-    } else if (state == 3 && right != null) {
-      String op = (String) value;
-      double calVal = right.calculateParametric(t, vars);
-      if (op.equals("sin")) {
-        return Math.sin(calVal);
-      } else if (op.equals("cos")) {
-        return Math.cos(calVal);
-      } else if (op.equals("tan")) {
-        return Math.tan(calVal);
-      } else if (op.equals("ln")) {
-        return Math.log(calVal);
-      } else if (op.equals("abs")) {
-        return Math.abs(calVal);
-      } else if (op.equals("sqrt")) {
-        return Math.sqrt(calVal);
-      } else {
-        System.out.println("Invalid special function!");
-      }
-    } else {
-      System.out.println("Invalid Node");
-    }
-    return 0.0;
-  }
-
   public double calculate(TwoDVec<Double> realCoord, Variable[] vars, EquationTree[] existingFunctions) {
-
     if (state == 0) {
       return (double) value;
       // return (double) value;
@@ -102,9 +43,51 @@ public class EquationNode {
       } else {
         return readVar(vars, varName);
       }
-    } else if (state == 2 && left != null && right != null) {
-      double part1 = left.calculate(realCoord, vars, existingFunctions);
-      double part2 = right.calculate(realCoord, vars, existingFunctions);
+    }
+    return handleHigherStates(realCoord,vars,existingFunctions,false,0);
+  }
+
+  public double calculateParametric(double t, Variable[] vars, EquationTree[] existingFunctions) {
+    if (state == 0) {
+      return (Double) value;
+      // return (double) value;
+    } else if (state == 1) {
+      String varName = (String) value;
+      if (varName.equals("t")) {
+        return t;
+      } else {
+        return readVar(vars, varName);
+      }
+    }
+    return handleHigherStates(null,vars,existingFunctions,true,t);
+  }
+
+
+  private static double readVar(Variable[] vars, String varName) {
+    if (vars == null) {
+      return 0;
+    }
+    for (int i = 0; i < vars.length; i++) {
+      if (vars[i].name.equals(varName)) {
+        return vars[i].value;
+      }
+    }
+    System.out.println("Error: Invalid Parameter: " + varName);
+    return 0;
+  }
+
+  private double handleHigherStates(TwoDVec<Double> realCoord, Variable[] vars, EquationTree[] existingFunctions, boolean isParametric, double t) {
+    if (state == 2 && left != null && right != null) {
+      double part1;
+      double part2;
+      if (isParametric) {
+        part1 = left.calculateParametric(t, vars, existingFunctions);
+        part2 = right.calculateParametric(t, vars, existingFunctions);
+      }
+      else {
+        part1 = left.calculate(realCoord, vars, existingFunctions);
+        part2 = right.calculate(realCoord, vars, existingFunctions);
+      }
       String op = (String) value;
       if (op.equals("+")) {
         return part1 + part2;
@@ -128,7 +111,13 @@ public class EquationNode {
       }
     } else if (state == 3 && right != null) {
       String op = (String) value;
-      double calVal = right.calculate(realCoord, vars, existingFunctions);
+      double calVal;
+      if (isParametric) {
+        calVal = right.calculateParametric(t,vars,existingFunctions);
+      }
+      else {
+        calVal = right.calculate(realCoord, vars, existingFunctions);
+      }
       if (op.equals("sin")) {
         return Math.sin(calVal);
       } else if (op.equals("cos")) {
@@ -173,8 +162,8 @@ public class EquationNode {
         // System.out.println("WHY NOT WORKING -- Function calculate :c");
         invalid = true;
       }
-
-    } else {
+    }
+    else {
       System.out.println("Invalid Node! " + value + " state:" + state);
       invalid = true;
     }
@@ -184,19 +173,6 @@ public class EquationNode {
     }
 
     return 0.0;
-  }
-
-  private static double readVar(Variable[] vars, String varName) {
-    if (vars == null) {
-      return 0;
-    }
-    for (int i = 0; i < vars.length; i++) {
-      if (vars[i].name.equals(varName)) {
-        return vars[i].value;
-      }
-    }
-    System.out.println("Error: Invalid Parameter!");
-    return 0;
   }
 
 }
