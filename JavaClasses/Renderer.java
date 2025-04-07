@@ -87,6 +87,9 @@ public class Renderer {
     if (parametrics.size() > 0) {
       ArrayList<ArrayList<TwoDVec<TwoDVec<Double>>>> parametricsLines = parametricsRenderer.calculateParametricsLinePoints(parametrics);
       for (int i = 0; i < parametricsLines.size(); i++) {
+        if (parametrics.get(i).rangeCondition != null) {
+          fixLinesRange(parametricsLines.get(i),functions.get(i).rangeCondition,customVariables,existingFunctions);
+        }
         renderLines(parametrics.get(i).graphColor,parametricsLines.get(i));
       }
     }
