@@ -2,7 +2,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class EquationParser {
-  public static boolean debug = false; // all debugging prints will be removed when there are no issues anymore
+  public static boolean debug = true; // all debugging prints will be removed when there are no issues anymore
   static String name = "";
   static boolean isFunction = false;
   static boolean isParametic = false;
@@ -22,7 +22,12 @@ public class EquationParser {
   private static String transformString(String input) {
     // Sanitize and Transform string
     // remove all spaces
+    System.out.println(input);
     input = input.replaceAll("\\s", "");
+    // So that the equalSign of a condition node will not be used
+    input = input.replaceAll("==", "≠");
+    input = input.replaceAll("<=", "≤");
+    input = input.replaceAll(">=", "≥");
     input = input.toLowerCase();
     if (input.equals("")) {
       return null;
@@ -43,7 +48,8 @@ public class EquationParser {
     // Transform
     if (!parseBetweenBrackets) {
       name = "";
-      if (!input.contains("=") && !input.contains("y")) { // fe. 3x+1
+      int equalSignPos = input.indexOf('=');
+      if (equalSignPos == -1 && !input.contains("y")) { // fe. 3x+1
         if (!simpleParsing)
           input += "-y";
         isFunction = true;
@@ -54,7 +60,7 @@ public class EquationParser {
         input = input.split("=")[1] + "-y";
         if (debug)
           System.out.println("is a function");
-      } else if (input.contains("=")) {
+      } else if (equalSignPos != -1) {
         String[] split = input.split("=");
         if (split.length == 2) {
           input = split[1] + "-(" + split[0] + ")";
@@ -79,6 +85,10 @@ public class EquationParser {
     } else if (first == '-') {
       input = "0" + input;
     }
+
+    input = input.replaceAll("≠", "==");
+    input = input.replaceAll("≤", "<=");
+    input = input.replaceAll("≥", ">=");
 
     if (debug)
       System.out.println("input after TRANSFORM: " + input);
@@ -156,11 +166,11 @@ public class EquationParser {
       return null;
     }
     controller = appController;
-
     if (isParametic) {
       return parseParametics(input);
     }
-    System.out.println("------ " + simpleParsing);
+
+    EquationTree parsedEquation = new EquationTree();
 
     if (debug)
       System.out.println(input);
@@ -178,6 +188,12 @@ public class EquationParser {
       Byte state = currentNode.state;
       Byte opLevel = currentNode.opLevel;
       currentNode.bracketDepth = bracketDepth;
+
+      if (state == 42) {
+        parsedEquation.rangeCondition = (CondtionTree) val;
+        currentNode = getNextNode(in);
+        continue;
+      }
 
       if (handleAdvancedInput(currentNode, lastNode, in)) {
         bracketDepth = currentNode.bracketDepth; // since it could have been updated
@@ -237,7 +253,7 @@ public class EquationParser {
       } else if (state == specialOpMagicNum) { // is "special" operator (root log)
         currentNode.state = 2; // change state because it will be treated like a operator in calculate()
         OperatorStackElement stackTop = operators.getLast(bracketDepth, opLevel);
-        String[] betweenBrackts = getBetweenBrackets(in);
+        String[] betweenBrackts = getValuesInBrackets(in);
         if (betweenBrackts != null) {
           parseBetweenBrackets = true;
           EquationTree parsedTree;
@@ -374,7 +390,10 @@ public class EquationParser {
     }
     // debugging
 
-    return new EquationTree(root, name, isFunction);
+    parsedEquation.root = root;
+    parsedEquation.name = name;
+    parsedEquation.isFunction = isFunction;
+    return parsedEquation;
   }
 
   private static boolean handleAdvancedInput(EquationNode currentNode, EquationNode lastNode,
@@ -382,6 +401,10 @@ public class EquationParser {
     // should recognize the following and add a multiplikation inbetween:
     // 2(, )2, 2x, x2, 2sin, xsin, )sin,
     // should fix x^-1
+    if (currentNode == null || lastNode == null || input == null) {
+      System.out.println("NULL passed to handleAdvancedInput");
+      return false;
+    }
 
     byte state = currentNode.state;
 
@@ -455,7 +478,7 @@ public class EquationParser {
     return false;
   }
 
-  public static String[] getBetweenBrackets(StringBuffer input) {
+  public static String[] getValuesInBrackets(StringBuffer input) {
     if (debug) {
       System.out.println("input: " + input);
     }
@@ -505,7 +528,7 @@ public class EquationParser {
     String value = Character.toString(first);
     byte state = getState(first);
     byte opLevel = -1;
-    EquationNode result;
+    EquationNode result = new EquationNode(state, "");
 
     if (input.length() == 1) { // to prevent out of bounds with the following lines
       input = input.delete(0, 1);
@@ -516,8 +539,7 @@ public class EquationParser {
         } catch (Exception e) {
           return null;
         }
-      }
-      else {
+      } else {
         result = new EquationNode(state, value);
       }
       result.opLevel = opLevel;
@@ -565,6 +587,18 @@ public class EquationParser {
     }
     // remove used part
     input = input.delete(0, counter);
+    if (value.equals("if")) { // edgecase for conditionNodes
+      String betweenBrackets = getValuesInBrackets(input)[0];
+      // System.out.println("+++++ " + betweenBrackets);
+      // System.out.println("---------------------------- " + input);
+      CondtitionParser condtitionParser = new CondtitionParser();
+      CondtionTree condition = condtitionParser.parseCondition(betweenBrackets, controller);
+      state = 42;
+      result.value = condition;
+      result.state = 42;
+      // System.out.println("---------------------------- " + input);
+      return result;
+    }
 
     Set<String> specials = Set.of("abs", "sin", "cos", "tan", "ln", "sqrt");
     Set<String> operators = Set.of("root", "log");
@@ -618,25 +652,21 @@ public class EquationParser {
         }
       }
 
-      // else {
-      // if (debug)
-      // System.out.println("invalid input getNode(): " + value);
-      // return null; // invalid input
-      // }
-
     }
 
     if (state == 0) {
       try {
-        result = new EquationNode(state, Double.parseDouble(value));
+        result.value = Double.parseDouble(value);
       } catch (Exception e) {
         return null;
       }
-    }
-    else {
-      result = new EquationNode(state, value);
+    } else {
+      if (state != 42) { // is not a conditionNode
+        result.value = value;
+      }
     }
     result.opLevel = opLevel;
+    result.state = state;
     return result;
   }
 
@@ -670,8 +700,7 @@ public class EquationParser {
     }
   }
 
-  public static void testParser(ApplicationController controller) { // todo
-    // brackets
+  public static void testParser(ApplicationController controller) {
     String test[] = { "3*2^2+1", "1+2*3^2", "2*3^sin(0)+1", "1+sin(0)*2",
         "1+1^3*3+1", "1+2*(3-1)", "(2*2+1)^2", "sin(1-1)+2*(3^(2-1))", "1+2*(1+3*3+1)",
         "3^(sin(2*cos(1/3*3-1)-2)+2)*(1/2)", "cos(sin(1-1)*2)", "sin(2*sin(2-2))", "sin(2*sin(22*0))", "root(2,64)-4",

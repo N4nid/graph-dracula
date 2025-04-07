@@ -3,7 +3,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public class CondtitionParser {
-    private static List<String> comparisonOperators = Arrays.asList("<",">","<=",">=","=","!=");
+    private static List<String> comparisonOperators = Arrays.asList("<",">","<=",">=","==","!=");
     private static List<String> booleanOperators = Arrays.asList("&","or","!&","!or");
     private CondtionNode root = null;
     private CondtionNode workOnNode = root;
