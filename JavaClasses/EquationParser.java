@@ -2,7 +2,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class EquationParser {
-  public static boolean debug = false; // all debugging prints will be removed when there are no issues anymore
+  public static boolean debug = true; // all debugging prints will be removed when there are no issues anymore
   static String name = "";
   static boolean isFunction = false;
   static boolean isParametic = false;
@@ -89,6 +89,19 @@ public class EquationParser {
     return input;
   }
 
+  public static EquationTree parseString(String input, ApplicationController appController) {
+    simpleParsing = true;
+    controller = appController;
+    transformString(input);
+    simpleParsing = false;
+    if (input.length() > 8 && input.substring(1,8).equals("(t->xy)")){
+      return parseParametics(input);
+    }
+    else {
+      return parseEquation(input,appController);
+    }
+  }
+
   public static EquationTree parseParametics(String input) {
     // f(t->xy):x=(t),y=(t);for(a<t<b)
     simpleParsing = true; // so that i can call parseString without problems
@@ -104,10 +117,10 @@ public class EquationParser {
 
     // x and y parts
     parts[0] = parts[0].substring(9); // remove the f(t->xy):
-    EquationNode left = parseString(parts[0], controller).root;
+    EquationNode left = parseEquation(parts[0], controller).root;
     if (left == null)
       return null;
-    EquationNode right = parseString(parts[1], controller).root;
+    EquationNode right = parseEquation(parts[1], controller).root;
     if (right == null)
       return null;
 
@@ -120,12 +133,12 @@ public class EquationParser {
     String[] intervalString = parts[2].split("<t<");
 
     if (intervalString.length == 2) {
-      EquationNode intervalNode = parseString(intervalString[0], controller).root;
+      EquationNode intervalNode = parseEquation(intervalString[0], controller).root;
       if (intervalNode == null)
         return null;
       result.intervalStart = intervalNode;
 
-      intervalNode = parseString(intervalString[1], controller).root;
+      intervalNode = parseEquation(intervalString[1], controller).root;
       if (intervalNode == null)
         return null;
       result.intervalEnd = intervalNode;
@@ -140,7 +153,7 @@ public class EquationParser {
     return null;
   }
 
-  public static EquationTree parseString(String input, ApplicationController appController) {
+  public static EquationTree parseEquation(String input, ApplicationController appController) {
     if (debug && input.equals("debug")) {
       testParser(appController);
     }
