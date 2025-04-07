@@ -89,7 +89,7 @@ public class ExpandMenu implements Hideble{
     private void initiateButtons() {
         TwoDVec<Double> currentPos = new TwoDVec<Double>(buttonDistXY,buttonDistXY);
         mathButtons.add(initiateButton("f(x)","f(x)=" , -4));
-        mathButtons.add(initiateButton("param_template","f(t->xy):x=(t),y=(t);for(a<t<b)",-30));
+        mathButtons.add(initiateButton("param_template","f(t->xy):x=(t);y=(t);for(a<t<b)",-30));
         mathButtons.add(initiateButton("x","x"));
         mathButtons.add(initiateButton("y","y"));
         mathButtons.add(initiateButton("square","^(2)"));
