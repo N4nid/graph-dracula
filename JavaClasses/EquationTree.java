@@ -13,6 +13,8 @@ public class EquationTree{
   public boolean isFunction = false;
   public boolean isParametric = false;
   public String name;
+  public EquationTree intervalStart;
+  public EquationNode intervalEnd;
   public CondtionTree rangeCondition;
   
   public EquationTree(EquationNode root,String name, boolean isFunction) {
