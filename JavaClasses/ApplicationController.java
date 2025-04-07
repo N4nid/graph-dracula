@@ -79,9 +79,6 @@ public class ApplicationController implements MenuHaver {
       renderer.refreshEquationRenderer();
     }
     if (editIndex == -1) {
-      CondtionTree testNode = CondtitionParser.parseConditon("x<2&(x>-4or1<2)",this);
-      testNode.root.recursivePrint("CondtionTree: ");
-      inputEquation.rangeCondition = testNode;
       addEquation(inputEquation, equationInput.getText(), mainColorPicker.colorIndex);
     } else {
       listElements.get(editIndex).setEquationText(equationInput.getText());
@@ -497,7 +494,8 @@ public class ApplicationController implements MenuHaver {
   }
 
   public void testConditionParser() {
-    CondtionTree testTree = CondtitionParser.parseConditon("sin(X)<=0",this);
+    CondtitionParser testParser = new CondtitionParser();
+    CondtionTree testTree = testParser.parseCondition("sin(X)<=0",this);
     System.out.println("Test condition: ");
     testTree.root.recursivePrint("");
     System.out.println(testTree.checkCondition(new TwoDVec<Double>((1.0/2.0)*Math.PI,0.0),null,null));

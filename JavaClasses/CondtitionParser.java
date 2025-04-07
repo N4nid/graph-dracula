@@ -5,9 +5,11 @@ import java.util.List;
 public class CondtitionParser {
     private static List<String> comparisonOperators = Arrays.asList("<",">","<=",">=","=","!=");
     private static List<String> booleanOperators = Arrays.asList("&","or","!&","!or");
-    private static CondtionNode root = null;
-    private static CondtionNode workOnNode = root;
-    public static CondtionTree parseConditon(String conditionString, ApplicationController controller) {
+    private CondtionNode root = null;
+    private CondtionNode workOnNode = root;
+
+
+    public CondtionTree parseCondition(String conditionString, ApplicationController controller) {
         if (conditionString.contains("y")) {
             System.out.println("Error: Condition can't deppend on y-Value!");
             return null;
@@ -45,12 +47,15 @@ public class CondtitionParser {
                         System.out.println("Error: Invalid Bracket content!");
                         return null;
                     }
-                    CondtionNode bracketNode = parseConditon(bracketContent,controller).root;
+                    CondtitionParser bracketParser = new CondtitionParser();
+                    CondtionNode bracketNode = bracketParser.parseCondition(bracketContent,controller).root;
                     if (bracketNode == null) {
                         System.out.println("Error: Invalid Bracket content!");
                         return null;
                     }
-                    addNode(bracketNode);
+                    //bracketNode.recursivePrint("BracketNode: ");
+                    addBelow(bracketNode,workOnNode);
+                    i+=bracketContent.length()+2;
                 }
             } else if (potComparisonOperators.size() == 0 && potBooleanOperators.size() == 0) {
                 currentEquation += currentValue;
@@ -71,7 +76,7 @@ public class CondtitionParser {
         return new CondtionTree(root);
     }
 
-    private static EquationNode parseEquation(String equationString, ApplicationController controller) {
+    private EquationNode parseEquation(String equationString, ApplicationController controller) {
         EquationTree currentEquation = EquationParser.parseString(equationString,controller);
         if (currentEquation != null && currentEquation.root != null) {
             if (currentEquation.root.state == 2 && ((String)currentEquation.root.value).equals("-") && currentEquation.root.right != null && ((String)currentEquation.root.right.value).equals("y")) {
@@ -82,7 +87,7 @@ public class CondtitionParser {
         System.out.println("Invalid equation for condition!");
         return null;
     }
-    private static ArrayList<String> getPotentialOperators(List<String> searchList, String searchString) {
+    private ArrayList<String> getPotentialOperators(List<String> searchList, String searchString) {
         ArrayList<String> retList = new ArrayList<String>();
         for (int i = 0; i < searchList.size(); i++) {
             if (searchList.get(i).length() >= searchString.length() && searchList.get(i).startsWith(searchString)) {
@@ -92,14 +97,14 @@ public class CondtitionParser {
         return retList;
     }
 
-    private static void addEquation(String currentEquation, ApplicationController controller) {
+    private void addEquation(String currentEquation, ApplicationController controller) {
         EquationNode equation = parseEquation(currentEquation,controller);
         CondtionNode euqationConditionNode = new CondtionNode(equation);
         if (equation != null) {
             addNode(euqationConditionNode);
         }
     }
-    private static void addNode(CondtionNode node) {
+    private void addNode(CondtionNode node) {
         /*if (root != null) {
             root.recursivePrint("Conditon Tree: ");
         }*/
@@ -153,19 +158,17 @@ public class CondtitionParser {
         }
     }
 
-    private static String getBracketContent(String entireString, int BracketPos) {
+    private String getBracketContent(String entireString, int BracketPos) {
         int BracketDepth = 1;
         String BracketString = "";
         BracketPos+=1;
         while (BracketPos < entireString.length() && BracketDepth > 0) {
-            System.out.println(entireString.charAt(BracketPos));
             if (entireString.charAt(BracketPos) == '(') {
                 BracketDepth++;
             }
             if (entireString.charAt(BracketPos) == ')') {
                 BracketDepth--;
             }
-            System.out.println(BracketDepth);
             if (BracketDepth > 0) {
                 BracketString+= entireString.charAt(BracketPos);
             }
@@ -178,34 +181,55 @@ public class CondtitionParser {
         return BracketString;
     }
 
-    private static boolean addBelow(CondtionNode node, CondtionNode addNode) {
-        node.aboveElement = addNode;
-        if (addNode.left == null) {
-            addNode.left = node;
+    private boolean addBelow(CondtionNode node, CondtionNode addToNode) {
+        node.aboveElement = addToNode;
+        if (addToNode.left == null) {
+            addToNode.left = node;
             return true;
         }
-        if (addNode.right == null) {
-            addNode.right = node;
+        if (addToNode.right == null) {
+            addToNode.right = node;
             return true;
         }
         return false;
     }
 
-    private static void addAbove(CondtionNode node , CondtionNode addNode) {
+    private void addAbove(CondtionNode node , CondtionNode addToNode) {
         //System.out.println("Adding above " + addNode.type);
-        if (addNode.aboveElement != null) {
-            if (!addBelow(node,addNode.aboveElement)) {
+        if (addToNode.aboveElement != null) {
+            //System.out.println("Adding on top of " + addToNode.type);
+            boolean aboveElementHasChildren = false;
+            if (addToNode.aboveElement.left != null && addToNode.aboveElement.left.equals(addToNode)) {
+                aboveElementHasChildren = true;
+                if (!addBelow(addToNode,node)) {
+                    System.out.println("Error: Can't add above this element!");
+                    return;
+                }
+                addToNode.aboveElement.left = node;
+            }
+            if (addToNode.aboveElement.right != null && addToNode.aboveElement.left.equals(addToNode)) {
+                aboveElementHasChildren = true;
+                if (!addBelow(addToNode,node)) {
+                    System.out.println("Error: Can't add above this element!");
+                    return;
+                }
+                addToNode.aboveElement.right = node;
+            }
+            if (!aboveElementHasChildren) {
                 System.out.println("Error: Can't add above this element!");
                 return;
             }
-            node.aboveElement = addNode.aboveElement;
+            node.aboveElement = addToNode.aboveElement;
         }
         else {
-            root.aboveElement = node;
+            //System.out.println("Adding on top of root " + root.type);
+            if (!addBelow(root,node)) {
+                System.out.println("Error: Can't add above this element!");
+                return;
+            }
             root = node;
         }
-        addNode.aboveElement = node;
-        node.left = addNode;
+        addToNode.aboveElement = node;
         workOnNode = node;
     }
 
