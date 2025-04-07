@@ -1,8 +1,4 @@
-import javafx.scene.canvas.Canvas;
 import javafx.scene.paint.Color;
-import java.util.ArrayList;
-
-import java.util.ArrayList;
 
 public class EquationTree{
 
@@ -15,7 +11,7 @@ public class EquationTree{
   public String name;
   public EquationNode intervalStart;
   public EquationNode intervalEnd;
-  public CondtionTree rangeCondition;
+  public ConditionTree rangeCondition;
   
   public EquationTree(EquationNode root,String name, boolean isFunction) {
     this.name = name;
@@ -27,7 +23,7 @@ public class EquationTree{
     this.name = name;
     this.isFunction = isFunction;
     this.root = root;
-    this.rangeCondition = new CondtionTree(xRange.x, xRange.y);
+    this.rangeCondition = new ConditionTree(xRange.x, xRange.y);
   }
   
   public EquationTree(EquationNode root) {

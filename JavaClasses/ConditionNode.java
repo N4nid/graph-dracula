@@ -1,4 +1,4 @@
-public class CondtionNode {
+public class ConditionNode {
     enum Type {
         COMPARE,
         BOOLOPERATION,
@@ -7,11 +7,11 @@ public class CondtionNode {
     public Type type;
     private String value; //possible values: <;>;<=;>=;=;!=;&;or;!&;!or;!
     private EquationNode equationNode;
-    public CondtionNode left;
-    public CondtionNode right;
-    public CondtionNode aboveElement;
+    public ConditionNode left;
+    public ConditionNode right;
+    public ConditionNode aboveElement;
 
-    public CondtionNode(Type type, String value) {
+    public ConditionNode(Type type, String value) {
         if (type != Type.EQUATIONNODE) {
             this.type = type;
             this.value = value;
@@ -19,7 +19,7 @@ public class CondtionNode {
         }
         System.out.println("Invalid type!");
     }
-    public CondtionNode(EquationNode value) {
+    public ConditionNode(EquationNode value) {
         this.type = Type.EQUATIONNODE;
         this.equationNode = value;
     }

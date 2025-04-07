@@ -100,7 +100,7 @@ public class Renderer {
     }
   }
 
-  private void fixLinesRange(ArrayList<TwoDVec<TwoDVec<Double>>> lines, CondtionTree rangeCondition,Variable[] customVariables, EquationTree[] existingFunctions) {
+  private void fixLinesRange(ArrayList<TwoDVec<TwoDVec<Double>>> lines, ConditionTree rangeCondition, Variable[] customVariables, EquationTree[] existingFunctions) {
     for (int i = 0; i < lines.size(); i++) {
       TwoDVec<Double> firstCoordinate = renderValues.screenCoordDoubleToRealCoord(lines.get(i).x);
       TwoDVec<Double> secondCoordinate = renderValues.screenCoordDoubleToRealCoord(lines.get(i).y);

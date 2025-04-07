@@ -494,8 +494,8 @@ public class ApplicationController implements MenuHaver {
   }
 
   public void testConditionParser() {
-    CondtitionParser testParser = new CondtitionParser();
-    CondtionTree testTree = testParser.parseCondition("sin(X)<=0",this);
+    ConditionParser testParser = new ConditionParser();
+    ConditionTree testTree = testParser.parseCondition("sin(X)<=0",this);
     System.out.println("Test condition: ");
     testTree.root.recursivePrint("");
     System.out.println(testTree.checkCondition(new TwoDVec<Double>((1.0/2.0)*Math.PI,0.0),null,null));
