@@ -5,6 +5,8 @@ public class EquationParser {
   public static boolean debug = false; // all debugging prints will be removed when there are no issues anymore
   static String name = "";
   static boolean isFunction = false;
+  static boolean isParametic = false;
+  static boolean simpleParsing = false;
   private static boolean parseBetweenBrackets = false;
   private static byte specialOpMagicNum = 6;
   public static ApplicationController controller;
@@ -42,7 +44,8 @@ public class EquationParser {
     if (!parseBetweenBrackets) {
       name = "";
       if (!input.contains("=") && !input.contains("y")) { // fe. 3x+1
-        input += "-y";
+        if (!simpleParsing)
+          input += "-y";
         isFunction = true;
         name = "";
         if (debug)
@@ -54,7 +57,7 @@ public class EquationParser {
       } else if (input.contains("=")) {
         String[] split = input.split("=");
         if (split.length == 2) {
-          input = split[0] + "-(" + split[1] + ")";
+          input = split[1] + "-(" + split[0] + ")";
           isFunction = false;
           if (debug)
             System.out.println("is not a function");
@@ -91,6 +94,58 @@ public class EquationParser {
     return input;
   }
 
+  public static EquationTree parseParametics(String input) {
+    // f(t->xy):x=(t),y=(t);for(a<t<b)
+    simpleParsing = true; // so that i can call parseString without problems
+
+    // check if input is valid
+    String parts[] = input.split(";"); // part 0 and 1 are the equations; part 2 the interval
+    if (!input.contains(";") || parts.length != 3) {
+      if (debug)
+        System.out.println("invalid parametic input");
+      return null;
+    }
+
+    EquationNode root = new EquationNode((byte) 5, "");
+
+    // x and y parts
+    parts[0] = parts[0].substring(9); // remove the f(t->xy):
+    EquationNode left = parseString(parts[0], controller).root;
+    if (left == null)
+      return null;
+    EquationNode right = parseString(parts[1], controller).root;
+    if (right == null)
+      return null;
+
+    root.left = left;
+    root.right = right;
+    EquationTree result = new EquationTree(root, name, false);
+
+    parts[2] = parts[2].substring(4); // remove "for("
+    parts[2] = parts[2].substring(0, parts[2].length() - 1); // remove ")" from for(*)
+    String[] intervalString = parts[2].split("<t<");
+
+    if (intervalString.length == 2) {
+      EquationNode intervalNode = parseString(intervalString[0], controller).root;
+      if (intervalNode == null)
+        return null;
+      result.intervalStart = intervalNode;
+
+      intervalNode = parseString(intervalString[1], controller).root;
+      if (intervalNode == null)
+        return null;
+      result.intervalEnd = intervalNode;
+      // System.out.println(result.calculateParametrics(2, null).x);
+
+      result.isParametric = true;
+      simpleParsing = false;
+      return result;
+    }
+
+    simpleParsing = false;
+    return null;
+  }
+
   public static EquationTree parseString(String input, ApplicationController appController) {
     if (debug && input.equals("debug")) {
       testParser(appController);
@@ -101,6 +156,11 @@ public class EquationParser {
       return null;
     }
     controller = appController;
+
+    if (isParametic) {
+      return parseParametics(input);
+    }
+    System.out.println("------ " + simpleParsing);
 
     if (debug)
       System.out.println(input);
@@ -137,9 +197,9 @@ public class EquationParser {
         if (state == 1 && controller.functionExists(val.toString())) {
           return null;
         }
-        if (state == 1 && !(val.equals("y") || val.equals("x"))) { // handle
-                                                                   // variables
-          controller.customVarList.addCustomVar(val.toString());
+        if (state == 1 && !(val.equals("y") || val.equals("x"))) { // handle variables
+          if (!(simpleParsing && val.equals("t"))) // since t should not be added when parsing parametics
+            controller.customVarList.addCustomVar(val.toString());
         }
 
         lastNode = currentNode;
