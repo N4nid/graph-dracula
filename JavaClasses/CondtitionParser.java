@@ -38,6 +38,20 @@ public class CondtitionParser {
                 CondtionNode booleanOperator = new CondtionNode(CondtionNode.Type.BOOLOPERATION, currentValue);
                 addNode(booleanOperator);
                 currentValue = "";
+
+                if (i < conditionString.length() - 2 && conditionString.charAt(i+1) == '(') {
+                    String bracketContent = getBracketContent(conditionString,i+1);
+                    if (bracketContent.isEmpty()) {
+                        System.out.println("Error: Invalid Bracket content!");
+                        return null;
+                    }
+                    CondtionNode bracketNode = parseConditon(bracketContent,controller).root;
+                    if (bracketNode == null) {
+                        System.out.println("Error: Invalid Bracket content!");
+                        return null;
+                    }
+                    addNode(bracketNode);
+                }
             } else if (potComparisonOperators.size() == 0 && potBooleanOperators.size() == 0) {
                 currentEquation += currentValue;
                 currentValue = "";
@@ -137,6 +151,31 @@ public class CondtitionParser {
                 addBelow(node,workOnNode);
             }
         }
+    }
+
+    private static String getBracketContent(String entireString, int BracketPos) {
+        int BracketDepth = 1;
+        String BracketString = "";
+        BracketPos+=1;
+        while (BracketPos < entireString.length() && BracketDepth > 0) {
+            System.out.println(entireString.charAt(BracketPos));
+            if (entireString.charAt(BracketPos) == '(') {
+                BracketDepth++;
+            }
+            if (entireString.charAt(BracketPos) == ')') {
+                BracketDepth--;
+            }
+            System.out.println(BracketDepth);
+            if (BracketDepth > 0) {
+                BracketString+= entireString.charAt(BracketPos);
+            }
+            BracketPos++;
+        }
+        if (BracketDepth > 0) {
+            System.out.println("Error: Unclosed Bracket!");
+            return "";
+        }
+        return BracketString;
     }
 
     private static boolean addBelow(CondtionNode node, CondtionNode addNode) {

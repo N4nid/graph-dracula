@@ -79,6 +79,9 @@ public class ApplicationController implements MenuHaver {
       renderer.refreshEquationRenderer();
     }
     if (editIndex == -1) {
+      CondtionTree testNode = CondtitionParser.parseConditon("x<2&(x>-4or1<2)",this);
+      testNode.root.recursivePrint("CondtionTree: ");
+      inputEquation.rangeCondition = testNode;
       addEquation(inputEquation, equationInput.getText(), mainColorPicker.colorIndex);
     } else {
       listElements.get(editIndex).setEquationText(equationInput.getText());
