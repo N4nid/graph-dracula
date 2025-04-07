@@ -83,7 +83,7 @@ public class EquationNode {
         System.out.println("Invalid special function!");
       }
     } else {
-      System.out.println("Invalid Node!");
+      System.out.println("Invalid Node");
     }
     return 0.0;
   }
@@ -175,7 +175,7 @@ public class EquationNode {
       }
 
     } else {
-      System.out.println("Invalid Node!");
+      System.out.println("Invalid Node! " + value + " state:" + state);
       invalid = true;
     }
 

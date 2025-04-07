@@ -2,8 +2,6 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.paint.Color;
 import java.util.ArrayList;
 
-import java.util.ArrayList;
-
 public class EquationTree {
 
   public EquationNode root;
