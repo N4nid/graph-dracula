@@ -201,7 +201,7 @@ public class EquationParser {
       currentNode.bracketDepth = bracketDepth;
 
       if (state == 42) {
-        parsedEquation.rangeCondition = (CondtionTree) val;
+        parsedEquation.rangeCondition = (ConditionTree) val;
         currentNode = getNextNode(in);
         continue;
       }
@@ -586,8 +586,8 @@ public class EquationParser {
       String betweenBrackets = getValuesInBrackets(input)[0];
       // System.out.println("+++++ " + betweenBrackets);
       // System.out.println("---------------------------- " + input);
-      CondtitionParser condtitionParser = new CondtitionParser();
-      CondtionTree condition = condtitionParser.parseCondition(betweenBrackets, controller);
+      ConditionParser ConditionParser = new ConditionParser();
+      ConditionTree condition = ConditionParser.parseCondition(betweenBrackets, controller);
       state = 42;
       result.value = condition;
       result.state = 42;
