@@ -78,6 +78,9 @@ public class Renderer {
     if (equations.size() > 0) {
       ArrayList<ArrayList<TwoDVec<TwoDVec<Double>>>> equationsLines = equationRenderer.calculateEquationsLinePoints(equations,customVariables,existingFunctions);
       for (int i = 0; i < equationsLines.size(); i++) {
+        if (equations.get(i).rangeCondition != null) {
+          fixLinesRange(equationsLines.get(i),equations.get(i).rangeCondition,customVariables,existingFunctions);
+        }
         renderLines(equations.get(i).graphColor, equationsLines.get(i));
       }
       //testParametrics();
@@ -87,10 +90,25 @@ public class Renderer {
       long startTime = System.nanoTime();
       ArrayList<ArrayList<TwoDVec<TwoDVec<Double>>>> functionsLines = funcDrawer.calculateFunctionsLines(functions,customVariables,existingFunctions);
       for (int i = 0; i < functionsLines.size(); i++) {
+        if (functions.get(i).rangeCondition != null) {
+          fixLinesRange(functionsLines.get(i),functions.get(i).rangeCondition,customVariables,existingFunctions);
+        }
         renderLines(functions.get(i).graphColor, functionsLines.get(i));
       }
       long endTime = System.nanoTime();
       //System.out.println(endTime-startTime);
+    }
+  }
+
+  private void fixLinesRange(ArrayList<TwoDVec<TwoDVec<Double>>> lines, CondtionTree rangeCondition,Variable[] customVariables, EquationTree[] existingFunctions) {
+    for (int i = 0; i < lines.size(); i++) {
+      TwoDVec<Double> firstCoordinate = renderValues.screenCoordDoubleToRealCoord(lines.get(i).x);
+      TwoDVec<Double> secondCoordinate = renderValues.screenCoordDoubleToRealCoord(lines.get(i).y);
+      if (!rangeCondition.checkCondition(firstCoordinate,customVariables,existingFunctions) || !rangeCondition.checkCondition(secondCoordinate,customVariables,existingFunctions)) {
+        //lines.get(i).x.printDouble();
+        lines.get(i).x.x = Double.NaN; //Lines with one NaN coordinate don't get drawn
+        lines.get(i).y.x = Double.NaN;
+      }
     }
   }
   

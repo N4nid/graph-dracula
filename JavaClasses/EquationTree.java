@@ -37,18 +37,11 @@ public class EquationTree{
   public EquationTree() {}
   
   public double calculate(TwoDVec<Double> coordinates, Variable[] customVariables, EquationTree[] existingFunctions) {
-    if (rangeCondition != null && !rangeCondition.checkCondition(coordinates,customVariables,existingFunctions)) {
-      return Double.NaN;
-    }
     return root.calculate(coordinates,customVariables,existingFunctions);
   }
   
   public TwoDVec<Double> calculateParametrics(double t, Variable[] customVariables) {
-    TwoDVec<Double> result = (new TwoDVec<Double>(root.left.calculateParametric(t,customVariables),root.right.calculateParametric(t,customVariables)));
-    if (rangeCondition != null && !rangeCondition.checkCondition(result,customVariables,null)) {
-      return new TwoDVec<Double>(Double.NaN,Double.NaN);
-    }
-    return result;
+    return new TwoDVec<Double>(root.left.calculateParametric(t,customVariables),root.right.calculateParametric(t,customVariables));
   }
   
   

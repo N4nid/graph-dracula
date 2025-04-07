@@ -2,7 +2,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class EquationParser {
-  public static boolean debug = true; // all debugging prints will be removed when there are no issues anymore
+  public static boolean debug = false; // all debugging prints will be removed when there are no issues anymore
   static String name = "";
   static boolean isFunction = false;
   static boolean isParametic = false;

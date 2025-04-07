@@ -10,10 +10,6 @@ public class CondtitionParser {
 
 
     public CondtionTree parseCondition(String conditionString, ApplicationController controller) {
-        if (conditionString.contains("y")) {
-            System.out.println("Error: Condition can't deppend on y-Value!");
-            return null;
-        }
         String currentValue = "";
         String currentEquation = "";
         for (int i = 0; i < conditionString.length(); i++) {
@@ -77,11 +73,10 @@ public class CondtitionParser {
     }
 
     private EquationNode parseEquation(String equationString, ApplicationController controller) {
-        EquationTree currentEquation = EquationParser.parseString(equationString,controller);
+        EquationParser.simpleParsing = true;
+        EquationTree currentEquation = EquationParser.parseEquation(equationString,controller);
+        EquationParser.simpleParsing = false;
         if (currentEquation != null && currentEquation.root != null) {
-            if (currentEquation.root.state == 2 && ((String)currentEquation.root.value).equals("-") && currentEquation.root.right != null && ((String)currentEquation.root.right.value).equals("y")) {
-                currentEquation.root.right = new EquationNode((byte)0,0);
-            }
             return currentEquation.root;
         }
         System.out.println("Invalid equation for condition!");
