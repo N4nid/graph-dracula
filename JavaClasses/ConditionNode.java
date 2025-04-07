@@ -5,7 +5,7 @@ public class ConditionNode {
         EQUATIONNODE
     }
     public Type type;
-    private String value; //possible values: <;>;<=;>=;=;!=;&;or;!&;!or;!
+    private String value; //possible values: <;>;<=;>=;==;!=;&;or;!&;!or;!
     private EquationNode equationNode;
     public ConditionNode left;
     public ConditionNode right;
@@ -51,7 +51,7 @@ public class ConditionNode {
                     return leftValue <= rightValue;
                 case ">=":
                     return leftValue >= rightValue;
-                case "=":
+                case "==":
                     return leftValue == rightValue;
                 case "!=":
                     return leftValue != rightValue;

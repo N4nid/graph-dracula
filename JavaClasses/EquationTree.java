@@ -1,6 +1,6 @@
 import javafx.scene.paint.Color;
 
-public class EquationTree{
+public class EquationTree {
 
   public boolean isVisible = true;
 
@@ -19,19 +19,20 @@ public class EquationTree{
     this.root = root;
   }
 
-  public EquationTree(EquationNode root,String name, boolean isFunction, TwoDVec<Double> xRange) {
+  public EquationTree(EquationNode root, String name, boolean isFunction, TwoDVec<Double> xRange) {
     this.name = name;
     this.isFunction = isFunction;
     this.root = root;
     this.rangeCondition = new ConditionTree(xRange.x, xRange.y);
   }
-  
+
   public EquationTree(EquationNode root) {
     this.root = root;
   }
-  
-  public EquationTree() {}
-  
+
+  public EquationTree() {
+  }
+
   public double calculate(TwoDVec<Double> coordinates, Variable[] customVariables, EquationTree[] existingFunctions) {
     return root.calculate(coordinates,customVariables,existingFunctions);
   }
@@ -39,6 +40,5 @@ public class EquationTree{
   public TwoDVec<Double> calculateParametrics(double t, Variable[] customVariables, EquationTree[] existingFunctions) {
     return new TwoDVec<Double>(root.left.calculateParametric(t,customVariables,existingFunctions),root.right.calculateParametric(t,customVariables,existingFunctions));
   }
-  
-  
+
 }
