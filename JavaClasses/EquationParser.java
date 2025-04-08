@@ -27,7 +27,7 @@ public class EquationParser {
     }
 
     // replace constants
-    String uniConstants = "Φ π";
+    String uniConstants = "φ π"; // for some reason "Φ" will be passed as "φ"; maybe utf8 problem idk
     String constants = "phi pi e"; // must be divided by spaces for split() in getConstant
                                    // should be sorted by length to avoid replacement with shorter constants
                                    // F.e when there would be a constant like "pie" and "e" is replaced
@@ -94,7 +94,7 @@ public class EquationParser {
   private static String replaceConstants(String input, String constants, Double[] constValues) {
     String constArr[] = constants.split(" ");
     for (int i = 0; i < constArr.length; i++) {
-      // System.out.println("Test replace: |"+constArr[i]+"|");
+      System.out.println("Test replace: |"+constArr[i]+"|");
       input = input.replaceAll(constArr[i], "(" + constValues[i] + ")");
     }
     return input;
