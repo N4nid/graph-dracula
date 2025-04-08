@@ -40,7 +40,7 @@ a:hover {
     -webkit-text-fill-color: #FEC006;
 }
 
-header {
+h1 {
     font: 40px source code;
     padding: 0.3em;
     text-align: left;
@@ -64,4 +64,8 @@ header {
     margin: auto;
     border-style: none;
     max-width: 50%;
+}
+
+.nav-header {
+    margin-bottom: -0.7em;
 }
