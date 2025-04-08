@@ -1,0 +1,67 @@
+@font-face {
+    font-family: source code;
+    src: url(SourceCodePro-Regular.ttf);
+}
+
+body {
+    background-color: #242424;
+    margin: 15px;
+}
+
+fieldset {
+    font: 20px source code;
+    -webkit-text-fill-color: white;
+    border: 3px dashed white;
+}
+
+p {
+    font: 20px source code;
+    -webkit-text-fill-color: white;
+}
+
+h2 {
+    font: 25px source code;
+    -webkit-text-fill-color: white;
+}
+
+a {
+    color: white;
+    text-decoration: underline;
+}
+
+img {
+    border: 2px dashed rgba(255, 255, 255, 0.5);
+    width: 60%;
+    max-width: 1000px;
+}
+
+a:hover {
+    text-decoration-color: #FEC006;
+    -webkit-text-fill-color: #FEC006;
+}
+
+header {
+    font: 40px source code;
+    padding: 0.3em;
+    text-align: left;
+    -webkit-text-fill-color: white;
+    border-style: dashed none dashed none;
+    border-width: 3px;
+    border-color: #FEC006;
+    margin-bottom: 40px;
+    text-align: center;
+}
+
+.logo-holder {   
+    width: auto;
+    display: inline-block;   
+    margin-bottom: 30px; 
+  }
+  
+.logo-holder img {
+    width: 50%;
+    display: block; 
+    margin: auto;
+    border-style: none;
+    max-width: 50%;
+}
