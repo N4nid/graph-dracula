@@ -12,6 +12,7 @@ public class Renderer {
   private FunctionRenderer funcDrawer;
   private EquationRenderer equationRenderer;
   private ParametricsRenderer parametricsRenderer;
+
   
   ArrayList<EquationTree> allEquations = new ArrayList<EquationTree>();
   ArrayList<EquationTree> equations = new ArrayList<EquationTree>();
@@ -84,6 +85,7 @@ public class Renderer {
     
     if (equations.size() > 0) {
       equationLines = equationRenderer.calculateEquationsLinePoints(equations,customVariables,existingFunctions);
+      //System.out.println(equationLines.size());
       for (int i = 0; i < equationLines.size(); i++) {
         renderLines(equations.get(i).graphColor, equationLines.get(i));
       }
@@ -101,18 +103,32 @@ public class Renderer {
   }
   
   public void rerender() {
+    Variable[] customVariables = controller.customVarList.getAllCustomVars();
+    EquationTree[] existingFunctions = controller.getAllFunctions();
     mainCanvas.getGraphicsContext2D().clearRect(0, 0, mainCanvas.getWidth(), mainCanvas.getHeight());
     coordinateSystemRenderer.drawCoordinateSystem();
     if (functions.size() > 0) {
+      functionsLines = funcDrawer.calculateFunctionsLines(functions,customVariables,existingFunctions);
       for (int i = 0; i < functionsLines.size(); i++) {
-        if (functions.get(i).rangeCondition != null) {
-          fixLinesRange(functionsLines.get(i),functions.get(i).rangeCondition,customVariables,existingFunctions);
-        }
         renderLines(functions.get(i).graphColor, functionsLines.get(i));
       }
-      long endTime = System.nanoTime();
-      //System.out.println(endTime-startTime);
     }
+
+    if (equations.size() > 0) {
+      for (int i = 0; i < equationLines.size(); i++) {
+        renderLines(equations.get(i).graphColor, equationLines.get(i));
+      }
+    }
+
+    if (parametrics.size() > 0) {
+      parametricsLines = parametricsRenderer.calculateParametricsLinePoints(parametrics,customVariables,existingFunctions);
+      for (int i = 0; i < parametricsLines.size(); i++) {
+        if (parametrics.get(i).rangeCondition != null) {
+          fixLinesRange(parametricsLines.get(i),functions.get(i).rangeCondition,customVariables,existingFunctions);
+        }
+        renderLines(parametrics.get(i).graphColor, parametricsLines.get(i));
+      }
+    } // end of if
   }
 
   private void fixLinesRange(ArrayList<TwoDVec<TwoDVec<Double>>> lines, ConditionTree rangeCondition, Variable[] customVariables, EquationTree[] existingFunctions) {
@@ -166,7 +182,7 @@ public class Renderer {
     for (int i = 0; i < lines.size(); i++) {
       if (lines.get(i) != null) {
         mainCanvas.getGraphicsContext2D().setStroke(graphColor);
-        TwoDVec<TwoDVec<Double>> currentLine = lines.get(i);
+        TwoDVec<TwoDVec<Double>> currentLine = new TwoDVec<TwoDVec<Double>>(renderValues.realCoordToScreenCoord(lines.get(i).x),renderValues.realCoordToScreenCoord(lines.get(i).y));
         mainCanvas.getGraphicsContext2D().strokeLine(currentLine.x.x, currentLine.x.y, currentLine.y.x, currentLine.y.y);
       }
     }
@@ -175,7 +191,7 @@ public class Renderer {
 
   private void correctLines(ArrayList<TwoDVec<TwoDVec<Double>>> lines) {
     for (int i = 0; i < lines.size(); i++) {
-      double currentSlope = Math.abs(lines.get(i).y.y - lines.get(i).x.y);
+      double currentSlope = Math.abs(lines.get(i).y.y - lines.get(i).x.y)/renderValues.zoom.y;
       if (currentSlope > renderValues.resolution.y && !yIsOnScreen(lines.get(i).x.y) && !yIsOnScreen(lines.get(i).y.y)) {
         double midpointY = renderValues.midpoint.y;
         if (renderValues.zoom.x < 0.02) {
@@ -192,8 +208,9 @@ public class Renderer {
   }
 
   private boolean yIsOnScreen(double y) {
-    double minY = -renderValues.midpoint.y - (renderValues.resolution.y / 2);
-    double maxY = -renderValues.midpoint.y + (renderValues.resolution.y / 2);
+    y /= renderValues.zoom.y;
+    double minY = (-renderValues.midpoint.y - (renderValues.resolution.y / 2));
+    double maxY = (-renderValues.midpoint.y + (renderValues.resolution.y / 2));
     return (y < maxY && y > minY);
   }
 

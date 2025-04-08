@@ -38,12 +38,10 @@ public class ParametricsRenderer {
     return Math.cos(t)*(Math.pow(2.71828,Math.cos(t))-2*Math.cos(4*t)-Math.pow(Math.sin(1/12*t),5));      //Butterfly
   }
   
-  private ArrayList<ArrayList<TwoDVec<TwoDVec<Double>>>> calculateParametrics() {
+  private ArrayList<ArrayList<TwoDVec<TwoDVec<Double>>>> calculateParametrics(Variable[] customVars,EquationTree[] existingFunctions) {
     //zeichnet neue Funktionen aus negPosMaps in eine Pixelmap
     ArrayList<ArrayList<TwoDVec<TwoDVec<Double>>>> returnParametricsLines = new ArrayList<ArrayList<TwoDVec<TwoDVec<Double>>>>();
     double minLineLenght = 2;
-    Variable[] customVars = controller.customVarList.getAllCustomVars();
-    EquationTree[] existingFunctions = controller.getAllFunctions();
     for (int i = 0; i < parametrics.size(); i++) {
       a = parametrics.get(i).intervalStart.calculate(new TwoDVec<Double>(0.0,0.0),customVars,existingFunctions);
       b = parametrics.get(i).intervalEnd.calculate(new TwoDVec<Double>(0.0,0.0),customVars,existingFunctions);
@@ -66,8 +64,8 @@ public class ParametricsRenderer {
   }
 
   
-  public ArrayList<ArrayList<TwoDVec<TwoDVec<Double>>>> calculateParametricsLinePoints(ArrayList<EquationTree> parametrics) {
+  public ArrayList<ArrayList<TwoDVec<TwoDVec<Double>>>> calculateParametricsLinePoints(ArrayList<EquationTree> parametrics,Variable[] customVars,EquationTree[] existingFunctions) {
     this.parametrics = parametrics;
-    return calculateParametrics();
+    return calculateParametrics(customVars,existingFunctions);
   }
 }

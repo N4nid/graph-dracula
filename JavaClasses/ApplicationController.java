@@ -87,7 +87,6 @@ public class ApplicationController implements MenuHaver {
     mainColorPicker.pickColor(new Random().nextInt(15));
     setEditModeUI(false);
     updateInputBarColor();
-    resize();                                                                          
   }
   
   public void addEquation(EquationTree equation, String equationText, int colorIndex) {
@@ -103,6 +102,7 @@ public class ApplicationController implements MenuHaver {
     anchors.get(anchors.size() - 1).applyAnchor();
     anchors.add(new Anchor(newElement.funcDisplay, newElement.pane, new TwoDVec<Double>(-76.0, 0.0), "scale", false, true));
     anchors.get(anchors.size() - 1).applyAnchor();
+    resize();
   }
   
   public boolean functionExists(String name) {
@@ -373,10 +373,8 @@ public class ApplicationController implements MenuHaver {
     graphViewPane.setPrefHeight(graphViewPaneSize.y);
     equationListBackground.setPrefWidth(scrollPaneBackgroundSize.x);
     equationListBackground.setPrefHeight(scrollPaneBackgroundSize.y);
-    updateRenderCanvas();                                 
-    Anchor.applyAnchors(anchors);
-    
-    updateListElementTransform();
+
+    updateRenderCanvas();
     if (customVarList != null) {
       customVarList.updateListTransform();
       scrollPane.setPrefHeight(equationListBackground.getPrefHeight() - 6 -customVarList.backgroundPane.getPrefHeight());
@@ -391,6 +389,8 @@ public class ApplicationController implements MenuHaver {
         equationList.setPrefHeight(scrollPane.getPrefHeight());
       }
     }
+    updateListElementTransform();
+    Anchor.applyAnchors(anchors);
   }
   
   public void updateRenderCanvas() {
