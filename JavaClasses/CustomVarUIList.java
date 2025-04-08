@@ -14,7 +14,7 @@ public class CustomVarUIList {
 
     private int lastCustomVarsSize = -1;
 
-    private ArrayList<CustomVarUIElement> customVars = new ArrayList<>();
+    public ArrayList<CustomVarUIElement> customVars = new ArrayList<>();
     private ArrayList<Anchor> UIAnchors = new ArrayList<>();
 
     private static final double customVarElementHeightPadding = 20;
@@ -61,11 +61,20 @@ public class CustomVarUIList {
 
     }
 
-    public void addCustomVar(String name) {
+    public boolean addCustomVar(String name) {
         if (!customVarExists(name)) {
             customVars.add(new CustomVarUIElement(name,controller));
             updateListTransform();
+            return true;
         }
+        return false;
+    }
+
+    public void discardCustomVars(ArrayList<CustomVarUIElement> oldVars){
+        // only keeps the vars that are in oldVars
+        // As to remove all vars that were added by invalid input
+        customVars.retainAll(oldVars);
+        updateListTransform();
     }
 
     public void removeCustomVar(String name) {

@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -10,14 +11,6 @@ public class EquationParser {
   private static boolean parseBetweenBrackets = false;
   private static byte specialOpMagicNum = 6;
   public static ApplicationController controller;
-
-  // this code could also be in Main.java
-  // TODO
-  // - Sanitize String
-  // - Check if valid
-  // - Deal with brackets and sings
-  // - figure out what todo with variables
-  // - special functions
 
   private static String transformString(String input) {
     // Sanitize and Transform string
@@ -54,22 +47,29 @@ public class EquationParser {
           input += "-y";
         isFunction = true;
         name = "";
-        if (debug) {System.out.println("a function");}
+        if (debug) {
+          System.out.println("a function");
+        }
       } else if (checkIfFunction(input)) { // fe. f(x)=x or y=x
         input = input.split("=")[1] + "-y";
-        if (debug) System.out.println("is a function");
+        if (debug)
+          System.out.println("is a function");
       } else if (equalSignPos != -1) {
         String[] split = input.split("=");
         if (split.length == 2) {
           input = split[1] + "-(" + split[0] + ")";
           isFunction = false;
-          if (debug) {System.out.println("is not a function");}
+          if (debug) {
+            System.out.println("is not a function");
+          }
         } else { // invalid input y=
           return null;
         }
       } else { // 3y+1
         isFunction = false;
-        if (debug) {System.out.println("not a function");}
+        if (debug) {
+          System.out.println("not a function");
+        }
 
       }
     }
@@ -86,7 +86,8 @@ public class EquationParser {
     input = input.replaceAll("≤", "<=");
     input = input.replaceAll("≥", ">=");
 
-    if (debug) System.out.println("input after TRANSFORM: " + input);
+    if (debug)
+      System.out.println("input after TRANSFORM: " + input);
     return input;
   }
 
@@ -104,11 +105,10 @@ public class EquationParser {
     controller = appController;
     transformString(input);
     simpleParsing = false;
-    if (input.length() > 8 && input.substring(1,8).equals("(t->xy)")){
+    if (input.length() > 8 && input.substring(1, 8).equals("(t->xy)")) {
       return parseParametics(input);
-    }
-    else {
-      return parseEquation(input,appController);
+    } else {
+      return parseEquation(input, appController);
     }
   }
 
@@ -126,21 +126,21 @@ public class EquationParser {
     EquationNode root = new EquationNode((byte) 5, "");
 
     // x and y parts
-    if (parts[0].length()<12 || parts[1].length() < 3) {
+    if (parts[0].length() < 12 || parts[1].length() < 3) {
       System.out.println("Error: Invalid parametric input!");
       return null;
     }
     parts[0] = parts[0].substring(9); // remove the f(t->xy):
-    parts[0] = parts[0].substring(3,parts[0].length()-1); //remove = and brackets
-    parts[1] = parts[1].substring(3,parts[1].length()-1); //remove = and brackets
-    EquationNode left = parseEquation(parts[0], controller).root;
-    if (left == null)
+    parts[0] = parts[0].substring(3, parts[0].length() - 1); // remove = and brackets
+    parts[1] = parts[1].substring(3, parts[1].length() - 1); // remove = and brackets
+    EquationTree left = parseEquation(parts[0], controller);
+    if (left == null || left.root == null)
       return null;
-    EquationNode right = parseEquation(parts[1], controller).root;
-    if (right == null)
+    EquationTree right = parseEquation(parts[1], controller);
+    if (right == null || right.root == null)
       return null;
-    root.left = left;
-    root.right = right;
+    root.left = left.root;
+    root.right = right.root;
     EquationTree result = new EquationTree(root, name, false);
 
     parts[2] = parts[2].substring(4); // remove "for("
@@ -174,17 +174,20 @@ public class EquationParser {
     }
 
     input = transformString(input);
+    controller = appController;
     if (input == null) {
       return null;
     }
-    controller = appController;
     if (isParametic) {
       return parseParametics(input);
     }
 
     EquationTree parsedEquation = new EquationTree();
+    ArrayList<String> addedVars = new ArrayList<String>();
 
-    if (debug) {System.out.println(input);}
+    if (debug) {
+      System.out.println(input);
+    }
     StringBuffer in = new StringBuffer(input); // The StringBuffer is mutable by refrence
                                                // so that i can manipulate the string in getNextNode
     EquationNode currentNode = getNextNode(in);
@@ -222,31 +225,44 @@ public class EquationParser {
         }
 
         if (state == 1 && controller.functionExists(val.toString())) {
+          discardVars(addedVars);
           return null;
         }
         if (state == 1 && !(val.equals("y") || val.equals("x"))) { // handle variables
-          if (!(simpleParsing && val.equals("t"))) // since t should not be added when parsing parametics
-            controller.customVarList.addCustomVar(val.toString());
+          if (!(simpleParsing && val.equals("t"))) { // since t should not be added when parsing parametics
+            boolean didntExistBefore = controller.customVarList.addCustomVar(val.toString());
+            if (didntExistBefore) {
+              addedVars.add(val.toString());
+            }
+          }
         }
 
         lastNode = currentNode;
         // lastNode.bracketDepth = bracketDepth;
         // System.out.println("setting lastnode="+val);
         if (root == null) {
-          if (debug) {System.out.println("setin rooot");}
+          if (debug) {
+            System.out.println("setin rooot");
+          }
           root = currentNode;
         }
       } else if (state == 3 || state == 4) { // is specialFunction or function
-        if (debug) {System.out.println("current: " + val + " | " + bracketDepth);}
+        if (debug) {
+          System.out.println("current: " + val + " | " + bracketDepth);
+        }
         OperatorStackElement stackTop = operators.getLast(bracketDepth, opLevel);
         if (stackTop != null) {
           EquationNode lastOp = stackTop.elem;
           lastOp.right = currentNode;
           currentNode.above = lastOp;
-          if (debug) {System.out.println("addBelow " + lastOp.value);}
+          if (debug) {
+            System.out.println("addBelow " + lastOp.value);
+          }
         } else {
           root = currentNode;
-          if (debug) {System.out.println("setin rooot");}
+          if (debug) {
+            System.out.println("setin rooot");
+          }
         }
         lastNode = currentNode;
         operators.add(currentNode, bracketDepth);
@@ -272,15 +288,19 @@ public class EquationParser {
           parsedTree = parseString(betweenBrackts[0], controller);
           if (parsedTree == null) {
             parseBetweenBrackets = false;
+            discardVars(addedVars);
             return null;
           }
           EquationNode left = parsedTree.root;
 
-          if (debug) {System.out.println("---PARSING RIGHT---");}
+          if (debug) {
+            System.out.println("---PARSING RIGHT---");
+          }
 
           parsedTree = parseString(betweenBrackts[1], controller);
           if (parsedTree == null) {
             parseBetweenBrackets = false;
+            discardVars(addedVars);
             return null;
           }
           EquationNode right = parsedTree.root;
@@ -303,19 +323,25 @@ public class EquationParser {
 
         } else {
           root = currentNode;
-          if (debug) {System.out.println("> root: " + root.value);}
+          if (debug) {
+            System.out.println("> root: " + root.value);
+          }
         }
         operators.add(currentNode, bracketDepth);
         lastNode = currentNode;
 
       } else if (state == 2) { // is operator (+-*/)
-        if (debug) {System.out.println("current: " + val + " | " + bracketDepth);}
+        if (debug) {
+          System.out.println("current: " + val + " | " + bracketDepth);
+        }
         OperatorStackElement stackTop = operators.getLast(bracketDepth, opLevel);
 
         if (stackTop != null) {
 
           if ((lastNode.bracketDepth < bracketDepth) && val.equals("-")) { // so that negative numbers work
-            if (debug) {System.out.println("neg. number fix " + lastNode.value);}
+            if (debug) {
+              System.out.println("neg. number fix " + lastNode.value);
+            }
             lastNode.right = new EquationNode((byte) 0, 0);
           }
 
@@ -325,21 +351,29 @@ public class EquationParser {
           if (bracketDepth > lastDepth
               || (lastOp.state == 2 && lastOp.opLevel < opLevel)) {
             // Either in brackets or operator is Higher
-            if (debug) {System.out.println("addBelow " + lastOp.value);}
+            if (debug) {
+              System.out.println("addBelow " + lastOp.value);
+            }
             addBelow(lastOp, currentNode);
           } else { // add current above. F.e 2*2+2
             EquationNode above = lastOp.above;
-            if (debug) {System.out.println("add above " + lastOp.value);}
+            if (debug) {
+              System.out.println("add above " + lastOp.value);
+            }
             currentNode.left = lastOp;
             lastOp.above = currentNode;
 
             if (lastOp == root) {
-              if (debug) {System.out.println("YOOOOOO");}
+              if (debug) {
+                System.out.println("YOOOOOO");
+              }
               root = currentNode;
             }
 
             if (above != null) {
-              if (debug) {System.out.println("-#- below: " + above.value);}
+              if (debug) {
+                System.out.println("-#- below: " + above.value);
+              }
               // above.right
               above.right = currentNode;
               currentNode.above = above;
@@ -348,7 +382,9 @@ public class EquationParser {
 
         } else {
           root = currentNode;
-          if (debug) {System.out.println("> root: " + root.value);}
+          if (debug) {
+            System.out.println("> root: " + root.value);
+          }
           currentNode.left = lastNode;
         }
         operators.add(currentNode, bracketDepth);
@@ -369,7 +405,9 @@ public class EquationParser {
       }
     }
 
-    if (debug) {operators.printStack();}
+    if (debug) {
+      operators.printStack();
+    }
     if (root != null) {
       if (debug) {
         root.recursivePrint(""); // For debugging
@@ -377,9 +415,14 @@ public class EquationParser {
       TwoDVec coords = new TwoDVec<Double>(0.0, 0.0);
       EquationTree[] existingFunctions = controller.getAllFunctions();
       double res = root.calculate(coords, null, existingFunctions);
-      if (debug) {System.out.println(res + " name: " + name + " isFunction: " + isFunction);}
+      if (debug) {
+        System.out.println(res + " name: " + name + " isFunction: " + isFunction);
+      }
       if ((double) coords.x == -1.0) {
-        if (debug) {System.out.println("Return null");}
+        if (debug) {
+          System.out.println("Return null");
+        }
+        discardVars(addedVars);
         return null;
       }
     }
@@ -389,6 +432,13 @@ public class EquationParser {
     parsedEquation.name = name;
     parsedEquation.isFunction = isFunction;
     return parsedEquation;
+  }
+
+  private static void discardVars(ArrayList<String> varList) {
+    for (String var : varList) {
+      System.out.println("Removed: " + var);
+      controller.customVarList.removeCustomVar(var);
+    }
   }
 
   private static boolean handleAdvancedInput(EquationNode currentNode, EquationNode lastNode,
