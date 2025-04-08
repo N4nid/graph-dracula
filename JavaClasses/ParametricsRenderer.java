@@ -13,6 +13,9 @@ public class ParametricsRenderer {
   public TwoDVec<Double> lastZoom = new TwoDVec<Double>(-1.0, -1.0);
   ArrayList<ArrayList<TwoDVec<TwoDVec<Double>>>> parametricLineCache = new ArrayList<ArrayList<TwoDVec<TwoDVec<Double>>>>();
   
+  Variable[] customVars;
+  EquationTree[] existingFunctions;
+  
   public ParametricsRenderer(RenderValues renderValues) {
     this.renderValues = renderValues;
   }
@@ -76,7 +79,9 @@ public class ParametricsRenderer {
     }
   }
   
-  public ArrayList<ArrayList<TwoDVec<TwoDVec<Double>>>> calculateParametricsLinePoints(ArrayList<EquationTree> parametrics) {
+  public ArrayList<ArrayList<TwoDVec<TwoDVec<Double>>>> calculateParametricsLinePoints(ArrayList<EquationTree> parametrics,Variable[] existingVariables, EquationTree[] existingFunctions) {
+    this.customVars = existingVariables;
+    this.existingFunctions = existingFunctions;
     if (lastZoom.x != renderValues.zoom.x || lastZoom.y != renderValues.zoom.y) {
       this.parametrics = parametrics;
       this.lastZoom = new TwoDVec<Double>(renderValues.zoom.x, renderValues.zoom.y);
