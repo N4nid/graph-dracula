@@ -182,7 +182,7 @@ public class Renderer {
     for (int i = 0; i < lines.size(); i++) {
       if (lines.get(i) != null) {
         mainCanvas.getGraphicsContext2D().setStroke(graphColor);
-        TwoDVec<TwoDVec<Double>> currentLine = lines.get(i);
+        TwoDVec<TwoDVec<Double>> currentLine = new TwoDVec<TwoDVec<Double>>(renderValues.realCoordToScreenCoord(lines.get(i).x),renderValues.realCoordToScreenCoord(lines.get(i).y));
         mainCanvas.getGraphicsContext2D().strokeLine(currentLine.x.x, currentLine.x.y, currentLine.y.x, currentLine.y.y);
       }
     }
@@ -191,7 +191,7 @@ public class Renderer {
 
   private void correctLines(ArrayList<TwoDVec<TwoDVec<Double>>> lines) {
     for (int i = 0; i < lines.size(); i++) {
-      double currentSlope = Math.abs(lines.get(i).y.y - lines.get(i).x.y);
+      double currentSlope = Math.abs(lines.get(i).y.y - lines.get(i).x.y)/renderValues.zoom.y;
       if (currentSlope > renderValues.resolution.y && !yIsOnScreen(lines.get(i).x.y) && !yIsOnScreen(lines.get(i).y.y)) {
         double midpointY = renderValues.midpoint.y;
         if (renderValues.zoom.x < 0.02) {
@@ -208,8 +208,9 @@ public class Renderer {
   }
 
   private boolean yIsOnScreen(double y) {
-    double minY = -renderValues.midpoint.y - (renderValues.resolution.y / 2);
-    double maxY = -renderValues.midpoint.y + (renderValues.resolution.y / 2);
+    y /= renderValues.zoom.y;
+    double minY = (-renderValues.midpoint.y - (renderValues.resolution.y / 2));
+    double maxY = (-renderValues.midpoint.y + (renderValues.resolution.y / 2));
     return (y < maxY && y > minY);
   }
 
