@@ -27,7 +27,10 @@ public class EquationVisElement implements MenuHaver{
   public EquationVisElement(EquationTree equation, String equationText, Pane parent, Pane root, ScrollPane scrollpane, int yPos, ApplicationController controller, int defaultColor) {
     this.controller = controller;
     this.equation = equation;
+
     this.equationText = equationText;
+    this.equationText = this.equationText.replaceAll("\\s", ""); // remove white spaces
+    this.equationText = this.equationText.toLowerCase();
     
     pane = new Pane();
     pane.setLayoutX(defaultXPos);
@@ -42,7 +45,7 @@ public class EquationVisElement implements MenuHaver{
     funcDisplay.setPrefHeight(defaultHeight);
     funcDisplay.setLayoutX(labelX);
     funcDisplay.setLayoutY(labelY);
-    funcDisplay.setText(equationText);
+    funcDisplay.setText(this.equationText);
     funcDisplay.getStyleClass().add("normal-text");
     
     pane.getChildren().add(funcDisplay);

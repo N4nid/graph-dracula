@@ -3,7 +3,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class EquationParser {
-  public static boolean debug = true; // all debugging prints will be removed when there are no issues anymore
+  public static boolean debug = false; // all debugging prints will be removed when there are no issues anymore
   static String name = "";
   static boolean isFunction = false;
   static boolean isParametic = false;
@@ -165,7 +165,7 @@ public class EquationParser {
       // System.out.println(result.calculateParametrics(2, null).x);
 
       result.isParametric = true;
-      System.out.println(input);
+      if (debug) System.out.println(input);
       simpleParsing = false;
       result.name = "" + input.charAt(0);
       return result;

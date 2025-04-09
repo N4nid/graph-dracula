@@ -74,7 +74,6 @@ public class ApplicationController implements MenuHaver {
       defaultErrorMessage.displayError("Invalid equation! Please try again.");
       return;
     }
-    System.out.println(editIndex);
     if (!inputEquation.name.isBlank() && identifierExists(inputEquation.name) && editIndex==-1 || (editIndex != -1 && !listElements.get(editIndex).equation.name.equals(inputEquation.name) && identifierExists(inputEquation.name))) {
       customVarList.discardCustomVars(EquationParser.oldVarCache);
       resize();
