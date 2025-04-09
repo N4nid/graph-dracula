@@ -70,24 +70,30 @@ public class ApplicationController implements MenuHaver {
 
     if (inputEquation == null || inputEquation.root == null) {
       customVarList.discardCustomVars(EquationParser.oldVarCache);
+      resize();
       defaultErrorMessage.displayError("Invalid equation! Please try again.");
       return;
     }
-    if (!inputEquation.name.isBlank() && identifierExists(inputEquation.name) && (editIndex != -1 && !listElements.get(editIndex).equation.name.equals(inputEquation.name))) {
+    System.out.println(editIndex);
+    if (!inputEquation.name.isBlank() && identifierExists(inputEquation.name) && editIndex==-1 || (editIndex != -1 && !listElements.get(editIndex).equation.name.equals(inputEquation.name) && identifierExists(inputEquation.name))) {
+      customVarList.discardCustomVars(EquationParser.oldVarCache);
+      resize();
       defaultErrorMessage.displayError("The name for this function is already in use. Please choose another one!");
       return;
     }
     if (editIndex == -1) {
+      hideRedundantElements();
       addEquation(inputEquation, equationInput.getText(), mainColorPicker.colorIndex);      
     } else {
       listElements.get(editIndex).setEquationText(equationInput.getText());
       listElements.get(editIndex).equation = inputEquation;
       listElements.get(editIndex).colorPicker.pickColor(mainColorPicker.colorIndex);
       editIndex = -1;
+      hideRedundantElements();
+      setEditModeUI(false);
     }
     equationInput.setText("");
     mainColorPicker.pickColor(new Random().nextInt(15));
-    setEditModeUI(false);
     updateInputBarColor();
   }
   
@@ -466,6 +472,7 @@ public class ApplicationController implements MenuHaver {
       updateInputBarColor();
       previewButton.setVisible(false);
     }
+    resize();
   }
   
   public void updateInputBarColor() {
