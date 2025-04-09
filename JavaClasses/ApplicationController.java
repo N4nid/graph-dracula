@@ -32,7 +32,7 @@ public class ApplicationController implements MenuHaver {
   private ExpandMenu expandMenu;
   
   ArrayList<EquationVisElement> listElements = new ArrayList<EquationVisElement>();
-  EquationTree editOrigional = new EquationTree(); 
+  EquationTree editOrigonal = new EquationTree();
   public CustomVarUIList customVarList;
   
   public RoundColorPicker mainColorPicker;
@@ -436,7 +436,7 @@ public class ApplicationController implements MenuHaver {
   public void editEquation(EquationVisElement equation) {
     mainColorPicker.pickColor(equation.colorPicker.colorIndex);
     equationInput.setText(equation.equationText);
-    editOrigional = equation.equation;
+    editOrigonal = equation.equation;
     editIndex = listElements.indexOf(equation);
     setEditModeUI(true);
     resize();
@@ -449,11 +449,13 @@ public class ApplicationController implements MenuHaver {
       return;
     }
     listElements.get(editIndex).equation = previewEquation;
+    listElements.get(editIndex).colorPicker.pickColor(mainColorPicker.colorIndex);
     updateRenderCanvas();
   }
   
   public void removePreview() {
-    listElements.get(editIndex).equation = editOrigional;
+    listElements.get(editIndex).equation = editOrigonal;
+    listElements.get(editIndex).colorPicker.pickColor(RoundColorPicker.getColorIndex(editOrigonal.graphColor));
     editIndex = -1;
     setEditModeUI(false);
     equationInput.setText("");
