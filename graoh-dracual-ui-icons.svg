@@ -7,7 +7,7 @@
    viewBox="0 0 210 297"
    version="1.1"
    id="svg1"
-   inkscape:version="1.4 (e7c3feb100, 2024-10-09)"
+   inkscape:version="1.4.1 (1:1.4.1+202503302257+93de688d07)"
    sodipodi:docname="graoh-dracual-ui-icons.svg"
    inkscape:export-filename="checkmark.png"
    inkscape:export-xdpi="143.76877"
@@ -29,11 +29,11 @@
      inkscape:pagecheckerboard="0"
      inkscape:deskcolor="#d1d1d1"
      inkscape:document-units="mm"
-     inkscape:zoom="0.77911414"
-     inkscape:cx="819.52049"
-     inkscape:cy="295.84882"
-     inkscape:window-width="1536"
-     inkscape:window-height="796"
+     inkscape:zoom="1.1018338"
+     inkscape:cx="1410.3761"
+     inkscape:cy="903.49381"
+     inkscape:window-width="2752"
+     inkscape:window-height="1086"
      inkscape:window-x="0"
      inkscape:window-y="0"
      inkscape:window-maximized="1"
@@ -1634,6 +1634,18 @@
        d="M 230.58505,97.803392 296.46651,65.881445"
        id="path23"
        sodipodi:nodetypes="cc" />
+    <use
+       x="0"
+       y="0"
+       inkscape:tiled-clone-of="#rect37"
+       xlink:href="#rect37"
+       transform="matrix(1.0016439,0,0,0.52220265,109.9238,253.25397)"
+       id="use7"
+       style="stroke:none;stroke-width:0.123756;stroke-dasharray:none"
+       inkscape:label="abs"
+       inkscape:export-filename="JavaClasses/resources/MathIcons/if.png"
+       inkscape:export-xdpi="450"
+       inkscape:export-ydpi="450" />
   </g>
   <g
      inkscape:groupmode="layer"
@@ -1653,9 +1665,9 @@
        inkscape:export-ydpi="400.76999"><tspan
          x="282.34103"
          y="72.980049"
-         id="tspan3"><tspan
+         id="tspan6"><tspan
            style="fill:#ffffff"
-           id="tspan2">f(x)=</tspan></tspan></text>
+           id="tspan1">f(x)=</tspan></tspan></text>
     <text
        xml:space="preserve"
        style="font-size:13.4159px;text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;white-space:pre;inline-size:57.547;display:inline;fill:#242424;fill-opacity:1;stroke:#ffffff;stroke-width:0.138006;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1"
@@ -1667,11 +1679,11 @@
        inkscape:tile-y0="166.95511"><tspan
          x="282.34103"
          y="72.980049"
-         id="tspan5"><tspan
+         id="tspan11"><tspan
    style="fill:#ffffff"
-   id="tspan4">a</tspan><tspan
+   id="tspan10">a</tspan><tspan
    y="72.980049"
-   id="tspan76"> </tspan></tspan></text>
+   id="tspan12"> </tspan></tspan></text>
     <text
        xml:space="preserve"
        style="font-size:13.4159px;text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;white-space:pre;inline-size:57.547;display:inline;fill:#242424;fill-opacity:1;stroke:#ffffff;stroke-width:0.138006;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1"
@@ -1683,11 +1695,11 @@
        inkscape:tile-y0="166.95511"><tspan
          x="282.34103"
          y="72.980049"
-         id="tspan78"><tspan
+         id="tspan14"><tspan
    style="fill:#ffffff"
-   id="tspan77">tan</tspan><tspan
+   id="tspan13">tan</tspan><tspan
    y="72.980049"
-   id="tspan79"> </tspan></tspan></text>
+   id="tspan15"> </tspan></tspan></text>
     <text
        xml:space="preserve"
        style="font-size:13.4159px;text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;white-space:pre;inline-size:57.547;display:inline;fill:#242424;fill-opacity:1;stroke:#ffffff;stroke-width:0.138006;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1"
@@ -1699,11 +1711,11 @@
        inkscape:tile-y0="166.95511"><tspan
          x="282.34103"
          y="72.980049"
-         id="tspan81"><tspan
+         id="tspan17"><tspan
    style="fill:#ffffff"
-   id="tspan80">log</tspan><tspan
+   id="tspan16">log</tspan><tspan
    y="72.980049"
-   id="tspan82"> </tspan></tspan></text>
+   id="tspan18"> </tspan></tspan></text>
     <text
        xml:space="preserve"
        style="font-size:13.4159px;text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;white-space:pre;inline-size:57.547;display:inline;fill:#242424;fill-opacity:1;stroke:#ffffff;stroke-width:0.138006;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1"
@@ -1715,11 +1727,11 @@
        inkscape:tile-y0="166.95511"><tspan
          x="282.34103"
          y="72.980049"
-         id="tspan84"><tspan
+         id="tspan20"><tspan
    style="fill:#ffffff"
-   id="tspan83">π</tspan><tspan
+   id="tspan19">π</tspan><tspan
    y="72.980049"
-   id="tspan85"> </tspan></tspan></text>
+   id="tspan21"> </tspan></tspan></text>
     <text
        xml:space="preserve"
        style="font-size:13.4159px;text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;white-space:pre;inline-size:57.547;display:inline;fill:#242424;fill-opacity:1;stroke:#ffffff;stroke-width:0.138006;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1"
@@ -1731,13 +1743,13 @@
        inkscape:tile-y0="166.95511"><tspan
          x="282.34103"
          y="72.980049"
-         id="tspan88"><tspan
+         id="tspan24"><tspan
    style="fill:#ffffff"
-   id="tspan86">√</tspan><tspan
+   id="tspan22">√</tspan><tspan
    style="fill:#ffffff"
-   id="tspan87">a</tspan><tspan
+   id="tspan23">a</tspan><tspan
    y="72.980049"
-   id="tspan89"> </tspan></tspan></text>
+   id="tspan25"> </tspan></tspan></text>
     <text
        xml:space="preserve"
        style="font-size:13.4159px;text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;white-space:pre;inline-size:57.547;display:inline;fill:#242424;fill-opacity:1;stroke:#ffffff;stroke-width:0.138006;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1"
@@ -1749,11 +1761,11 @@
        inkscape:tile-y0="166.95511"><tspan
          x="282.34103"
          y="72.980049"
-         id="tspan91"><tspan
+         id="tspan27"><tspan
    style="fill:#ffffff"
-   id="tspan90">sin</tspan><tspan
+   id="tspan26">sin</tspan><tspan
    y="72.980049"
-   id="tspan92"> </tspan></tspan></text>
+   id="tspan28"> </tspan></tspan></text>
     <text
        xml:space="preserve"
        style="font-size:13.4159px;text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;white-space:pre;inline-size:57.547;display:inline;fill:#242424;fill-opacity:1;stroke:#ffffff;stroke-width:0.138006;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1"
@@ -1765,11 +1777,11 @@
        inkscape:tile-y0="166.95511"><tspan
          x="282.34103"
          y="72.980049"
-         id="tspan94"><tspan
+         id="tspan30"><tspan
    style="fill:#ffffff"
-   id="tspan93">e</tspan><tspan
+   id="tspan29">e</tspan><tspan
    y="72.980049"
-   id="tspan95"> </tspan></tspan></text>
+   id="tspan31"> </tspan></tspan></text>
     <text
        xml:space="preserve"
        style="font-size:13.4159px;text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;white-space:pre;inline-size:57.547;display:inline;fill:#242424;fill-opacity:1;stroke:#ffffff;stroke-width:0.138006;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1"
@@ -1782,11 +1794,11 @@
        inkscape:label="e"><tspan
          x="282.34103"
          y="72.980049"
-         id="tspan97"><tspan
+         id="tspan33"><tspan
    style="fill:#ffffff"
-   id="tspan96">e</tspan><tspan
+   id="tspan32">e</tspan><tspan
    y="72.980049"
-   id="tspan98"> </tspan></tspan></text>
+   id="tspan34"> </tspan></tspan></text>
     <text
        xml:space="preserve"
        style="font-size:13.4159px;text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;white-space:pre;inline-size:57.547;display:inline;fill:#242424;fill-opacity:1;stroke:#ffffff;stroke-width:0.138006;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1"
@@ -1799,9 +1811,9 @@
        inkscape:label="phi"><tspan
          x="282.34103"
          y="72.980049"
-         id="tspan100"><tspan
+         id="tspan36"><tspan
            style="fill:#ffffff"
-           id="tspan99">Φ</tspan></tspan></text>
+           id="tspan35">Φ</tspan></tspan></text>
     <text
        xml:space="preserve"
        style="font-size:13.4159px;text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;white-space:pre;inline-size:57.547;display:inline;fill:#242424;fill-opacity:1;stroke:#ffffff;stroke-width:0.138006;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1"
@@ -1813,11 +1825,11 @@
        inkscape:tile-y0="166.95511"><tspan
          x="282.34103"
          y="72.980049"
-         id="tspan102"><tspan
+         id="tspan38"><tspan
    style="fill:#ffffff"
-   id="tspan101">sin</tspan><tspan
+   id="tspan37">sin</tspan><tspan
    y="72.980049"
-   id="tspan103"> </tspan></tspan></text>
+   id="tspan39"> </tspan></tspan></text>
     <text
        xml:space="preserve"
        style="font-size:13.4159px;text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;white-space:pre;inline-size:57.547;display:inline;fill:#242424;fill-opacity:1;stroke:#ffffff;stroke-width:0.138006;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1"
@@ -1829,11 +1841,11 @@
        inkscape:tile-y0="166.95511"><tspan
          x="282.34103"
          y="72.980049"
-         id="tspan105"><tspan
+         id="tspan41"><tspan
    style="fill:#ffffff"
-   id="tspan104">10</tspan><tspan
+   id="tspan40">10</tspan><tspan
    y="72.980049"
-   id="tspan106"> </tspan></tspan></text>
+   id="tspan42"> </tspan></tspan></text>
     <text
        xml:space="preserve"
        style="font-size:13.4159px;text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;white-space:pre;inline-size:57.547;display:inline;fill:#242424;fill-opacity:1;stroke:#ffffff;stroke-width:0.138006;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1"
@@ -1845,11 +1857,11 @@
        inkscape:tile-y0="166.95511"><tspan
          x="282.34103"
          y="72.980049"
-         id="tspan108"><tspan
+         id="tspan44"><tspan
    style="fill:#ffffff"
-   id="tspan107">a²</tspan><tspan
+   id="tspan43">a²</tspan><tspan
    y="72.980049"
-   id="tspan109"> </tspan></tspan></text>
+   id="tspan45"> </tspan></tspan></text>
     <text
        xml:space="preserve"
        style="font-size:13.4159px;text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;white-space:pre;inline-size:57.547;display:inline;fill:#242424;fill-opacity:1;stroke:#ffffff;stroke-width:0.138006;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1"
@@ -1870,11 +1882,11 @@
        inkscape:tile-y0="166.95511"><tspan
          x="282.34103"
          y="72.980049"
-         id="tspan111"><tspan
+         id="tspan47"><tspan
    style="fill:#ffffff"
-   id="tspan110">ln</tspan><tspan
+   id="tspan46">ln</tspan><tspan
    y="72.980049"
-   id="tspan112"> </tspan></tspan></text>
+   id="tspan48"> </tspan></tspan></text>
     <text
        xml:space="preserve"
        style="font-size:13.4159px;text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;white-space:pre;inline-size:57.547;display:inline;fill:#242424;fill-opacity:1;stroke:#ffffff;stroke-width:0.138006;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1"
@@ -1886,11 +1898,11 @@
        inkscape:tile-y0="166.95511"><tspan
          x="282.34103"
          y="72.980049"
-         id="tspan114"><tspan
+         id="tspan50"><tspan
    style="fill:#ffffff"
-   id="tspan113">mod</tspan><tspan
+   id="tspan49">mod</tspan><tspan
    y="72.980049"
-   id="tspan115"> </tspan></tspan></text>
+   id="tspan51"> </tspan></tspan></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:7.05556px;font-family:'Source Code Pro';-inkscape-font-specification:'Source Code Pro';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ffffff;fill-opacity:1;stroke:#ffffff;stroke-width:0.138006;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1"
@@ -1918,13 +1930,13 @@
        inkscape:tile-y0="166.95511"><tspan
          x="282.34103"
          y="72.980049"
-         id="tspan118"><tspan
+         id="tspan54"><tspan
    style="fill:#ffffff"
-   id="tspan116">√</tspan><tspan
+   id="tspan52">√</tspan><tspan
    style="fill:#ffffff"
-   id="tspan117">a</tspan><tspan
+   id="tspan53">a</tspan><tspan
    y="72.980049"
-   id="tspan119"> </tspan></tspan></text>
+   id="tspan55"> </tspan></tspan></text>
     <path
        style="fill:none;fill-opacity:1;stroke:#ffffff;stroke-width:0.838;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1"
        d="m 392.39134,195.48582 h 9.48234 v 2.87856"
@@ -1952,11 +1964,11 @@
        inkscape:tile-y0="166.95511"><tspan
          x="282.34103"
          y="72.980049"
-         id="tspan121"><tspan
+         id="tspan57"><tspan
    style="fill:#ffffff"
-   id="tspan120">cos</tspan><tspan
+   id="tspan56">cos</tspan><tspan
    y="72.980049"
-   id="tspan122"> </tspan></tspan></text>
+   id="tspan58"> </tspan></tspan></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:7.05556px;font-family:'Source Code Pro';-inkscape-font-specification:'Source Code Pro';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ffffff;fill-opacity:1;stroke:#ffffff;stroke-width:0.138006;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1"
@@ -1979,11 +1991,11 @@
        inkscape:tile-y0="166.95511"><tspan
          x="282.34103"
          y="72.980049"
-         id="tspan124"><tspan
+         id="tspan60"><tspan
    style="fill:#ffffff"
-   id="tspan123">cos</tspan><tspan
+   id="tspan59">cos</tspan><tspan
    y="72.980049"
-   id="tspan125"> </tspan></tspan></text>
+   id="tspan61"> </tspan></tspan></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:7.05556px;font-family:'Source Code Pro';-inkscape-font-specification:'Source Code Pro';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ffffff;fill-opacity:1;stroke:#ffffff;stroke-width:0.138006;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1"
@@ -2006,11 +2018,11 @@
        inkscape:tile-y0="166.95511"><tspan
          x="282.34103"
          y="72.980049"
-         id="tspan127"><tspan
+         id="tspan63"><tspan
    style="fill:#ffffff"
-   id="tspan126">tan</tspan><tspan
+   id="tspan62">tan</tspan><tspan
    y="72.980049"
-   id="tspan128"> </tspan></tspan></text>
+   id="tspan64"> </tspan></tspan></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:7.05556px;font-family:'Source Code Pro';-inkscape-font-specification:'Source Code Pro';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ffffff;fill-opacity:1;stroke:#ffffff;stroke-width:0.138006;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1"
@@ -2055,11 +2067,11 @@
        inkscape:tile-y0="166.95511"><tspan
          x="282.34103"
          y="72.980049"
-         id="tspan130"><tspan
+         id="tspan66"><tspan
    style="fill:#ffffff"
-   id="tspan129">log</tspan><tspan
+   id="tspan65">log</tspan><tspan
    y="72.980049"
-   id="tspan131"> </tspan></tspan></text>
+   id="tspan67"> </tspan></tspan></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:7.05556px;font-family:'Source Code Pro';-inkscape-font-specification:'Source Code Pro';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#ffffff;fill-opacity:1;stroke:#ffffff;stroke-width:0.138006;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1"
@@ -2093,11 +2105,11 @@
        inkscape:tile-y0="166.95511"><tspan
          x="282.34103"
          y="72.980049"
-         id="tspan133"><tspan
+         id="tspan69"><tspan
    style="fill:#ffffff"
-   id="tspan132">|a|</tspan><tspan
+   id="tspan68">|a|</tspan><tspan
    y="72.980049"
-   id="tspan134"> </tspan></tspan></text>
+   id="tspan70"> </tspan></tspan></text>
     <text
        xml:space="preserve"
        style="font-size:13.4159px;text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;white-space:pre;inline-size:57.547;display:inline;fill:#242424;fill-opacity:1;stroke:#ffffff;stroke-width:0.138006;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1"
@@ -2109,11 +2121,11 @@
        inkscape:tile-y0="166.95511"><tspan
          x="282.34103"
          y="72.980049"
-         id="tspan136"><tspan
+         id="tspan72"><tspan
    style="font-size:18.399px;fill:#ffffff"
-   id="tspan135">a</tspan><tspan
+   id="tspan71">a</tspan><tspan
    y="72.980049"
-   id="tspan137"> </tspan></tspan></text>
+   id="tspan73"> </tspan></tspan></text>
     <text
        xml:space="preserve"
        style="font-size:13.4159px;text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;white-space:pre;inline-size:57.547;display:inline;fill:#242424;fill-opacity:1;stroke:#ffffff;stroke-width:0.138006;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1"
@@ -2125,11 +2137,11 @@
        inkscape:tile-y0="166.95511"><tspan
          x="282.34103"
          y="72.980049"
-         id="tspan139"><tspan
+         id="tspan75"><tspan
    style="fill:#ffffff"
-   id="tspan138">100</tspan><tspan
+   id="tspan74">100</tspan><tspan
    y="72.980049"
-   id="tspan140"> </tspan></tspan></text>
+   id="tspan76"> </tspan></tspan></text>
     <rect
        style="fill:#3c3c3c;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:1.33762;stroke-linejoin:bevel;stroke-dasharray:2.67525, 1.33762;stroke-dashoffset:0;stroke-opacity:1"
        id="rect17"
@@ -2154,11 +2166,27 @@
        inkscape:tile-y0="166.95511"><tspan
          x="282.34103"
          y="72.980049"
-         id="tspan142"><tspan
+         id="tspan78"><tspan
    style="fill:#ffffff"
-   id="tspan141">f(t-&gt;xy)</tspan><tspan
+   id="tspan77">f(t-&gt;xy)</tspan><tspan
    y="72.980049"
-   id="tspan143"> </tspan></tspan></text>
+   id="tspan79"> </tspan></tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:13.4159px;text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;white-space:pre;inline-size:57.547;display:inline;fill:#242424;fill-opacity:1;stroke:#ffffff;stroke-width:0.138006;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1"
+       x="282.34103"
+       y="72.980049"
+       id="text9"
+       transform="matrix(0.90591542,0,0,0.93499564,137.63585,229.59346)"
+       inkscape:tile-x0="264.59837"
+       inkscape:tile-y0="166.95511"><tspan
+         x="282.34103"
+         y="72.980049"
+         id="tspan81"><tspan
+   style="fill:#ffffff"
+   id="tspan80">if</tspan><tspan
+   y="72.980049"
+   id="tspan82"> </tspan></tspan></text>
   </g>
   <g
      inkscape:groupmode="layer"

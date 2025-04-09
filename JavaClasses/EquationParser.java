@@ -3,7 +3,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class EquationParser {
-  public static boolean debug = true; // all debugging prints will be removed when there are no issues anymore
+  public static boolean debug = false; // all debugging prints will be removed when there are no issues anymore
   static String name = "";
   static boolean isFunction = false;
   static boolean isParametic = false;
@@ -11,11 +11,12 @@ public class EquationParser {
   private static boolean parseBetweenBrackets = false;
   private static byte specialOpMagicNum = 6;
   public static ApplicationController controller;
+  public static ArrayList<CustomVarUIElement> oldVarCache;
 
   private static String transformString(String input) {
     // Sanitize and Transform string
     // remove all spaces
-    System.out.println(input);
+    if (debug) System.out.println(input);
     input = input.replaceAll("\\s", "");
     // So that the equalSign of a condition node will not be used
     input = input.replaceAll("==", "≠");
@@ -88,7 +89,6 @@ public class EquationParser {
         if (debug) {
           System.out.println("not a function");
         }
-
       }
     }
 
@@ -104,8 +104,7 @@ public class EquationParser {
     input = input.replaceAll("≤", "<=");
     input = input.replaceAll("≥", ">=");
 
-    if (debug)
-      System.out.println("input after TRANSFORM: " + input);
+    if (debug) System.out.println("input after TRANSFORM: " + input);
     return input;
   }
 
@@ -185,7 +184,9 @@ public class EquationParser {
       // System.out.println(result.calculateParametrics(2, null).x);
 
       result.isParametric = true;
+      if (debug) System.out.println(input);
       simpleParsing = false;
+      result.name = "" + input.charAt(0);
       return result;
     }
 
@@ -200,8 +201,6 @@ public class EquationParser {
     if (debug && input.equals("bug")) {
       testParser(appController);
     }
-
-    controller = appController;
 
     EquationTree parsedEquation = new EquationTree();
     ArrayList<String> addedVars = new ArrayList<String>();
@@ -245,7 +244,7 @@ public class EquationParser {
           lastNode.right = currentNode;
         }
 
-        if (state == 1 && controller.functionExists(val.toString())) {
+        if (state == 1 && controller.equationNameExists(val.toString())) {
           discardVars(addedVars);
           return null;
         }
@@ -457,7 +456,7 @@ public class EquationParser {
 
   private static void discardVars(ArrayList<String> varList) {
     for (String var : varList) {
-      System.out.println("Removed: " + var);
+      if (debug) System.out.println("Removed: " + var);
       controller.customVarList.removeCustomVar(var);
     }
   }
@@ -619,7 +618,7 @@ public class EquationParser {
     byte nextState = getState(next);
 
     if (state == 1 && next == '(') { // edgecase for parsing functions f(
-      if (controller.functionExists(value) && !name.equals(value)) {
+      if (controller.equationNameExists(value) && !name.equals(value)) {
         // check if it is a variables or function; a(x) could also mean a*(x)
         input = input.delete(0, 1);
         result = new EquationNode((byte) 4, value);

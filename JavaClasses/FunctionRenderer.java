@@ -21,7 +21,7 @@ public class FunctionRenderer {
     double[] returnValues = new double[(int)Math.round((double)renderValues.resolution.x/pixelsPerPoint)];
     for (int i = 0; i < returnValues.length; i++) {
       double yValue = equation.calculate(new TwoDVec<Double>(renderValues.screenCoordDoubleToRealCoord(new TwoDVec<Double>((double)i*pixelsPerPoint,0.0)).x,0.0),existingVariables,existingFunctions);
-      returnValues[i] = renderValues.realCoordToScreenCoord(new TwoDVec<Double>(0.0,yValue)).y;
+      returnValues[i] = yValue;
     }
     return returnValues;
   }
@@ -47,8 +47,8 @@ public class FunctionRenderer {
       ArrayList<TwoDVec<TwoDVec<Double>>> currentFunctionLines = new ArrayList<TwoDVec<TwoDVec<Double>>>();
       double[] functionValues = calculateFunctionValues(functions.get(i),existingVariables,existingFunctions);
       for (int j = 0; j < functionValues.length-1; j++) {
-        TwoDVec<Double> fromCoord = new TwoDVec<Double>(xValues[j],functionValues[j]);
-        TwoDVec<Double> toCoord = new TwoDVec<Double>(xValues[j+1],functionValues[j+1]);
+        TwoDVec<Double> fromCoord = new TwoDVec<Double>(renderValues.screenCoordDoubleToRealCoord(new TwoDVec<Double>(xValues[j],0.0)).x,functionValues[j]);
+        TwoDVec<Double> toCoord = new TwoDVec<Double>(renderValues.screenCoordDoubleToRealCoord(new TwoDVec<Double>(xValues[j+1],0.0)).x,functionValues[j+1]);
         currentFunctionLines.add(new TwoDVec<TwoDVec<Double>>(fromCoord,toCoord));
       }
       functionsLines.add(currentFunctionLines);

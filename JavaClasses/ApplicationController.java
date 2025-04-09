@@ -30,7 +30,7 @@ public class ApplicationController implements MenuHaver {
   private Button previewButton = new Button();
   private MenuOption recenterButton;
   private ExpandMenu expandMenu;
-
+  
   ArrayList<EquationVisElement> listElements = new ArrayList<EquationVisElement>();
   EquationTree editOrigional = new EquationTree(); 
   public CustomVarUIList customVarList;
@@ -54,7 +54,7 @@ public class ApplicationController implements MenuHaver {
   private static final double defaultSceneWidth = 1920;
   private static final double defaultButtonSize = 70;
   public static double zoomSensitivity = 0.0015;
-
+  
   private static final KeyCharacterCombination insertFunctionShortcut = new KeyCharacterCombination("f",KeyCharacterCombination.CONTROL_DOWN);
   private static final KeyCodeCombination goToLineEndShortcut = new KeyCodeCombination(KeyCode.L, KeyCombination.CONTROL_DOWN);
   private static final KeyCharacterCombination expandMenuShortcut = new KeyCharacterCombination("e",KeyCharacterCombination.CONTROL_DOWN);
@@ -66,36 +66,34 @@ public class ApplicationController implements MenuHaver {
   
   @FXML
   protected void onAddButtonClick() {
-    //ArrayList<CustomVarUIElement> oldVars = (ArrayList<CustomVarUIElement>)customVarList.customVars.clone();
-    ArrayList<CustomVarUIElement> oldVars = new ArrayList<>();
-    oldVars.addAll(customVarList.customVars);
     EquationTree inputEquation = EquationParser.parseString(equationInput.getText(),this);
 
     if (inputEquation == null || inputEquation.root == null) {
-      customVarList.discardCustomVars(oldVars);
+      customVarList.discardCustomVars(EquationParser.oldVarCache);
+      resize();
       defaultErrorMessage.displayError("Invalid equation! Please try again.");
       return;
     }
-    if (!inputEquation.name.isBlank() && identifierExists(inputEquation.name) && (editIndex != -1 && !listElements.get(editIndex).equation.name.equals(inputEquation.name))) {
+    if (!inputEquation.name.isBlank() && identifierExists(inputEquation.name) && editIndex==-1 || (editIndex != -1 && !listElements.get(editIndex).equation.name.equals(inputEquation.name) && identifierExists(inputEquation.name))) {
+      customVarList.discardCustomVars(EquationParser.oldVarCache);
+      resize();
       defaultErrorMessage.displayError("The name for this function is already in use. Please choose another one!");
       return;
     }
-    if (!inputEquation.isFunction) {
-      renderer.refreshEquationRenderer();
-    }
     if (editIndex == -1) {
+      hideRedundantElements();
       addEquation(inputEquation, equationInput.getText(), mainColorPicker.colorIndex);
     } else {
       listElements.get(editIndex).setEquationText(equationInput.getText());
       listElements.get(editIndex).equation = inputEquation;
       listElements.get(editIndex).colorPicker.pickColor(mainColorPicker.colorIndex);
       editIndex = -1;
+      hideRedundantElements();
+      setEditModeUI(false);
     }
     equationInput.setText("");
     mainColorPicker.pickColor(new Random().nextInt(15));
-    setEditModeUI(false);
     updateInputBarColor();
-    resize();
   }
   
   public void addEquation(EquationTree equation, String equationText, int colorIndex) {
@@ -113,10 +111,11 @@ public class ApplicationController implements MenuHaver {
     anchors.get(anchors.size() - 1).applyAnchor();
     resize();
   }
-
-  public boolean functionExists(String name) {
+  
+  public boolean equationNameExists(String name) {
     for (int i = 0; i < listElements.size(); i++) {
-      if (listElements.get(i).equation.name.equals(name) && listElements.get(i).equation.isFunction) {
+      System.out.println(listElements.get(i).equation.name);
+      if (listElements.get(i).equation.name.equals(name)) {
         return true;
       }
     }
@@ -146,14 +145,14 @@ public class ApplicationController implements MenuHaver {
     }
     return allFunctionArray;
   }
-
+  
   public boolean identifierExists(String name) {
-    if (functionExists(name)) {
+    if (equationNameExists(name)) {
       return true;
     }
     return customVarList.customVarExists(name);
   }
-
+  
   public void setup() {
     TwoDVec<Double> colorPickPos = new TwoDVec<Double>(1650.0, 15.0);
     mainColorPicker = new RoundColorPicker(colorPickPos.x, colorPickPos.y, 0, new Random().nextInt(15), true, root, this);
@@ -176,6 +175,7 @@ public class ApplicationController implements MenuHaver {
     updateInputBarColor();
     calculateDefaultSizes();
     scene = equationInput.getScene();
+    equationInput.setContextMenu(new ContextMenu()); //to disable the default context menu
     
     renderer = new Renderer(this);
     renderer.mainCanvas = new Canvas(graphViewPane.getPrefWidth(), graphViewPane.getPrefHeight());
@@ -195,8 +195,8 @@ public class ApplicationController implements MenuHaver {
     Effects.addDefaultHoverEffect(previewButton);
     root.getChildren().add(previewButton);
     previewButton.setOnAction(e -> addPreviewEquation());
-
-
+    
+    
     anchors.add(new Anchor(extraInputButton, root, new TwoDVec<Double>(0.0, -138.0), "scale->pos", true, false));
     anchors.add(new Anchor(addButton, root, new TwoDVec<Double>(-98.0, -138.0), "scale->pos"));
     anchors.add(new Anchor(scrollPane, equationListBackground, new TwoDVec<Double>(-6.0, 0.0), "scale",false,true));
@@ -291,22 +291,31 @@ public class ApplicationController implements MenuHaver {
         mouseMindpointOffset = new TwoDVec<Double>((e.getX() - renderer.renderValues.midpoint.x),
         e.getY() - renderer.renderValues.midpoint.y);
         firstDrag = false;
-      }
-      TwoDVec<Double> newPos = new TwoDVec<Double>((e.getX() - mouseMindpointOffset.x),
-      (e.getY() - mouseMindpointOffset.y));
-      if (graphOffsetInBounds(0.1, renderer.renderValues)) {
-        recenterButton.optionPane.setVisible(false);
+        TwoDVec<Double> newPos = new TwoDVec<Double>((e.getX() - mouseMindpointOffset.x),
+        (e.getY() - mouseMindpointOffset.y));
+        if (graphOffsetInBounds(0.1, renderer.renderValues)) {
+          recenterButton.optionPane.setVisible(false);
+        } else {
+          recenterButton.optionPane.setVisible(true);
+        }
+        renderer.renderValues.midpoint.setPos(newPos.x, newPos.y);
       } else {
-        recenterButton.optionPane.setVisible(true);
-      }
-      renderer.renderValues.midpoint.setPos(newPos.x, newPos.y);
-      updateRenderCanvas();
+        TwoDVec<Double> newPos = new TwoDVec<Double>((e.getX() - mouseMindpointOffset.x),
+        (e.getY() - mouseMindpointOffset.y));
+        if (graphOffsetInBounds(0.1, renderer.renderValues)) {
+          recenterButton.optionPane.setVisible(false);
+        } else {
+          recenterButton.optionPane.setVisible(true);
+        }
+        renderer.renderValues.midpoint.setPos(newPos.x, newPos.y);
+        updateRenderCanvas();
+      } // end of if-else
     });
     
     extraInputButton.setOnAction(e->{
       expandMenu.flipVisibility();
     });
-
+    
     customVarList = new CustomVarUIList(equationListBackground,this);
     resize();
   }
@@ -373,10 +382,8 @@ public class ApplicationController implements MenuHaver {
     graphViewPane.setPrefHeight(graphViewPaneSize.y);
     equationListBackground.setPrefWidth(scrollPaneBackgroundSize.x);
     equationListBackground.setPrefHeight(scrollPaneBackgroundSize.y);
-    updateRenderCanvas();
-    Anchor.applyAnchors(anchors);
 
-    updateListElementTransform();
+    updateRenderCanvas();
     if (customVarList != null) {
       customVarList.updateListTransform();
       scrollPane.setPrefHeight(equationListBackground.getPrefHeight() - 6 -customVarList.backgroundPane.getPrefHeight());
@@ -384,13 +391,15 @@ public class ApplicationController implements MenuHaver {
     if (equationList.getPrefHeight() < minEquationListHeight) {
       equationList.setPrefHeight(minEquationListHeight);
     }
-
+    
     if (equationList.getPrefHeight() > minEquationListHeight && equationList.getPrefHeight() > scrollPane.getPrefHeight()) {
       equationList.setPrefHeight(minEquationListHeight);
       if (equationList.getPrefHeight() +1 < scrollPane.getPrefHeight()) {
         equationList.setPrefHeight(scrollPane.getPrefHeight());
       }
     }
+    updateListElementTransform();
+    Anchor.applyAnchors(anchors);
   }
   
   public void updateRenderCanvas() {
@@ -401,7 +410,7 @@ public class ApplicationController implements MenuHaver {
     GraphicsContext gc = renderer.mainCanvas.getGraphicsContext2D();
     renderer.renderValues.resolution = res;
     
-    renderer.renderEquations(listElements);
+    renderer.renderEquations(listElements);                                             
   }
   
   private void updateListElementTransform() {
@@ -416,6 +425,8 @@ public class ApplicationController implements MenuHaver {
     equationList.getChildren().remove(equation.pane);
     if (listElements.indexOf(equation) == editIndex) {
       editIndex = -1;
+      equationInput.setText("");
+      setEditModeUI(false);
     }
     listElements.remove(equation);
     minEquationListHeight -= 100;
@@ -463,6 +474,7 @@ public class ApplicationController implements MenuHaver {
       updateInputBarColor();
       previewButton.setVisible(false);
     }
+    resize();
   }
   
   public void updateInputBarColor() {

@@ -1,13 +1,16 @@
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 
 
-public class CustomVarUIElement {
+public class CustomVarUIElement implements MenuHaver{
     public String name;
     public double value;
     private int sliderDecimalPlaces = 1;
@@ -22,6 +25,8 @@ public class CustomVarUIElement {
     private TextField minValDisplay;
     private TextField maxValDisplay;
     private ApplicationController controller;
+    private CustomVarUIList parent;
+    private OverlayMenu rightClickMenu;
 
     public static final int defaultHeight = 73;
     private static final int labelWidth = 40;
@@ -31,9 +36,10 @@ public class CustomVarUIElement {
     private static final double rangeDisplayWidth = 50;
     private static final TwoDVec<Double> labelPos = new TwoDVec<Double>(25.0,0.0);
 
-    public CustomVarUIElement(String name,ApplicationController controller) {
+    public CustomVarUIElement(String name,ApplicationController controller, CustomVarUIList parent) {
         this.name = name;
         this.controller = controller;
+        this.parent = parent;
         value = 1;
 
         background = new Pane();
@@ -57,6 +63,7 @@ public class CustomVarUIElement {
         valueInput.getStyleClass().add("black");
         valueInput.getStyleClass().add("border");
         valueInput.getStyleClass().add("small-text");
+        valueInput.setContextMenu(new ContextMenu()); //to disable the default context menu
         valueInput.setPadding(new Insets(0,8,0,8));
         background.getChildren().add(valueInput);
 
@@ -91,11 +98,28 @@ public class CustomVarUIElement {
                 background.requestFocus();
             }
         });
+
+        background.setOnMouseClicked(e ->{
+            dealWithMouseClick(e);
+        });
+        valueInput.setOnMouseClicked(e -> {
+            dealWithMouseClick(e);
+        });
+    }
+
+    private void dealWithMouseClick(MouseEvent e) {
+        controller.hideRedundantElements();
+        if (e.getButton().equals(MouseButton.SECONDARY)) {
+            TwoDVec<Double> mousePos = new TwoDVec<Double>(e.getX(), e.getY());
+            rightClickMenu = new OverlayMenu(this,"customVarElement",mousePos,background);
+            controller.hideOnClick.add(rightClickMenu);
+        }
     }
 
     private void setupRangeDisplay(TextField display, boolean isMax) {
         double xPos = (isMax)? (currentWidth - rangeDisplayWidth - rangeDisplayPadding) : rangeDisplayPadding;
         double displayVal = (isMax)? sliderRange.y : sliderRange.x;
+        display.setContextMenu(new ContextMenu()); //to disable the default context menu
         display.setPrefWidth(rangeDisplayWidth);
         display.setPrefHeight(defaultHeight/2-3);
         display.relocate(xPos,defaultHeight/2);
@@ -132,6 +156,9 @@ public class CustomVarUIElement {
             if (e.getCode() == KeyCode.ENTER) {
                 background.requestFocus();
             }
+        });
+        display.setOnMouseClicked(e -> {
+            dealWithMouseClick(e);
         });
     }
 
@@ -194,6 +221,14 @@ public class CustomVarUIElement {
         valueInput.setPrefWidth(currentWidth-labelWidth-labelBoxPadding+3);
         setupRangeDisplay(minValDisplay,false);
         setupRangeDisplay(maxValDisplay,true);
+    }
+
+    public void executeMenuOption(String menuOption) {
+        if (menuOption.equals("delete")) {
+            controller.destroyMenu(rightClickMenu);
+            parent.removeCustomVar(name);
+            controller.resize();
+        }
     }
 
     private static double round(double value, int places) {
