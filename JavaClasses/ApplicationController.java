@@ -425,6 +425,8 @@ public class ApplicationController implements MenuHaver {
     equationList.getChildren().remove(equation.pane);
     if (listElements.indexOf(equation) == editIndex) {
       editIndex = -1;
+      equationInput.setText("");
+      setEditModeUI(false);
     }
     listElements.remove(equation);
     minEquationListHeight -= 100;
