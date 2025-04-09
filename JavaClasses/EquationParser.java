@@ -39,7 +39,7 @@ public class EquationParser {
     input = input.replaceAll("\\)\\(", ")*(");
 
 
-    // handle case in which the condition is in the beginning
+    // handle case in which the condition is in the beginning -> move it to the back
     // Fe. if(x<1) x^2
     if (input.length() > 4) { // so its not just if
       String sub = input.substring(0, 2);
@@ -121,7 +121,14 @@ public class EquationParser {
   public static EquationTree parseString(String input, ApplicationController appController) {
     simpleParsing = true;
     controller = appController;
-    transformString(input);
+    parseBetweenBrackets = true;
+    input = transformString(input);
+    parseBetweenBrackets = false;
+    if(input == null){
+      if(debug)System.out.println("invalid inputt");
+      return null;
+    }
+
     simpleParsing = false;
     if (input.length() > 8 && input.substring(1, 8).equals("(t->xy)")) {
       return parseParametics(input);
@@ -187,18 +194,14 @@ public class EquationParser {
   }
 
   public static EquationTree parseEquation(String input, ApplicationController appController) {
-    if (debug && input.equals("debug")) {
-      testParser(appController);
-    }
-
-    input = transformString(input);
-    controller = appController;
     if (input == null) {
       return null;
     }
-    if (isParametic) {
-      return parseParametics(input);
+    if (debug && input.equals("bug")) {
+      testParser(appController);
     }
+
+    controller = appController;
 
     EquationTree parsedEquation = new EquationTree();
     ArrayList<String> addedVars = new ArrayList<String>();
