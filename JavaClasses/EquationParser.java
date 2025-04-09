@@ -3,7 +3,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class EquationParser {
-  public static boolean debug = false; // all debugging prints will be removed when there are no issues anymore
+  public static boolean debug = true; // all debugging prints will be removed when there are no issues anymore
   static String name = "";
   static boolean isFunction = false;
   static boolean isParametic = false;
@@ -40,7 +40,7 @@ public class EquationParser {
     input = input.replaceAll("\\)\\(", ")*(");
 
 
-    // handle case in which the condition is in the beginning
+    // handle case in which the condition is in the beginning -> move it to the back
     // Fe. if(x<1) x^2
     if (input.length() > 4) { // so its not just if
       String sub = input.substring(0, 2);
@@ -118,16 +118,17 @@ public class EquationParser {
   }
 
   public static EquationTree parseString(String input, ApplicationController appController) {
-    oldVarCache = new ArrayList<>();
-    oldVarCache.addAll(appController.customVarList.customVars);
-    if (debug) {
-      for (CustomVarUIElement customVarUIElement : oldVarCache) {
-        System.out.println("old: "+customVarUIElement.value);
-      }
-    }
+    simpleParsing = true;
     controller = appController;
-    input = input.replaceAll("\\s", ""); //remove white spaces
-    input = input.toLowerCase();
+    parseBetweenBrackets = true;
+    input = transformString(input);
+    parseBetweenBrackets = false;
+    if(input == null){
+      if(debug)System.out.println("invalid inputt");
+      return null;
+    }
+
+    simpleParsing = false;
     if (input.length() > 8 && input.substring(1, 8).equals("(t->xy)")) {
       return parseParametics(input);
     } else {
@@ -194,17 +195,12 @@ public class EquationParser {
   }
 
   public static EquationTree parseEquation(String input, ApplicationController appController) {
-    if (debug && input.equals("debug")) {
-      testParser(appController);
-    }
-
     input = transformString(input);
-    controller = appController;
     if (input == null) {
       return null;
     }
-    if (isParametic) {
-      return parseParametics(input);
+    if (debug && input.contains("debug")) {
+      testParser(appController);
     }
 
     EquationTree parsedEquation = new EquationTree();
