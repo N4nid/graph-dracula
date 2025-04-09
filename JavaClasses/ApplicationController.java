@@ -113,9 +113,10 @@ public class ApplicationController implements MenuHaver {
     resize();
   }
   
-  public boolean functionExists(String name) {
+  public boolean equationNameExists(String name) {
     for (int i = 0; i < listElements.size(); i++) {
-      if (listElements.get(i).equation.name.equals(name) && listElements.get(i).equation.isFunction) {
+      System.out.println(listElements.get(i).equation.name);
+      if (listElements.get(i).equation.name.equals(name)) {
         return true;
       }
     }
@@ -147,7 +148,7 @@ public class ApplicationController implements MenuHaver {
   }
   
   public boolean identifierExists(String name) {
-    if (functionExists(name)) {
+    if (equationNameExists(name)) {
       return true;
     }
     return customVarList.customVarExists(name);
