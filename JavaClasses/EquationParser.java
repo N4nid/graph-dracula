@@ -93,7 +93,7 @@ public class EquationParser {
   private static String replaceConstants(String input, String constants, Double[] constValues) {
     String constArr[] = constants.split(" ");
     for (int i = 0; i < constArr.length; i++) {
-      if (debug) System.out.println("Test replace: |"+constArr[i]+"|");
+      //System.out.println("Test replace: |"+constArr[i]+"|");
       input = input.replaceAll(constArr[i], "(" + constValues[i] + ")");
     }
     return input;
@@ -337,7 +337,7 @@ public class EquationParser {
         operators.add(currentNode, bracketDepth);
         lastNode = currentNode;
 
-      } else if (state == 2) { // is operator (+-*/)
+      } else if (state == 2) { // is operator (+-*/^)
         if (debug) {
           System.out.println("current: " + val + " | " + bracketDepth);
         }
@@ -756,9 +756,11 @@ public class EquationParser {
     String test[] = { "3*2^2+1", "1+2*3^2", "2*3^sin(0)+1", "1+sin(0)*2",
         "1+1^3*3+1", "1+2*(3-1)", "(2*2+1)^2", "sin(1-1)+2*(3^(2-1))", "1+2*(1+3*3+1)",
         "3^(sin(2*cos(1/3*3-1)-2)+2)*(1/2)", "cos(sin(1-1)*2)", "sin(2*sin(2-2))", "sin(2*sin(22*0))", "root(2,64)-4",
-        "root(2,root(2,64)/2)*2^1", "(x/3)^4-2(x/3)^2 -5" };
+        "root(2,root(2,64)/2)*2^1", "(x/3)^4-2(x/3)^2 -5", "x^2-2x-1" ,"2^2-x^2","cos(1/3*3-1)","x-sin(x)^sin(x)^2*4"};
 
-    double results[] = { 13, 19, 3, 1, 5, 5, 25, 6, 23, 4.5, 1, 0, 0, 4, 4, -5 };
+    //Ergebnisse für x = 0
+    //Sind nicht 100% representativ für das richtige parsen !
+    double results[] = { 13, 19, 3, 1, 5, 5, 25, 6, 23, 4.5, 1, 0, 0, 4, 4, -5, -1 ,4,1,-4};
     int passed = 0;
     for (int i = 0; i < test.length; i++) {
       System.out.println("-----------------");
