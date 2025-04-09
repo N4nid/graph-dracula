@@ -1,6 +1,7 @@
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
 
 public class EquationVisElement implements MenuHaver{
   //Javafx-Elements
@@ -64,6 +65,14 @@ public class EquationVisElement implements MenuHaver{
     if(option.equals("edit")) {
       controller.editEquation(this);
     }
+    if (option.equals("hide")) {
+      setVisible(false);
+      controller.updateRenderCanvas();
+    }
+    if (option.equals("show")) {
+      setVisible(true);
+      controller.updateRenderCanvas();
+    }
     if (option.equals("delete")) {
       controller.deleteEquation(this);
     }
@@ -71,5 +80,10 @@ public class EquationVisElement implements MenuHaver{
   public void setEquationText(String text) {
     this.equationText = text;
     this.funcDisplay.setText(text);
+  }
+
+  public void setVisible(boolean visible){
+    equation.isVisible = visible;
+    funcDisplay.setTextFill((visible) ? Color.WHITE : Color.web("#a6a6a6"));
   }
 }

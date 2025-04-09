@@ -19,8 +19,8 @@
     -fx-border-color: "white";
 }
 
-.yellow-border {
-    -fx-border-color: "#D9CD23";
+.red-border {
+    -fx-border-color: #E91D61;
 }
 
 .close-button {
@@ -92,8 +92,6 @@
     -fx-text-fill: "white";
     -fx-font-family: "source code pro";
 }
-
-
 
 
 .no-border {

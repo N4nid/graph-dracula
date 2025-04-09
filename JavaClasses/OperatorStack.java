@@ -1,5 +1,6 @@
 public class OperatorStack {
   public OperatorStackElement top = null;
+  public boolean debug = false;
 
   public OperatorStackElement getLast(int depth, int lvl) {
     cleanUp(depth);
@@ -7,13 +8,18 @@ public class OperatorStack {
       return null;
     }
     // first op with max 1 level diff and also on the same depth
+    // Turns out its better to keep searching for the perfect match (lvl diff = 0)
+    // and only take the other option if there is no better match
 
     OperatorStackElement looker = top;
     int levelDiff = looker.elem.opLevel - lvl;
     if (levelDiff <= 1) {
-      // System.out.println("last: " + looker.elem.value);
+      if (debug) {
+        System.out.println("last: " + looker.elem.value);
+      }
       return looker;
     }
+    OperatorStackElement potentialOption = top;
     while (looker != null) {
       // the or is for in brackets
       // System.out.println(" --- " + looker.elem.value + " | " +
@@ -21,11 +27,21 @@ public class OperatorStack {
       if (looker.elem.bracketDepth == depth) {
         // System.out.println(" --- right depth");
         levelDiff = looker.elem.opLevel - lvl;
-        if (levelDiff <= 1) {
-          // System.out.println("found last: " + looker.elem.value);
+        if (levelDiff == 0) {
+          if (debug) {
+            System.out.println("FOUND last: " + looker.elem.value);
+          }
           return looker;
+        } else if (levelDiff == 1) {
+          if (debug) {
+            System.out.println("found potentialOption: " + looker.elem.value);
+          }
+          potentialOption = looker;
         }
-      } else { // this is also for in brackets, might change later FIXME maybe ?
+      } else if (potentialOption.equals(top)) { // this is also for in brackets, might change later FIXME maybe ?
+        if (debug) {
+          System.out.println("Not in bracketDepth");
+        }
         return top;
       }
       if (looker.next != null) {
@@ -34,12 +50,15 @@ public class OperatorStack {
         break;
       }
     }
-    // System.out.println("notfound last: " + top.elem.value);
-    return top; // XXX MIGHT BLOW UP !?
+
+    if (debug) {
+      System.out.println("notfound last: " + potentialOption.elem.value);
+    }
+    return potentialOption; // XXX MIGHT BLOW UP !?
   }
 
   public void printStack() {
-    if (top != null) {
+    if (top != null && debug) {
       System.out.println("------ top");
       top.printStack();
       System.out.println("--- bottom");

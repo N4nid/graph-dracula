@@ -1,45 +1,44 @@
-import javafx.scene.canvas.Canvas;
 import javafx.scene.paint.Color;
-import java.util.ArrayList;
 
-import java.util.ArrayList;
+public class EquationTree {
 
-public class EquationTree{
-  
+  public boolean isVisible = true;
+
   public EquationNode root;
   public Color graphColor = Color.BLACK;
-  public boolean isPreviewEquation = false;
   public boolean isFunction = false;
   public boolean isParametric = false;
   public String name;
-  
-  public EquationTree(byte rootState, String rootValue) {
-    this.root = new EquationNode(rootState,rootValue);
-  }
-  
-  public EquationTree(byte rootState, double rootValue) {
-    this.root = new EquationNode(rootState,rootValue);
-  }
+  public EquationNode intervalStart;
+  public EquationNode intervalEnd;
+  public ConditionTree rangeCondition;
   
   public EquationTree(EquationNode root,String name, boolean isFunction) {
     this.name = name;
     this.isFunction = isFunction;
     this.root = root;
   }
-  
+
+  public EquationTree(EquationNode root, String name, boolean isFunction, TwoDVec<Double> xRange) {
+    this.name = name;
+    this.isFunction = isFunction;
+    this.root = root;
+    this.rangeCondition = new ConditionTree(xRange.x, xRange.y);
+  }
+
   public EquationTree(EquationNode root) {
     this.root = root;
   }
-  
-  public EquationTree() {}
-  
-  public double calculate(TwoDVec<Double> coordinates, Variable[] customVariables, EquationTree[] existingEquations) {
-    return root.calculate(coordinates,customVariables);
+
+  public EquationTree() {
+  }
+
+  public double calculate(TwoDVec<Double> coordinates, Variable[] customVariables, EquationTree[] existingFunctions) {
+    return root.calculate(coordinates,customVariables,existingFunctions);
   }
   
-  public TwoDVec<Double> calculateParametrics(double t, Variable[] parameters) {
-    return (new TwoDVec<Double>(root.left.calculateParametric(t,parameters),root.right.calculateParametric(t,parameters)));
+  public TwoDVec<Double> calculateParametrics(double t, Variable[] customVariables, EquationTree[] existingFunctions) {
+    return new TwoDVec<Double>(root.left.calculateParametric(t,customVariables,existingFunctions),root.right.calculateParametric(t,customVariables,existingFunctions));
   }
-  
-  
+
 }

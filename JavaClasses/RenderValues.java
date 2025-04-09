@@ -17,4 +17,9 @@ public class RenderValues {
     TwoDVec<Double> realCoord = new TwoDVec<Double>((screenCoord.x -midpoint.x)* zoom.x, (-screenCoord.y+ midpoint.y) * zoom.y);
     return realCoord;
   }
+
+  public TwoDVec<Double> screenCoordDoubleToRealCoord(TwoDVec<Double> screenCoord) {
+    TwoDVec<Double> realCoord = new TwoDVec<Double>((screenCoord.x -midpoint.x)* zoom.x, (-screenCoord.y+ midpoint.y) * zoom.y);
+    return realCoord;
+  }
 }
