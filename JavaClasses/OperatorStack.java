@@ -3,39 +3,43 @@ public class OperatorStack {
   public boolean debug = false;
 
   public OperatorStackElement getLast(int depth, int lvl) {
+    debug = true;
     cleanUp(depth);
     if (top == null) {
       return null;
     }
+
+    // if it isnt a lvl 0 or 1 operator -> no search necessary
+    if (lvl > 1) {
+      if (debug) {
+        System.out.println("last: " + top.elem.value);
+      }
+      return top;
+    }
+
     // first op with max 1 level diff and also on the same depth
     // Turns out its better to keep searching for the perfect match (lvl diff = 0)
     // and only take the other option if there is no better match
 
     OperatorStackElement looker = top;
-    int levelDiff = looker.elem.opLevel - lvl;
-    if (levelDiff <= 1) {
-      if (debug) {
-        System.out.println("last: " + looker.elem.value);
-      }
-      return looker;
-    }
     OperatorStackElement potentialOption = top;
-    while (looker != null) {
+    boolean hasFoundPotentialOption = false;
+    while (looker != null) { // only lvl 0 and 1 get here
       // the or is for in brackets
-      // System.out.println(" --- " + looker.elem.value + " | " +
-      // looker.elem.opLevel);
+      System.out.println(" --- " + looker.elem.value + " | " +looker.elem.opLevel);
       if (looker.elem.bracketDepth == depth) {
-        // System.out.println(" --- right depth");
-        levelDiff = looker.elem.opLevel - lvl;
-        if (levelDiff == 0) {
+        int lookerLvl = looker.elem.opLevel;
+        System.out.println(" --- right depth");
+        if (lookerLvl == 0) {
           if (debug) {
             System.out.println("FOUND last: " + looker.elem.value);
           }
           return looker;
-        } else if (levelDiff == 1) {
+        } else if (lookerLvl == 1 && !hasFoundPotentialOption) { 
           if (debug) {
             System.out.println("found potentialOption: " + looker.elem.value);
           }
+          hasFoundPotentialOption = true;
           potentialOption = looker;
         }
       } else if (potentialOption.equals(top)) { // this is also for in brackets, might change later FIXME maybe ?
