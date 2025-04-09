@@ -72,7 +72,6 @@ public class EquationNode {
         return vars[i].value;
       }
     }
-    System.out.println("Error: Invalid Parameter: " + varName);
     return 0;
   }
 

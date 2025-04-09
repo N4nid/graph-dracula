@@ -169,6 +169,7 @@ public class ApplicationController implements MenuHaver {
     updateInputBarColor();
     calculateDefaultSizes();
     scene = equationInput.getScene();
+    equationInput.setContextMenu(new ContextMenu()); //to disable the default context menu
     
     renderer = new Renderer(this);
     renderer.mainCanvas = new Canvas(graphViewPane.getPrefWidth(), graphViewPane.getPrefHeight());
