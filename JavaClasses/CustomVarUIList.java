@@ -76,12 +76,21 @@ public class CustomVarUIList {
         return;
       }
     }
-  }
-  
-  public Variable[] getAllCustomVars() {
-    Variable[] customVariableObjects = new Variable[customVars.size()];
-    for (int i = 0; i < customVars.size(); i++) {
-      customVariableObjects[i] = new Variable(customVars.get(i).name,customVars.get(i).value);
+
+    public boolean addCustomVar(String name) {
+        if (!customVarExists(name)) {
+            customVars.add(new CustomVarUIElement(name,controller));
+            updateListTransform();
+            return true;
+        }
+        return false;
+    }
+
+    public void discardCustomVars(ArrayList<CustomVarUIElement> oldVars){
+        // only keeps the vars that are in oldVars
+        // As to remove all vars that were added by invalid input
+        customVars.retainAll(oldVars);
+        updateListTransform();
     }
     return customVariableObjects;
   }
