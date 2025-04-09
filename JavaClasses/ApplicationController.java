@@ -66,16 +66,10 @@ public class ApplicationController implements MenuHaver {
   
   @FXML
   protected void onAddButtonClick() {
-    //ArrayList<CustomVarUIElement> oldVars = (ArrayList<CustomVarUIElement>)customVarList.customVars.clone();
-    ArrayList<CustomVarUIElement> oldVars = new ArrayList<>();
-    oldVars.addAll(customVarList.customVars);
-    for (CustomVarUIElement customVarUIElement : oldVars) {
-      System.out.println("old: "+customVarUIElement.value);
-    }
     EquationTree inputEquation = EquationParser.parseString(equationInput.getText(),this);
 
     if (inputEquation == null || inputEquation.root == null) {
-      customVarList.discardCustomVars(oldVars);
+      customVarList.discardCustomVars(EquationParser.oldVarCache);
       defaultErrorMessage.displayError("Invalid equation! Please try again.");
       return;
     }

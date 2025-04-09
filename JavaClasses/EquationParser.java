@@ -11,6 +11,7 @@ public class EquationParser {
   private static boolean parseBetweenBrackets = false;
   private static byte specialOpMagicNum = 6;
   public static ApplicationController controller;
+  public static ArrayList<CustomVarUIElement> oldVarCache;
 
   private static String transformString(String input) {
     // Sanitize and Transform string
@@ -101,6 +102,13 @@ public class EquationParser {
   }
 
   public static EquationTree parseString(String input, ApplicationController appController) {
+    oldVarCache = new ArrayList<>();
+    oldVarCache.addAll(appController.customVarList.customVars);
+    if (debug) {
+      for (CustomVarUIElement customVarUIElement : oldVarCache) {
+        System.out.println("old: "+customVarUIElement.value);
+      }
+    }
     simpleParsing = true;
     controller = appController;
     transformString(input);
