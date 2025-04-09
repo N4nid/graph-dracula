@@ -38,6 +38,24 @@ public class EquationParser {
     // replace )( with )*( so something like (2+1)(x-1) works
     input = input.replaceAll("\\)\\(", ")*(");
 
+
+    // handle case in which the condition is in the beginning
+    // Fe. if(x<1) x^2
+    if (input.length() > 4) { // so its not just if
+      String sub = input.substring(0, 2);
+      if (sub.equals("if")) {
+        StringBuffer in = new StringBuffer(input);
+        in.delete(0, 2);
+        String betweenBrackets = getValuesInBrackets(in)[0];
+        if(betweenBrackets == null){
+          if(debug) System.out.println("Invalid condition at start");
+          return null;
+        }
+        input = in.toString();
+        input += "if("+betweenBrackets+")";
+      }
+    }
+
     // Transform
     if (!parseBetweenBrackets) {
       name = "";
@@ -524,6 +542,8 @@ public class EquationParser {
   }
 
   public static String[] getValuesInBrackets(StringBuffer input) {
+    // To get the different values seperated by "," in specialFunctions
+    // fe. log(2,x) -> {"2","x"}
     if (debug) {
       System.out.println("input: " + input);
     }
@@ -633,15 +653,16 @@ public class EquationParser {
     // remove used part
     input = input.delete(0, counter);
     if (value.equals("if")) { // edgecase for conditionNodes
-      String betweenBrackets = getValuesInBrackets(input)[0];
-      // System.out.println("+++++ " + betweenBrackets);
-      // System.out.println("---------------------------- " + input);
+      String[] betweenBrackets = getValuesInBrackets(input);
+      if(betweenBrackets == null || betweenBrackets[0].isBlank()){
+        if(debug) System.out.println("Invalid condition");
+        return null;
+      }
       ConditionParser ConditionParser = new ConditionParser();
-      ConditionTree condition = ConditionParser.parseCondition(betweenBrackets, controller);
+      ConditionTree condition = ConditionParser.parseCondition(betweenBrackets[0], controller);      
       state = 42;
       result.value = condition;
       result.state = 42;
-      // System.out.println("---------------------------- " + input);
       return result;
     }
 
@@ -714,6 +735,7 @@ public class EquationParser {
     result.state = state;
     return result;
   }
+
 
   private static byte getOpLevel(String op) {
     String ops1 = "+*^";
