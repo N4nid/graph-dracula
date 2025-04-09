@@ -63,7 +63,7 @@ public class CustomVarUIList {
   
   public void addCustomVar(String name) {
     if (!customVarExists(name)) {
-      customVars.add(new CustomVarUIElement(name,controller));
+      customVars.add(new CustomVarUIElement(name,controller,this));
       updateListTransform();
     }
   }

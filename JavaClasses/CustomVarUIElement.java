@@ -4,10 +4,11 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.MouseButton;
 import javafx.scene.layout.Pane;
 
 
-public class CustomVarUIElement {
+public class CustomVarUIElement implements MenuHaver{
     public String name;
     public double value;
     private int sliderDecimalPlaces = 1;
@@ -22,6 +23,8 @@ public class CustomVarUIElement {
     private TextField minValDisplay;
     private TextField maxValDisplay;
     private ApplicationController controller;
+    private CustomVarUIList parent;
+    private OverlayMenu rightClickMenu;
 
     public static final int defaultHeight = 73;
     private static final int labelWidth = 40;
@@ -31,9 +34,10 @@ public class CustomVarUIElement {
     private static final double rangeDisplayWidth = 50;
     private static final TwoDVec<Double> labelPos = new TwoDVec<Double>(25.0,0.0);
 
-    public CustomVarUIElement(String name,ApplicationController controller) {
+    public CustomVarUIElement(String name,ApplicationController controller, CustomVarUIList parent) {
         this.name = name;
         this.controller = controller;
+        this.parent = parent;
         value = 1;
 
         background = new Pane();
@@ -89,6 +93,17 @@ public class CustomVarUIElement {
         valueInput.setOnKeyPressed(e -> {
             if (e.getCode() == KeyCode.ENTER) {
                 background.requestFocus();
+            }
+        });
+
+        background.setOnMouseClicked(e ->{
+            System.out.println("HI");
+            if (e.getButton().equals(MouseButton.SECONDARY)) {
+                System.out.println("HI2");
+                TwoDVec<Double> mousePos = new TwoDVec<Double>(e.getX(), e.getY());
+                mousePos.printDouble();
+                rightClickMenu = new OverlayMenu(this,"customVarElement",mousePos,background);
+                controller.hideOnClick.add(rightClickMenu);
             }
         });
     }
@@ -194,6 +209,13 @@ public class CustomVarUIElement {
         valueInput.setPrefWidth(currentWidth-labelWidth-labelBoxPadding+3);
         setupRangeDisplay(minValDisplay,false);
         setupRangeDisplay(maxValDisplay,true);
+    }
+
+    public void executeMenuOption(String menuOption) {
+        if (menuOption.equals("delete")) {
+            controller.destroyMenu(rightClickMenu);
+            parent.removeCustomVar(name);
+        }
     }
 
     private static double round(double value, int places) {
