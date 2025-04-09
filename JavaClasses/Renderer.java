@@ -13,15 +13,13 @@ public class Renderer {
   private EquationRenderer equationRenderer;
   private ParametricsRenderer parametricsRenderer;
 
-  
+
   ArrayList<EquationTree> allEquations = new ArrayList<EquationTree>();
   ArrayList<EquationTree> equations = new ArrayList<EquationTree>();
   ArrayList<EquationTree> functions = new ArrayList<EquationTree>();
   ArrayList<EquationTree> parametrics = new ArrayList<EquationTree>();
-  
-  ArrayList<ArrayList<TwoDVec<TwoDVec<Double>>>> functionsLines;
+
   ArrayList<ArrayList<TwoDVec<TwoDVec<Double>>>> equationLines;
-  ArrayList<ArrayList<TwoDVec<TwoDVec<Double>>>> parametricsLines;
   
   public Renderer(ApplicationController controller) {
     mainCanvas = new Canvas();
@@ -66,65 +64,53 @@ public class Renderer {
   }    */
   
   public void renderEquations(ArrayList<EquationVisElement> listElements) {
-    mainCanvas.getGraphicsContext2D().clearRect(0, 0, mainCanvas.getWidth(), mainCanvas.getHeight());
-    coordinateSystemRenderer.drawCoordinateSystem();
     orderEquations(listElements);
-    
+
     Variable[] customVariables = null;
     if (controller.customVarList != null) {
       customVariables = controller.customVarList.getAllCustomVars();
     }
-    EquationTree[] existingFunctions = controller.getAllFunctions();  
-    
-    if (functions.size() > 0) {
-      functionsLines = funcDrawer.calculateFunctionsLines(functions,customVariables,existingFunctions);
-      for (int i = 0; i < functionsLines.size(); i++) {
-        renderLines(functions.get(i).graphColor, functionsLines.get(i));
-      }
-    } 
-    
+    EquationTree[] existingFunctions = controller.getAllFunctions();
+
     if (equations.size() > 0) {
       equationLines = equationRenderer.calculateEquationsLinePoints(equations,customVariables,existingFunctions);
-      //System.out.println(equationLines.size());
-      for (int i = 0; i < equationLines.size(); i++) {
-        renderLines(equations.get(i).graphColor, equationLines.get(i));
-      }
-    }        
-    
-    if (parametrics.size() > 0) {
-      parametricsLines = parametricsRenderer.calculateParametricsLinePoints(parametrics,customVariables,existingFunctions);
-      for (int i = 0; i < parametricsLines.size(); i++) {
-        if (parametrics.get(i).rangeCondition != null) {
-          fixLinesRange(parametricsLines.get(i),functions.get(i).rangeCondition,customVariables,existingFunctions);
-        }
-        renderLines(parametrics.get(i).graphColor, parametricsLines.get(i));
-      }
-    } // end of if
+    }
+
+    rerender();
   }
   
   public void rerender() {
-    Variable[] customVariables = controller.customVarList.getAllCustomVars();
+    Variable[] customVariables = null;
+    if (controller.customVarList != null) {
+      customVariables = controller.customVarList.getAllCustomVars();
+    }
     EquationTree[] existingFunctions = controller.getAllFunctions();
     mainCanvas.getGraphicsContext2D().clearRect(0, 0, mainCanvas.getWidth(), mainCanvas.getHeight());
     coordinateSystemRenderer.drawCoordinateSystem();
     if (functions.size() > 0) {
-      functionsLines = funcDrawer.calculateFunctionsLines(functions,customVariables,existingFunctions);
+      ArrayList<ArrayList<TwoDVec<TwoDVec<Double>>>> functionsLines = funcDrawer.calculateFunctionsLines(functions,customVariables,existingFunctions);
       for (int i = 0; i < functionsLines.size(); i++) {
+        if (functions.get(i).rangeCondition != null) {
+          fixLinesRange(functionsLines.get(i),functions.get(i).rangeCondition,customVariables,existingFunctions);
+        }
         renderLines(functions.get(i).graphColor, functionsLines.get(i));
       }
     }
 
     if (equations.size() > 0) {
       for (int i = 0; i < equationLines.size(); i++) {
+        if (equations.get(i).rangeCondition != null) {
+          fixLinesRange(equationLines.get(i),equations.get(i).rangeCondition,customVariables,existingFunctions);
+        }
         renderLines(equations.get(i).graphColor, equationLines.get(i));
       }
     }
 
     if (parametrics.size() > 0) {
-      parametricsLines = parametricsRenderer.calculateParametricsLinePoints(parametrics,customVariables,existingFunctions);
+      ArrayList<ArrayList<TwoDVec<TwoDVec<Double>>>> parametricsLines = parametricsRenderer.calculateParametricsLinePoints(parametrics,customVariables,existingFunctions);
       for (int i = 0; i < parametricsLines.size(); i++) {
         if (parametrics.get(i).rangeCondition != null) {
-          fixLinesRange(parametricsLines.get(i),functions.get(i).rangeCondition,customVariables,existingFunctions);
+          fixLinesRange(parametricsLines.get(i),parametrics.get(i).rangeCondition,customVariables,existingFunctions);
         }
         renderLines(parametrics.get(i).graphColor, parametricsLines.get(i));
       }
@@ -133,24 +119,14 @@ public class Renderer {
 
   private void fixLinesRange(ArrayList<TwoDVec<TwoDVec<Double>>> lines, ConditionTree rangeCondition, Variable[] customVariables, EquationTree[] existingFunctions) {
     for (int i = 0; i < lines.size(); i++) {
-      TwoDVec<Double> firstCoordinate = renderValues.screenCoordDoubleToRealCoord(lines.get(i).x);
-      TwoDVec<Double> secondCoordinate = renderValues.screenCoordDoubleToRealCoord(lines.get(i).y);
+      TwoDVec<Double> firstCoordinate = lines.get(i).x;
+      TwoDVec<Double> secondCoordinate = lines.get(i).y;
       if (!rangeCondition.checkCondition(firstCoordinate,customVariables,existingFunctions) || !rangeCondition.checkCondition(secondCoordinate,customVariables,existingFunctions)) {
         //lines.get(i).x.printDouble();
         lines.get(i).x.x = Double.NaN; //Lines with one NaN coordinate don't get drawn
         lines.get(i).y.x = Double.NaN;
       }
     }
-    if (equations.size() > 0) {
-      for (int i = 0; i < equationLines.size(); i++) {
-        renderLines(equations.get(i).graphColor, equationLines.get(i));
-      }
-    }
-    if (parametrics.size() > 0) {
-      for (int i = 0; i < parametricsLines.size(); i++) {
-        renderLines(parametrics.get(i).graphColor, parametricsLines.get(i));
-      }
-    } // end of if
   }
   
   private void orderEquations(ArrayList<EquationVisElement> listElements) {

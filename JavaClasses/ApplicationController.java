@@ -82,7 +82,7 @@ public class ApplicationController implements MenuHaver {
     }
     if (editIndex == -1) {
       hideRedundantElements();
-      addEquation(inputEquation, equationInput.getText(), mainColorPicker.colorIndex);      
+      addEquation(inputEquation, equationInput.getText(), mainColorPicker.colorIndex);
     } else {
       listElements.get(editIndex).setEquationText(equationInput.getText());
       listElements.get(editIndex).equation = inputEquation;

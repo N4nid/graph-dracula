@@ -641,10 +641,14 @@ public class EquationParser {
     input = input.delete(0, counter);
     if (value.equals("if")) { // edgecase for conditionNodes
       String betweenBrackets = getValuesInBrackets(input)[0];
-      // System.out.println("+++++ " + betweenBrackets);
+      //System.out.println("+++++ " + betweenBrackets);
       // System.out.println("---------------------------- " + input);
       ConditionParser ConditionParser = new ConditionParser();
       ConditionTree condition = ConditionParser.parseCondition(betweenBrackets, controller);
+      if (condition == null || condition.root == null) {
+        System.out.println("Error: Invalid condtion!");
+        return null;
+      }
       state = 42;
       result.value = condition;
       result.state = 42;
