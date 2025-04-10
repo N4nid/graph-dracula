@@ -6,7 +6,7 @@ public class ConditionNode {
     }
     public Type type;
     private String value; //possible values: <;>;<=;>=;==;!=;&;or;!&;!or;!
-    private EquationNode equationNode;
+    public EquationNode equationNode;
     public ConditionNode left;
     public ConditionNode right;
     public ConditionNode aboveElement;
