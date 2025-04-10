@@ -94,7 +94,8 @@ public class EquationRenderer {
       } else {                                      
         equationLineCache.set(i,linePoints);
       } // end of if-else
-      moveGraphs(((double)renderValues.midpoint.x - (double)midpoint.x),((double)renderValues.midpoint.y - (double)midpoint.y));
+      TwoDVec<Double> delta = renderValues.screenCoordDoubleToRealCoord(new TwoDVec<Double>(((double)renderValues.midpoint.x - (double)midpoint.x),((double)renderValues.midpoint.y - (double)midpoint.y)));
+      moveGraphs(delta);
       //Rueckmeldung, dass Thread fertig ist                                                     
       Platform.runLater(new Runnable() {
         @Override 
@@ -128,43 +129,43 @@ public class EquationRenderer {
     double deltaX = res.x/2;
     double deltaY = res.y/2;
     if (graphPixel[x+1][y+1].graph && !graphPixel[x+1][y+1].visited) {
-      TwoDVec<TwoDVec<Double>> line = new TwoDVec<TwoDVec<Double>>(new TwoDVec<Double>((double)x-deltaX,(double)y-deltaY),new TwoDVec<Double>((double)x+1-deltaX,(double)y+1-deltaY));
+      TwoDVec<TwoDVec<Double>> line = new TwoDVec<TwoDVec<Double>>(renderValues.screenCoordDoubleToRealCoord(new TwoDVec<Double>((double)x-deltaX,(double)y-deltaY)),renderValues.screenCoordDoubleToRealCoord(new TwoDVec<Double>((double)x+1-deltaX,(double)y+1-deltaY)));
       graphPixel[x+1][y].visited = true;
       graphPixel[x][y+1].visited = true;
       linePoints.add(line);                                
     } // end of if
     if (graphPixel[x-1][y+1].graph && !graphPixel[x-1][y+1].visited) {
-      TwoDVec<TwoDVec<Double>> line = new TwoDVec<TwoDVec<Double>>(new TwoDVec<Double>((double)x-deltaX,(double)y-deltaY),new TwoDVec<Double>((double)x-1-deltaX,(double)y+1-deltaY));
+      TwoDVec<TwoDVec<Double>> line = new TwoDVec<TwoDVec<Double>>(renderValues.screenCoordDoubleToRealCoord(new TwoDVec<Double>((double)x-deltaX,(double)y-deltaY)),renderValues.screenCoordDoubleToRealCoord(new TwoDVec<Double>((double)x-1-deltaX,(double)y+1-deltaY)));
       graphPixel[x][y+1].visited = true;
       graphPixel[x-1][y].visited = true;
       linePoints.add(line);
     } // end of if
     if (graphPixel[x-1][y-1].graph && !graphPixel[x-1][y-1].visited) {
-      TwoDVec<TwoDVec<Double>> line = new TwoDVec<TwoDVec<Double>>(new TwoDVec<Double>((double)x-deltaX,(double)y-deltaY),new TwoDVec<Double>((double)x-1-deltaX,(double)y-1-deltaY));
+      TwoDVec<TwoDVec<Double>> line = new TwoDVec<TwoDVec<Double>>(renderValues.screenCoordDoubleToRealCoord(new TwoDVec<Double>((double)x-deltaX,(double)y-deltaY)),renderValues.screenCoordDoubleToRealCoord(new TwoDVec<Double>((double)x-1-deltaX,(double)y-1-deltaY)));
       graphPixel[x-1][y].visited = true;
       graphPixel[x][y-1].visited = true;
       linePoints.add(line);
     } // end of if
     if (graphPixel[x+1][y-1].graph && !graphPixel[x+1][y-1].visited) {
-      TwoDVec<TwoDVec<Double>> line = new TwoDVec<TwoDVec<Double>>(new TwoDVec<Double>((double)x-deltaX,(double)y-deltaY),new TwoDVec<Double>((double)x+1-deltaX,(double)y-1-deltaY));
+      TwoDVec<TwoDVec<Double>> line = new TwoDVec<TwoDVec<Double>>(renderValues.screenCoordDoubleToRealCoord(new TwoDVec<Double>((double)x-deltaX,(double)y-deltaY)),renderValues.screenCoordDoubleToRealCoord(new TwoDVec<Double>((double)x+1-deltaX,(double)y-1-deltaY)));
       graphPixel[x+1][y].visited = true;
       graphPixel[x][y-1].visited = true;
       linePoints.add(line);
     } // end of if
     if (graphPixel[x+1][y].graph && !graphPixel[x+1][y].visited) {
-      TwoDVec<TwoDVec<Double>> line = new TwoDVec<TwoDVec<Double>>(new TwoDVec<Double>((double)x-deltaX,(double)y-deltaY),new TwoDVec<Double>((double)x+1-deltaX,(double)y-deltaY));
+      TwoDVec<TwoDVec<Double>> line = new TwoDVec<TwoDVec<Double>>(renderValues.screenCoordDoubleToRealCoord(new TwoDVec<Double>((double)x-deltaX,(double)y-deltaY)),renderValues.screenCoordDoubleToRealCoord(new TwoDVec<Double>((double)x+1-deltaX,(double)y-deltaY)));
       linePoints.add(line);
     } // end of if
     if (graphPixel[x][y+1].graph && !graphPixel[x][y+1].visited) {
-      TwoDVec<TwoDVec<Double>> line = new TwoDVec<TwoDVec<Double>>(new TwoDVec<Double>((double)x-deltaX,(double)y-deltaY),new TwoDVec<Double>((double)x-deltaX,(double)y+1-deltaY));
+      TwoDVec<TwoDVec<Double>> line = new TwoDVec<TwoDVec<Double>>(renderValues.screenCoordDoubleToRealCoord(new TwoDVec<Double>((double)x-deltaX,(double)y-deltaY)),renderValues.screenCoordDoubleToRealCoord(new TwoDVec<Double>((double)x-deltaX,(double)y+1-deltaY)));
       linePoints.add(line);
     } // end of if
     if (graphPixel[x-1][y].graph && !graphPixel[x-1][y].visited) {
-      TwoDVec<TwoDVec<Double>> line = new TwoDVec<TwoDVec<Double>>(new TwoDVec<Double>((double)x-deltaX,(double)y-deltaY),new TwoDVec<Double>((double)x-1-deltaX,(double)y-deltaY));
+      TwoDVec<TwoDVec<Double>> line = new TwoDVec<TwoDVec<Double>>(renderValues.screenCoordDoubleToRealCoord(new TwoDVec<Double>((double)x-deltaX,(double)y-deltaY)),renderValues.screenCoordDoubleToRealCoord(new TwoDVec<Double>((double)x-1-deltaX,(double)y-deltaY)));
       linePoints.add(line);
     } // end of if
     if (graphPixel[x][y-1].graph && !graphPixel[x][y-1].visited) {
-      TwoDVec<TwoDVec<Double>> line = new TwoDVec<TwoDVec<Double>>(new TwoDVec<Double>((double)x-deltaX,(double)y-deltaY),new TwoDVec<Double>((double)x-deltaX,(double)y-1-deltaY));
+      TwoDVec<TwoDVec<Double>> line = new TwoDVec<TwoDVec<Double>>(renderValues.screenCoordDoubleToRealCoord(new TwoDVec<Double>((double)x-deltaX,(double)y-deltaY)),renderValues.screenCoordDoubleToRealCoord(new TwoDVec<Double>((double)x-deltaX,(double)y-1-deltaY)));
       linePoints.add(line);
     } // end of if
     graphPixel[x][y].visited = true;
@@ -173,14 +174,14 @@ public class EquationRenderer {
   public boolean isPartOfFunction(int x, int y, boolean[][] negPosMap) {   //returns true if function runs through pixel
     return ((negPosMap[x][y] == negPosMap[x + 1][y]) && (negPosMap[x][y - 1] == negPosMap[x + 1][y - 1]) && (negPosMap[x][y] == negPosMap[x][y - 1])) ? false : true;
   }
-  
-  public void moveGraphs(double DeltaX, double DeltaY) {
+      
+  public void moveGraphs(TwoDVec<Double> delta) {
     for (int i = 0; i < equationLineCache.size(); i++) {
       for (int j = 0; j < equationLineCache.get(i).size(); j++) {
-        equationLineCache.get(i).get(j).x.x += DeltaX;
-        equationLineCache.get(i).get(j).x.y += DeltaY;
-        equationLineCache.get(i).get(j).y.x += DeltaX;
-        equationLineCache.get(i).get(j).y.y += DeltaY;
+        equationLineCache.get(i).get(j).x.x += delta.x;
+        equationLineCache.get(i).get(j).x.y += delta.y;
+        equationLineCache.get(i).get(j).y.x += delta.x;
+        equationLineCache.get(i).get(j).y.y += delta.y;
       }
     }                                                                           
   } 
@@ -195,20 +196,18 @@ public class EquationRenderer {
       calculateNewEquations(equations);
     } else if((double)lastPos.x != (double)renderValues.midpoint.x || (double)lastPos.y != (double)renderValues.midpoint.y) {
       if ((Math.abs(((double)renderValues.midpoint.x-(double)lastMove.x)) < (double)renderValues.resolution.x/4) && (Math.abs(((double)renderValues.midpoint.y-(double)lastMove.y)) < (double)renderValues.resolution.y/4)) {
-        double DeltaX = (renderValues.midpoint.x - lastPos.x);                          //Verschieben
-        double DeltaY = (renderValues.midpoint.y - lastPos.y);
+        TwoDVec<Double> delta = renderValues.screenCoordDoubleToRealCoord(new TwoDVec<Double>((renderValues.midpoint.x - lastPos.x),(renderValues.midpoint.y - lastPos.y)));        //Verschieben
         this.lastZoom = new TwoDVec<Double>((double)renderValues.zoom.x, (double)renderValues.zoom.y);
         this.lastPos = new TwoDVec<Double>((double)renderValues.midpoint.x, (double)renderValues.midpoint.y);
-        moveGraphs(DeltaX,DeltaY);
+        moveGraphs(delta);
       } else {
         this.equations = equations;                                                     //Verschieben und neu rendern
         this.lastZoom = new TwoDVec<Double>((double)renderValues.zoom.x, (double)renderValues.zoom.y);
         this.lastPos = new TwoDVec<Double>((double)renderValues.midpoint.x, (double)renderValues.midpoint.y);
         this.lastMove = new TwoDVec<Double>((double)renderValues.midpoint.x, (double)renderValues.midpoint.y);
         calculateNewEquations(equations);
-        double DeltaX = (renderValues.midpoint.x - lastPos.x);                          
-        double DeltaY = (renderValues.midpoint.y - lastPos.y);
-        moveGraphs(DeltaX,DeltaY);
+        TwoDVec<Double> delta = renderValues.screenCoordDoubleToRealCoord(new TwoDVec<Double>((renderValues.midpoint.x - lastPos.x),(renderValues.midpoint.y - lastPos.y)));
+        moveGraphs(delta);
       } // end of if-else
     } else {
       if (equations.size() < equationLineCacheSize) {            //Equation gelöscht
