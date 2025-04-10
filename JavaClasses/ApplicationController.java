@@ -32,7 +32,7 @@ public class ApplicationController implements MenuHaver {
   private ExpandMenu expandMenu;
   
   ArrayList<EquationVisElement> listElements = new ArrayList<EquationVisElement>();
-  EquationTree editOrigional = new EquationTree(); 
+  EquationTree editOrigonal = new EquationTree();
   public CustomVarUIList customVarList;
   
   public RoundColorPicker mainColorPicker;
@@ -67,27 +67,33 @@ public class ApplicationController implements MenuHaver {
   @FXML
   protected void onAddButtonClick() {
     EquationTree inputEquation = EquationParser.parseString(equationInput.getText(),this);
+
     if (inputEquation == null || inputEquation.root == null) {
+      customVarList.discardCustomVars(EquationParser.oldVarCache);
+      resize();
       defaultErrorMessage.displayError("Invalid equation! Please try again.");
       return;
     }
-    if (!inputEquation.name.isBlank() && identifierExists(inputEquation.name) && (editIndex != -1 && !listElements.get(editIndex).equation.name.equals(inputEquation.name))) {
+    if (!inputEquation.name.isBlank() && identifierExists(inputEquation.name) && editIndex==-1 || (editIndex != -1 && !listElements.get(editIndex).equation.name.equals(inputEquation.name) && identifierExists(inputEquation.name))) {
+      customVarList.discardCustomVars(EquationParser.oldVarCache);
+      resize();
       defaultErrorMessage.displayError("The name for this function is already in use. Please choose another one!");
       return;
     }
     if (editIndex == -1) {
-      addEquation(inputEquation, equationInput.getText(), mainColorPicker.colorIndex);      
+      hideRedundantElements();
+      addEquation(inputEquation, equationInput.getText(), mainColorPicker.colorIndex);
     } else {
       listElements.get(editIndex).setEquationText(equationInput.getText());
       listElements.get(editIndex).equation = inputEquation;
       listElements.get(editIndex).colorPicker.pickColor(mainColorPicker.colorIndex);
       editIndex = -1;
+      hideRedundantElements();
+      setEditModeUI(false);
     }
     equationInput.setText("");
     mainColorPicker.pickColor(new Random().nextInt(15));
-    setEditModeUI(false);
     updateInputBarColor();
-    resize();                                                                          
   }
   
   public void addEquation(EquationTree equation, String equationText, int colorIndex) {
@@ -103,11 +109,13 @@ public class ApplicationController implements MenuHaver {
     anchors.get(anchors.size() - 1).applyAnchor();
     anchors.add(new Anchor(newElement.funcDisplay, newElement.pane, new TwoDVec<Double>(-76.0, 0.0), "scale", false, true));
     anchors.get(anchors.size() - 1).applyAnchor();
+    resize();
   }
   
-  public boolean functionExists(String name) {
+  public boolean equationNameExists(String name) {
     for (int i = 0; i < listElements.size(); i++) {
-      if (listElements.get(i).equation.name.equals(name) && listElements.get(i).equation.isFunction) {
+      System.out.println(listElements.get(i).equation.name);
+      if (listElements.get(i).equation.name.equals(name)) {
         return true;
       }
     }
@@ -139,7 +147,7 @@ public class ApplicationController implements MenuHaver {
   }
   
   public boolean identifierExists(String name) {
-    if (functionExists(name)) {
+    if (equationNameExists(name)) {
       return true;
     }
     return customVarList.customVarExists(name);
@@ -167,6 +175,7 @@ public class ApplicationController implements MenuHaver {
     updateInputBarColor();
     calculateDefaultSizes();
     scene = equationInput.getScene();
+    equationInput.setContextMenu(new ContextMenu()); //to disable the default context menu
     
     renderer = new Renderer(this);
     renderer.mainCanvas = new Canvas(graphViewPane.getPrefWidth(), graphViewPane.getPrefHeight());
@@ -374,10 +383,8 @@ public class ApplicationController implements MenuHaver {
     graphViewPane.setPrefHeight(graphViewPaneSize.y);
     equationListBackground.setPrefWidth(scrollPaneBackgroundSize.x);
     equationListBackground.setPrefHeight(scrollPaneBackgroundSize.y);
-    updateRenderCanvas();                                 
-    Anchor.applyAnchors(anchors);
-    
-    updateListElementTransform();
+
+    updateRenderCanvas();
     if (customVarList != null) {
       customVarList.updateListTransform();
       scrollPane.setPrefHeight(equationListBackground.getPrefHeight() - 6 -customVarList.backgroundPane.getPrefHeight());
@@ -392,6 +399,8 @@ public class ApplicationController implements MenuHaver {
         equationList.setPrefHeight(scrollPane.getPrefHeight());
       }
     }
+    updateListElementTransform();
+    Anchor.applyAnchors(anchors);
   }
   
   public void updateRenderCanvas() {
@@ -417,6 +426,8 @@ public class ApplicationController implements MenuHaver {
     equationList.getChildren().remove(equation.pane);
     if (listElements.indexOf(equation) == editIndex) {
       editIndex = -1;
+      equationInput.setText("");
+      setEditModeUI(false);
     }
     listElements.remove(equation);
     minEquationListHeight -= 100;
@@ -426,7 +437,7 @@ public class ApplicationController implements MenuHaver {
   public void editEquation(EquationVisElement equation) {
     mainColorPicker.pickColor(equation.colorPicker.colorIndex);
     equationInput.setText(equation.equationText);
-    editOrigional = equation.equation;
+    editOrigonal = equation.equation;
     editIndex = listElements.indexOf(equation);
     setEditModeUI(true);
     resize();
@@ -439,11 +450,13 @@ public class ApplicationController implements MenuHaver {
       return;
     }
     listElements.get(editIndex).equation = previewEquation;
+    listElements.get(editIndex).colorPicker.pickColor(mainColorPicker.colorIndex);
     updateRenderCanvas();
   }
   
   public void removePreview() {
-    listElements.get(editIndex).equation = editOrigional;
+    listElements.get(editIndex).equation = editOrigonal;
+    listElements.get(editIndex).colorPicker.pickColor(RoundColorPicker.getColorIndex(editOrigonal.graphColor));
     editIndex = -1;
     setEditModeUI(false);
     equationInput.setText("");
@@ -464,6 +477,7 @@ public class ApplicationController implements MenuHaver {
       updateInputBarColor();
       previewButton.setVisible(false);
     }
+    resize();
   }
   
   public void updateInputBarColor() {
