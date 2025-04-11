@@ -113,9 +113,9 @@ public class ApplicationController implements MenuHaver {
     }
     return false;
   }
-
+  
   public EquationTree getFunction(String name){
-
+    
     for (int i = 0; i < listElements.size(); i++) {
       if (listElements.get(i).equation.name.equals(name) && listElements.get(i).equation.isFunction) {
         return listElements.get(i).equation;
@@ -123,7 +123,7 @@ public class ApplicationController implements MenuHaver {
     }
     return null;
   }
-
+  
   public EquationTree[] getAllFunctions() {
     ArrayList<EquationTree> allFunctionList = new ArrayList<>();
     for (int i = 0; i < listElements.size(); i++) {
@@ -154,7 +154,7 @@ public class ApplicationController implements MenuHaver {
     expandMenu = new ExpandMenu(root,equationInput,extraInputButton,expandMenuLabel);
     hideOnClick.add(expandMenu);
     expandMenu.dissappear();
-
+    
     defaultErrorMessage = new VisualErrorMessage(root,equationInputPane);
     hideOnClick.add(defaultErrorMessage);
     
