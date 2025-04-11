@@ -12,13 +12,13 @@ public class Renderer {
   private FunctionRenderer funcDrawer;
   private EquationRenderer equationRenderer;
   private ParametricsRenderer parametricsRenderer;
-
-
+  
+  
   ArrayList<EquationTree> allEquations = new ArrayList<EquationTree>();
   ArrayList<EquationTree> equations = new ArrayList<EquationTree>();
   ArrayList<EquationTree> functions = new ArrayList<EquationTree>();
   ArrayList<EquationTree> parametrics = new ArrayList<EquationTree>();
-
+  
   ArrayList<ArrayList<TwoDVec<TwoDVec<Double>>>> equationLines;
   
   public Renderer(ApplicationController controller) {
@@ -71,11 +71,11 @@ public class Renderer {
       customVariables = controller.customVarList.getAllCustomVars();
     }
     EquationTree[] existingFunctions = controller.getAllFunctions();
-
+    
     if (equations.size() > 0) {
       equationLines = equationRenderer.calculateEquationsLinePoints(equations,customVariables,existingFunctions);
     }
-
+    
     rerender();
   }
   
@@ -89,23 +89,25 @@ public class Renderer {
     coordinateSystemRenderer.drawCoordinateSystem();
     if (functions.size() > 0) {
       ArrayList<ArrayList<TwoDVec<TwoDVec<Double>>>> functionsLines = funcDrawer.calculateFunctionsLines(functions,customVariables,existingFunctions);
-      for (int i = 0; i < functionsLines.size(); i++) {
+      for (int i = 0; i < functionsLines.size(); i++) {  
         if (functions.get(i).rangeCondition != null) {
           fixLinesRange(functionsLines.get(i),functions.get(i).rangeCondition,customVariables,existingFunctions);
         }
         renderLines(functions.get(i).graphColor, functionsLines.get(i));
       }
     }
-
+    
     if (equations.size() > 0) {
       for (int i = 0; i < equationLines.size(); i++) {
-        if (equations.get(i).rangeCondition != null) {
-          fixLinesRange(equationLines.get(i),equations.get(i).rangeCondition,customVariables,existingFunctions);
-        }
-        renderLines(equations.get(i).graphColor, equationLines.get(i));
+        if (i < equations.size()) {
+          if (equations.get(i).rangeCondition != null) {
+            fixLinesRange(equationLines.get(i),equations.get(i).rangeCondition,customVariables,existingFunctions);
+          }
+          renderLines(equations.get(i).graphColor, equationLines.get(i));
+        } // end of if
       }
     }
-
+    
     if (parametrics.size() > 0) {
       ArrayList<ArrayList<TwoDVec<TwoDVec<Double>>>> parametricsLines = parametricsRenderer.calculateParametricsLinePoints(parametrics,customVariables,existingFunctions);
       for (int i = 0; i < parametricsLines.size(); i++) {
@@ -116,7 +118,7 @@ public class Renderer {
       }
     } // end of if
   }
-
+  
   private void fixLinesRange(ArrayList<TwoDVec<TwoDVec<Double>>> lines, ConditionTree rangeCondition, Variable[] customVariables, EquationTree[] existingFunctions) {
     for (int i = 0; i < lines.size(); i++) {
       TwoDVec<Double> firstCoordinate = lines.get(i).x;
@@ -140,7 +142,7 @@ public class Renderer {
         allEquations.get(allEquations.size() - 1).graphColor = listElements.get(i).colorPicker.colorValue;
       }
     }
-
+    
     for (int i = 0; i < allEquations.size(); i++) {
       if (allEquations.get(i).isFunction) {
         functions.add(allEquations.get(i));
@@ -163,8 +165,8 @@ public class Renderer {
       }
     }
   }
-
-
+  
+  
   private void correctLines(ArrayList<TwoDVec<TwoDVec<Double>>> lines) {
     for (int i = 0; i < lines.size(); i++) {
       double currentSlope = Math.abs(lines.get(i).y.y - lines.get(i).x.y)/renderValues.zoom.y;
@@ -182,14 +184,14 @@ public class Renderer {
       }
     }
   }
-
+  
   private boolean yIsOnScreen(double y) {
     y /= renderValues.zoom.y;
     double minY = (-renderValues.midpoint.y - (renderValues.resolution.y / 2));
     double maxY = (-renderValues.midpoint.y + (renderValues.resolution.y / 2));
     return (y < maxY && y > minY);
   }
-
+  
   
   private boolean checkLineValidity(TwoDVec<TwoDVec<Double>> prevLine,TwoDVec<TwoDVec<Double>> currentLine, TwoDVec<TwoDVec<Double>> nextLine) {
     double slope = Math.abs(currentLine.x.y - currentLine.y.y);

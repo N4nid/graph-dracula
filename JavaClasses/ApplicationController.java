@@ -121,9 +121,9 @@ public class ApplicationController implements MenuHaver {
     }
     return false;
   }
-
+  
   public EquationTree getFunction(String name){
-
+    
     for (int i = 0; i < listElements.size(); i++) {
       if (listElements.get(i).equation.name.equals(name) && listElements.get(i).equation.isFunction) {
         return listElements.get(i).equation;
@@ -131,7 +131,7 @@ public class ApplicationController implements MenuHaver {
     }
     return null;
   }
-
+  
   public EquationTree[] getAllFunctions() {
     ArrayList<EquationTree> allFunctionList = new ArrayList<>();
     for (int i = 0; i < listElements.size(); i++) {
@@ -162,7 +162,7 @@ public class ApplicationController implements MenuHaver {
     expandMenu = new ExpandMenu(root,equationInput,extraInputButton,expandMenuLabel);
     hideOnClick.add(expandMenu);
     expandMenu.dissappear();
-
+    
     defaultErrorMessage = new VisualErrorMessage(root,equationInputPane);
     hideOnClick.add(defaultErrorMessage);
     
@@ -285,17 +285,18 @@ public class ApplicationController implements MenuHaver {
     
     renderer.mainCanvas.setOnMouseReleased(e -> {
       firstDrag = true;
+      updateRenderCanvas();
     });
     renderer.mainCanvas.setOnMouseDragged(e -> {
       if (firstDrag) {
         mouseMindpointOffset = new TwoDVec<Double>((e.getX() - renderer.renderValues.midpoint.x),
-        e.getY() - renderer.renderValues.midpoint.y);
+        (e.getY() - renderer.renderValues.midpoint.y));
         firstDrag = false;
         TwoDVec<Double> newPos = new TwoDVec<Double>((e.getX() - mouseMindpointOffset.x),
         (e.getY() - mouseMindpointOffset.y));
         if (graphOffsetInBounds(0.1, renderer.renderValues)) {
           recenterButton.optionPane.setVisible(false);
-        } else {
+        } else {                                                                
           recenterButton.optionPane.setVisible(true);
         }
         renderer.renderValues.midpoint.setPos(newPos.x, newPos.y);
