@@ -65,7 +65,7 @@ public class Renderer {
   
   public void renderEquations(ArrayList<EquationVisElement> listElements) {
     orderEquations(listElements);
-
+    
     Variable[] customVariables = null;
     if (controller.customVarList != null) {
       customVariables = controller.customVarList.getAllCustomVars();
