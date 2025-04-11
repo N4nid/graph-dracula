@@ -60,7 +60,7 @@ public class ApplicationController implements MenuHaver {
   private static final KeyCharacterCombination expandMenuShortcut = new KeyCharacterCombination("e",KeyCharacterCombination.CONTROL_DOWN);
   private static final KeyCodeCombination closeWindowShortcut = new KeyCodeCombination(KeyCode.W, KeyCombination.CONTROL_DOWN);
   
-  private ArrayList<Anchor> anchors = new ArrayList<Anchor>();
+  public ArrayList<Anchor> anchors = new ArrayList<Anchor>();
   private static TwoDVec<Double> mouseMindpointOffset;
   boolean firstDrag = true;
   
@@ -318,6 +318,7 @@ public class ApplicationController implements MenuHaver {
     
     customVarList = new CustomVarUIList(equationListBackground,this);
     resize();
+
   }
   
   public EquationVisElement getHoveredEquationVisElement() {

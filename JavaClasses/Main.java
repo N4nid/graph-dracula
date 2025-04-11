@@ -35,6 +35,7 @@ public class Main extends Application {
     stage.setMinWidth(800);
     stage.setMinHeight(420);
     controller.setup();
+    UserManual manual = new UserManual(stage);
   }
 
 
