@@ -46,8 +46,8 @@ public class EquationParser {
       String sub = input.substring(0, 2);
       if (sub.equals("if")) {
         StringBuffer in = new StringBuffer(input);
-        in.delete(0, 2);
-        String betweenBrackets = getValuesInBrackets(in)[0];
+        in.delete(0,2);
+        String betweenBrackets = getBetweenBrackets(in);
         if(betweenBrackets == null){
           if(debug) System.out.println("Invalid condition at start");
           return null;
@@ -138,25 +138,34 @@ public class EquationParser {
 
   public static EquationTree parseParametics(String input) {
     // f(t->xy):x=(t);y=(t);for(a<t<b)
+    // f(t->xy):x=t;y=t;for(a<t<b)
     simpleParsing = true; // so that i can call parseString without problems
 
     // check if input is valid
     String parts[] = input.split(";"); // part 0 and 1 are the equations; part 2 the interval
-    if (!input.contains(";") || parts.length != 3) {
+    if (!input.contains(";") || parts.length != 3 || input.length() < 26) {
       System.out.println("invalid parametric input");
       return null;
     }
 
-    EquationNode root = new EquationNode((byte) 5, "");
+    String[] toRemove = {"(t->xy):x=","y=","for"};
+    int[] removeTillIndex = {11,2,3};
+    for (int i = 0; i < removeTillIndex.length; i++) {
+      if(parts[i].length() < removeTillIndex[i]){
+        System.out.println("invalid parametric input");
+        return null;
+      }
 
-    // x and y parts
-    if (parts[0].length() < 12 || parts[1].length() < 3) {
-      System.out.println("Error: Invalid parametric input!");
-      return null;
+      String check = parts[i].substring(0,removeTillIndex[i]);
+      System.out.println(check);
+      if(check.contains(toRemove[i])){
+        //.contains because it could also be g(t->xy)
+        parts[i] = parts[i].substring(removeTillIndex[i]);
+      }
     }
-    parts[0] = parts[0].substring(9); // remove the f(t->xy):
-    parts[0] = parts[0].substring(3, parts[0].length() - 1); // remove = and brackets
-    parts[1] = parts[1].substring(3, parts[1].length() - 1); // remove = and brackets
+    System.out.println("---------------- "+parts[0]+"  -  "+parts[1]+"  -  "+parts[2]);
+
+    EquationNode root = new EquationNode((byte) 5, "");
     EquationTree left = parseEquation(parts[0], controller);
     if (left == null || left.root == null)
       return null;
@@ -167,8 +176,8 @@ public class EquationParser {
     root.right = right.root;
     EquationTree result = new EquationTree(root, name, false);
 
-    parts[2] = parts[2].substring(4); // remove "for("
-    parts[2] = parts[2].substring(0, parts[2].length() - 1); // remove ")" from for(*)
+    parts[2] = getBetweenBrackets(new StringBuffer(parts[2]));
+    if(parts[2] == null) return null;
     String[] intervalString = parts[2].split("<t<");
 
     if (intervalString.length == 2) {
@@ -184,7 +193,6 @@ public class EquationParser {
       // System.out.println(result.calculateParametrics(2, null).x);
 
       result.isParametric = true;
-      if (debug) System.out.println(input);
       simpleParsing = false;
       result.name = "" + input.charAt(0);
       return result;
@@ -199,7 +207,7 @@ public class EquationParser {
     if (input == null) {
       return null;
     }
-    if (debug && input.contains("debug")) {
+    if (debug && input.contains("bug")) {
       testParser(appController);
     }
 
@@ -543,6 +551,35 @@ public class EquationParser {
 
     return false;
   }
+  public static String getBetweenBrackets(StringBuffer input) {
+    // To get the different values seperated by "," in specialFunctions
+    // fe. log(2,x) -> {"2","x"}
+    if (debug) {
+      System.out.println("input: " + input);
+    }
+    int depth = 1;
+    char current;
+    String between = "";
+
+    for (int i = 1; i < input.length(); i++) { // start at 1 as to skip the first bracket
+      current = input.charAt(i);
+      if (current == '(') {
+        depth++;
+      } else if (current == ')') {
+        depth--;
+      }
+
+      if (depth == 0) {
+        input = input.delete(0, i + 1);
+        if (debug) {
+          System.out.println("inp without brackets: " + input);
+        }
+        return between;
+      }
+      between += Character.toString(current);
+    }
+    return null;
+  }
 
   public static String[] getValuesInBrackets(StringBuffer input) {
     // To get the different values seperated by "," in specialFunctions
@@ -656,13 +693,13 @@ public class EquationParser {
     // remove used part
     input = input.delete(0, counter);
     if (value.equals("if")) { // edgecase for conditionNodes
-      String[] betweenBrackets = getValuesInBrackets(input);
-      if(betweenBrackets == null || betweenBrackets[0].isBlank()){
+      String betweenBrackets = getBetweenBrackets(input);
+      if(betweenBrackets == null || betweenBrackets.isBlank()){
         if(debug) System.out.println("Invalid condition");
         return null;
       }
       ConditionParser ConditionParser = new ConditionParser();
-      ConditionTree condition = ConditionParser.parseCondition(betweenBrackets[0], controller);      
+      ConditionTree condition = ConditionParser.parseCondition(betweenBrackets, controller);      
       state = 42;
       result.value = condition;
       result.state = 42;
