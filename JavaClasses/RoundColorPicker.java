@@ -8,6 +8,10 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 public class RoundColorPicker implements Hideble{
   public Button displayButton;
   private Button closeButton;
@@ -114,6 +118,18 @@ public class RoundColorPicker implements Hideble{
       }
     }
     this.colorIndex = defaultColor;
+  }
+
+  public static int getColorIndex(Color color) {
+    List<Color> allColors = Arrays.asList(selectableColors);
+    return allColors.indexOf(color);
+  }
+
+  public static Color getColorFromIndex(int colorIndex) {
+    if (colorIndex >= 0 && colorIndex < selectableColors.length) {
+      return selectableColors[colorIndex];
+    }
+    return Color.BLACK; //If there is no Color with this index
   }
   
   public void recalcExtraPositions() {

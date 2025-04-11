@@ -31,9 +31,41 @@ public class Renderer {
     parametricsRenderer = new ParametricsRenderer(renderValues,controller);
   }
   
+  public static EquationTree buildTestParametricFlower() {       //return x=4*Math.cos(t)*Math.sin(4*t)      //return y=4*Math.sin(t)*Math.sin(4*t)
+    EquationNode root = new EquationNode((byte) 4, "");
+    root.left = new EquationNode((byte) 2, "*");
+    root.left.left = new EquationNode((byte) 2, "*");
+    root.left.right = new EquationNode((byte) 3, "sin");
+    root.left.left.left = new EquationNode((byte) 0, 4.0);
+    root.left.left.right = new EquationNode((byte) 3, "cos");
+    root.left.right.right = new EquationNode((byte) 2, "*");
+    root.left.right.right.left = new EquationNode((byte) 0, 4.0);
+    root.left.right.right.right = new EquationNode((byte) 1, "t");
+    root.left.left.right.right = new EquationNode((byte) 1, "t");
+    root.right = new EquationNode((byte) 2, "*");
+    root.right.left = new EquationNode((byte) 2, "*");
+    root.right.right = new EquationNode((byte) 3, "sin");
+    root.right.left.left = new EquationNode((byte) 0, 4.0);
+    root.right.left.right = new EquationNode((byte) 3, "sin");
+    root.right.right.right = new EquationNode((byte) 2, "*");
+    root.right.right.right.left = new EquationNode((byte) 0, 4.0);
+    root.right.right.right.right = new EquationNode((byte) 1, "t");
+    root.right.left.right.right = new EquationNode((byte) 1, "t");
+    return new EquationTree(root);
+  }
+  
+  /*public void testParametrics() {
+  parametrics.add(buildTestParametricFlower());
+  ArrayList<ArrayList<TwoDVec<TwoDVec<Double>>>> parametricsLines = parametricsRenderer.calculateParametricsLinePoints(parametrics,customVariables,existingFunctions);
+  for (int i = 0; i < parametricsLines.size(); i++) {
+  //renderLines(parametrics.get(i).graphColor, parametricsLines.get(i));
+  renderLines(Color.RED, parametricsLines.get(i));
+  }
+  }    */
+  
   public void renderEquations(ArrayList<EquationVisElement> listElements) {
     orderEquations(listElements);
-    
+
     Variable[] customVariables = null;
     if (controller.customVarList != null) {
       customVariables = controller.customVarList.getAllCustomVars();

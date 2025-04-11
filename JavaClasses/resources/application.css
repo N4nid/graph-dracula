@@ -2,9 +2,10 @@
     -fx-background-color: #242424;
 }
 
+
 @font-face {
     -fx-font-family: source code pro;
-    -fx-src: url("file:resources/SourceCodePro-Regular.ttf");
+    -fx-src: url(resources/SourceCodePro-Regular.ttf);
 }
 
 .border {
