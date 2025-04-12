@@ -12,8 +12,8 @@ import java.net.URL;
 import java.util.Set;
 
 public class UserManual {
-    private static final double defaultWindowWidth = 900;
-    private static final double defaultWindowHeight = 600;
+    private static final double defaultWindowWidth = 1200;
+    private static final double defaultWindowHeight = 800;
 
     private Stage stage;
     private Pane root;

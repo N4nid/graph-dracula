@@ -14,6 +14,10 @@ fieldset {
     border: 3px dashed white;
 }
 
+
+fieldset legend {
+    background-color: #242424;
+} 
 p {
     font: 20px source code;
     -webkit-text-fill-color: white;
@@ -29,10 +33,11 @@ a {
     text-decoration: underline;
 }
 
-img {
-    border: 2px dashed rgba(255, 255, 255, 0.5);
-    width: 60%;
-    max-width: 1000px;
+.big-img {
+    border: dashed white 2px;
+    border-color: #9B9B9B;
+    width: 100%;
+    max-width: 950px;
 }
 
 a:hover {
@@ -62,8 +67,6 @@ h1 {
     width: 50%;
     display: block; 
     margin: auto;
-    border-style: none;
-    max-width: 50%;
 }
 
 .nav-header {
