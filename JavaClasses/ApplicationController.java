@@ -115,7 +115,7 @@ public class ApplicationController implements MenuHaver {
   
   public boolean equationNameExists(String name) {
     for (int i = 0; i < listElements.size(); i++) {
-      System.out.println(listElements.get(i).equation.name);
+      //System.out.println(listElements.get(i).equation.name);
       if (listElements.get(i).equation.name.equals(name)) {
         return true;
       }
@@ -278,7 +278,7 @@ public class ApplicationController implements MenuHaver {
     scrollPane.setOnScroll(scrollEvent -> updateListElementTransform());
     
     renderer.mainCanvas.setOnScroll(scrollEvent -> {;
-      System.out.println(scrollEvent.getX());
+      //System.out.println(scrollEvent.getX());
       double avgZoom = (renderer.renderValues.zoom.x + (renderer.renderValues.zoom.y) / 2);
       renderer.renderValues.zoom.setPos(renderer.renderValues.zoom.x - avgZoom * scrollEvent.getDeltaY() * zoomSensitivity,
       renderer.renderValues.zoom.y - avgZoom * scrollEvent.getDeltaY() * zoomSensitivity);
