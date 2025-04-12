@@ -67,7 +67,7 @@ public class ApplicationController implements MenuHaver {
   @FXML
   protected void onAddButtonClick() {
     EquationTree inputEquation = EquationParser.parseString(equationInput.getText(),this);
-
+    
     if (inputEquation == null || inputEquation.root == null) {
       customVarList.discardCustomVars(EquationParser.oldVarCache);
       resize();
@@ -277,9 +277,12 @@ public class ApplicationController implements MenuHaver {
     scrollPane.setOnScroll(scrollEvent -> updateListElementTransform());
     
     renderer.mainCanvas.setOnScroll(scrollEvent -> {;
+      System.out.println(scrollEvent.getX());
       double avgZoom = (renderer.renderValues.zoom.x + (renderer.renderValues.zoom.y) / 2);
       renderer.renderValues.zoom.setPos(renderer.renderValues.zoom.x - avgZoom * scrollEvent.getDeltaY() * zoomSensitivity,
       renderer.renderValues.zoom.y - avgZoom * scrollEvent.getDeltaY() * zoomSensitivity);
+      renderer.renderValues.midpoint.x -= (scrollEvent.getX()-renderer.renderValues.midpoint.x)*(avgZoom * scrollEvent.getDeltaY() * zoomSensitivity)/renderer.renderValues.zoom.x;
+      renderer.renderValues.midpoint.y -= (scrollEvent.getY()-renderer.renderValues.midpoint.y)*(avgZoom * scrollEvent.getDeltaY() * zoomSensitivity)/renderer.renderValues.zoom.y;
       updateRenderCanvas();
     });
     
@@ -383,7 +386,7 @@ public class ApplicationController implements MenuHaver {
     graphViewPane.setPrefHeight(graphViewPaneSize.y);
     equationListBackground.setPrefWidth(scrollPaneBackgroundSize.x);
     equationListBackground.setPrefHeight(scrollPaneBackgroundSize.y);
-
+    
     updateRenderCanvas();
     if (customVarList != null) {
       customVarList.updateListTransform();
