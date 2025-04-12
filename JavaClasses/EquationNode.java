@@ -144,7 +144,7 @@ public class EquationNode {
       }
 
       if (function != null) {
-        TwoDVec<Double> newCoords = new TwoDVec(right.calculate(realCoord, vars, existingFunctions), realCoord.y);
+        TwoDVec<Double> newCoords = new TwoDVec(right.calculate(realCoord, vars, existingFunctions), 0.0);
         double result = 0;
         try {
           if (!invalid) {

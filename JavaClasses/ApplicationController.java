@@ -32,7 +32,7 @@ public class ApplicationController implements MenuHaver {
   private ExpandMenu expandMenu;
   
   ArrayList<EquationVisElement> listElements = new ArrayList<EquationVisElement>();
-  EquationTree editOrigional = new EquationTree(); 
+  EquationTree editOrigonal = new EquationTree();
   public CustomVarUIList customVarList;
   
   public RoundColorPicker mainColorPicker;
@@ -68,7 +68,7 @@ public class ApplicationController implements MenuHaver {
   protected void onAddButtonClick() {
     EquationParser.oldVarCache = (ArrayList<CustomVarUIElement>)customVarList.customVars.clone();
     EquationTree inputEquation = EquationParser.parseString(equationInput.getText(),this);
-
+    
     if (inputEquation == null || inputEquation.root == null) {
       customVarList.discardCustomVars(EquationParser.oldVarCache);
       resize();
@@ -122,9 +122,9 @@ public class ApplicationController implements MenuHaver {
     }
     return false;
   }
-
+  
   public EquationTree getFunction(String name){
-
+    
     for (int i = 0; i < listElements.size(); i++) {
       if (listElements.get(i).equation.name.equals(name) && listElements.get(i).equation.isFunction) {
         return listElements.get(i).equation;
@@ -132,7 +132,7 @@ public class ApplicationController implements MenuHaver {
     }
     return null;
   }
-
+  
   public EquationTree[] getAllFunctions() {
     ArrayList<EquationTree> allFunctionList = new ArrayList<>();
     for (int i = 0; i < listElements.size(); i++) {
@@ -163,7 +163,7 @@ public class ApplicationController implements MenuHaver {
     expandMenu = new ExpandMenu(root,equationInput,extraInputButton,expandMenuLabel);
     hideOnClick.add(expandMenu);
     expandMenu.dissappear();
-
+    
     defaultErrorMessage = new VisualErrorMessage(root,equationInputPane);
     hideOnClick.add(defaultErrorMessage);
     
@@ -278,25 +278,29 @@ public class ApplicationController implements MenuHaver {
     scrollPane.setOnScroll(scrollEvent -> updateListElementTransform());
     
     renderer.mainCanvas.setOnScroll(scrollEvent -> {;
+      System.out.println(scrollEvent.getX());
       double avgZoom = (renderer.renderValues.zoom.x + (renderer.renderValues.zoom.y) / 2);
       renderer.renderValues.zoom.setPos(renderer.renderValues.zoom.x - avgZoom * scrollEvent.getDeltaY() * zoomSensitivity,
       renderer.renderValues.zoom.y - avgZoom * scrollEvent.getDeltaY() * zoomSensitivity);
+      renderer.renderValues.midpoint.x -= (scrollEvent.getX()-renderer.renderValues.midpoint.x)*(avgZoom * scrollEvent.getDeltaY() * zoomSensitivity)/renderer.renderValues.zoom.x;
+      renderer.renderValues.midpoint.y -= (scrollEvent.getY()-renderer.renderValues.midpoint.y)*(avgZoom * scrollEvent.getDeltaY() * zoomSensitivity)/renderer.renderValues.zoom.y;
       updateRenderCanvas();
     });
     
     renderer.mainCanvas.setOnMouseReleased(e -> {
       firstDrag = true;
+      updateRenderCanvas();
     });
     renderer.mainCanvas.setOnMouseDragged(e -> {
       if (firstDrag) {
         mouseMindpointOffset = new TwoDVec<Double>((e.getX() - renderer.renderValues.midpoint.x),
-        e.getY() - renderer.renderValues.midpoint.y);
+        (e.getY() - renderer.renderValues.midpoint.y));
         firstDrag = false;
         TwoDVec<Double> newPos = new TwoDVec<Double>((e.getX() - mouseMindpointOffset.x),
         (e.getY() - mouseMindpointOffset.y));
         if (graphOffsetInBounds(0.1, renderer.renderValues)) {
           recenterButton.optionPane.setVisible(false);
-        } else {
+        } else {                                                                
           recenterButton.optionPane.setVisible(true);
         }
         renderer.renderValues.midpoint.setPos(newPos.x, newPos.y);
@@ -383,7 +387,7 @@ public class ApplicationController implements MenuHaver {
     graphViewPane.setPrefHeight(graphViewPaneSize.y);
     equationListBackground.setPrefWidth(scrollPaneBackgroundSize.x);
     equationListBackground.setPrefHeight(scrollPaneBackgroundSize.y);
-
+    
     updateRenderCanvas();
     if (customVarList != null) {
       customVarList.updateListTransform();
@@ -437,7 +441,7 @@ public class ApplicationController implements MenuHaver {
   public void editEquation(EquationVisElement equation) {
     mainColorPicker.pickColor(equation.colorPicker.colorIndex);
     equationInput.setText(equation.equationText);
-    editOrigional = equation.equation;
+    editOrigonal = equation.equation;
     editIndex = listElements.indexOf(equation);
     setEditModeUI(true);
     resize();
@@ -450,11 +454,13 @@ public class ApplicationController implements MenuHaver {
       return;
     }
     listElements.get(editIndex).equation = previewEquation;
+    listElements.get(editIndex).colorPicker.pickColor(mainColorPicker.colorIndex);
     updateRenderCanvas();
   }
   
   public void removePreview() {
-    listElements.get(editIndex).equation = editOrigional;
+    listElements.get(editIndex).equation = editOrigonal;
+    listElements.get(editIndex).colorPicker.pickColor(RoundColorPicker.getColorIndex(editOrigonal.graphColor));
     editIndex = -1;
     setEditModeUI(false);
     equationInput.setText("");
