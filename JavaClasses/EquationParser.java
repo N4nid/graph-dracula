@@ -123,12 +123,13 @@ public class EquationParser {
     parseBetweenBrackets = true;
     input = transformString(input);
     parseBetweenBrackets = false;
+    simpleParsing = false;
+
     if(input == null){
       if(debug)System.out.println("invalid inputt");
       return null;
     }
 
-    simpleParsing = false;
     if (input.length() > 8 && input.substring(1, 8).equals("(t->xy)")) {
       return parseParametics(input);
     } else {
@@ -143,6 +144,7 @@ public class EquationParser {
 
     // check if input is valid
     String parts[] = input.split(";"); // part 0 and 1 are the equations; part 2 the interval
+                                       // part 0 -> x part and part 1 -> y part
     if (!input.contains(";") || parts.length != 3 || input.length() < 26) {
       System.out.println("invalid parametric input");
       return null;
@@ -157,13 +159,19 @@ public class EquationParser {
       }
 
       String check = parts[i].substring(0,removeTillIndex[i]);
-      System.out.println(check);
+      if(debug)System.out.println(check);
       if(check.contains(toRemove[i])){
         //.contains because it could also be g(t->xy)
         parts[i] = parts[i].substring(removeTillIndex[i]);
+
+        if(parts[i].contains("x") || parts[i].contains("y")){
+          if(debug) System.out.println("The defintion must not contain x or y");
+          return null;
+        }
       }
     }
-    System.out.println("---------------- "+parts[0]+"  -  "+parts[1]+"  -  "+parts[2]);
+    if(debug)System.out.println("---------------- "+parts[0]+"  -  "+parts[1]+"  -  "+parts[2]);
+
 
     EquationNode root = new EquationNode((byte) 5, "");
     EquationTree left = parseEquation(parts[0], controller);
@@ -698,8 +706,15 @@ public class EquationParser {
         if(debug) System.out.println("Invalid condition");
         return null;
       }
+      String backupName = name; // would otherwise be reset by parsing the condition
+      boolean backupIsFunction = isFunction;
+
       ConditionParser ConditionParser = new ConditionParser();
-      ConditionTree condition = ConditionParser.parseCondition(betweenBrackets, controller);      
+      ConditionTree condition = ConditionParser.parseCondition(betweenBrackets, controller);
+
+      isFunction = backupIsFunction;
+      name = backupName;
+
       state = 42;
       result.value = condition;
       result.state = 42;
