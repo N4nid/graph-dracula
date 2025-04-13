@@ -60,6 +60,17 @@ public class OverlayMenu implements Hideble, MenuHaver{
             options[0] = new MenuOption("recenter",recenterIcon,18,22,this,optionDimentions,new TwoDVec<Double>(0.0,0.0),window);
             options[1] = new MenuOption("reset zoom",resetZoomIcon,18,22,this,optionDimentions,new TwoDVec<Double>(0.0,optionDimentions.y -3),window);
         }
+        if (menuPreset.equals("file")) {
+            this.optionDimentions = new TwoDVec<Double>(150.0,43.0);
+            options = new MenuOption[1];
+            options[0] = new MenuOption("quit",deleteIcon,this,optionDimentions,new TwoDVec<Double>(0.0,0.0),window);
+        }
+        if (menuPreset.equals("help")) {
+            this.optionDimentions = new TwoDVec<Double>(150.0,43.0);
+            options = new MenuOption[2];
+            options[0] = new MenuOption("user manual",deleteIcon,this,optionDimentions,new TwoDVec<Double>(0.0,0.0),window);
+            options[1] = new MenuOption("about",deleteIcon,this,optionDimentions,new TwoDVec<Double>(0.0,optionDimentions.y -3),window);
+        }
         window.setPrefWidth(optionDimentions.x);
         window.setPrefHeight(optionDimentions.y * options.length);
     }

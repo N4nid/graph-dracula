@@ -29,7 +29,6 @@ public class UserManual {
         stage = new Stage(StageStyle.DECORATED);
         stage.setScene(new Scene(root,defaultWindowWidth,defaultWindowHeight));
         stage.initOwner(parent);
-        stage.initModality(Modality.WINDOW_MODAL);
         stage.show();
 
 
