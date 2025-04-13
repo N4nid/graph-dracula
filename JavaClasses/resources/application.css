@@ -24,6 +24,10 @@
     -fx-border-color: #E91D61;
 }
 
+.yellow-border {
+    -fx-border-color: #FEC006;
+}
+
 .close-button {
     -fx-background-image: url('closeX.png');
     -fx-background-size: 15px 15px;
@@ -88,6 +92,12 @@
     -fx-font-family: "source code pro";
 }
 
+.nav-button-text {
+    -fx-font-size: 15px;
+    -fx-text-fill: "white";
+    -fx-font-family: "source code pro";
+}
+
 .smallest-text {
     -fx-font-size: 13px;
     -fx-text-fill: "white";
@@ -98,6 +108,11 @@
 .no-border {
    -fx-border-width: 0px;
    -fx-border: none;
+}
+
+.solid-bottom-border {
+    -fx-border-style: solid none solid none;
+    -fx-border-width: 3px;
 }
 
 
