@@ -111,8 +111,8 @@
 }
 
 .solid-bottom-border {
-    -fx-border-style: solid none solid none;
-    -fx-border-width: 3px;
+    -fx-border-style: dashed none dashed none;
+    -fx-border-width: 1px;
 }
 
 

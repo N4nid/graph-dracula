@@ -325,7 +325,8 @@ public class ApplicationController implements MenuHaver {
     extraInputButton.setOnAction(e->{
       expandMenu.flipVisibility();
     });
-    
+
+    customVarList = new CustomVarUIList(equationListBackground,this);
     TopNavBar bar = new TopNavBar(root);
 
     resize();
