@@ -56,6 +56,7 @@ public class ApplicationController implements MenuHaver {
   public static double zoomSensitivity = 0.0015;
   
   private static final KeyCharacterCombination insertFunctionShortcut = new KeyCharacterCombination("f",KeyCharacterCombination.CONTROL_DOWN);
+  private static final KeyCombination enableHighQualityDynamicRenderingShortcut = KeyCombination.keyCombination("CTRL+SHIFT+R");
   private static final KeyCodeCombination goToLineEndShortcut = new KeyCodeCombination(KeyCode.L, KeyCombination.CONTROL_DOWN);
   private static final KeyCharacterCombination expandMenuShortcut = new KeyCharacterCombination("e",KeyCharacterCombination.CONTROL_DOWN);
   private static final KeyCodeCombination closeWindowShortcut = new KeyCodeCombination(KeyCode.W, KeyCombination.CONTROL_DOWN);
@@ -250,6 +251,10 @@ public class ApplicationController implements MenuHaver {
         Stage window = (Stage) equationInput.getScene().getWindow();
         window.close();
       }
+      if (enableHighQualityDynamicRenderingShortcut.match(e)) {
+        renderer.flipAutoAdjustLOD();
+        updateRenderCanvas();
+      }
     });
     
     scene.setOnMouseClicked(e -> {
@@ -323,7 +328,6 @@ public class ApplicationController implements MenuHaver {
     
     customVarList = new CustomVarUIList(equationListBackground,this);
     resize();
-
   }
   
   public EquationVisElement getHoveredEquationVisElement() {

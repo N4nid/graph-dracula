@@ -209,6 +209,10 @@ public class Renderer {
   public void centerCoordinateSystem() {
     coordinateSystemRenderer.centerCoordinateSystem();
   }
+
+  public void flipAutoAdjustLOD() {
+    funcDrawer.autoAdjustLOD = !funcDrawer.autoAdjustLOD;
+  }
   
 }
 

@@ -4,7 +4,7 @@ import javafx.scene.paint.Color;
 import java.util.ArrayList;
 
 public class FunctionRenderer {
-  public boolean autoAdjustLOD = true;
+  public boolean autoAdjustLOD = false;
 
   private double pixelsPerPoint;
 
@@ -35,7 +35,7 @@ public class FunctionRenderer {
   }
 
   public ArrayList<ArrayList<TwoDVec<TwoDVec<Double>>>> calculateFunctionsLines(ArrayList<EquationTree> functions, Variable[] existingVariables, EquationTree[] existingFunctions) {
-    if (renderValues.zoom.x > 0.02) {
+    if (renderValues.zoom.x > 0.02 && autoAdjustLOD) {
       pixelsPerPoint = Math.max(0.01/renderValues.zoom.x,0.2);
     }
     else {
