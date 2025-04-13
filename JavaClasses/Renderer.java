@@ -175,9 +175,6 @@ public class Renderer {
         if (renderValues.zoom.x < 0.02) {
           midpointY *= (renderValues.zoom.x / 0.02);
         }
-        //System.out.println(midpointY);
-        //System.out.println(renderValues.screenCoordDoubleToRealCoord(lines.get(i).y).x);
-        //System.out.println(currentSlope);
         if (midpointY < 1.7 * renderValues.resolution.y && midpointY > -1.7 * renderValues.resolution.y) { //If you go off too far up or down, the valid slopes will be too steep, and I don't wanna invalidate them
           lines.set(i,null);
         }
