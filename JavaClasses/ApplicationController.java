@@ -67,6 +67,7 @@ public class ApplicationController implements MenuHaver {
   
   @FXML
   protected void onAddButtonClick() {
+    EquationParser.oldVarCache = (ArrayList<CustomVarUIElement>)customVarList.customVars.clone();
     EquationTree inputEquation = EquationParser.parseString(equationInput.getText(),this);
     
     if (inputEquation == null || inputEquation.root == null) {
@@ -115,7 +116,7 @@ public class ApplicationController implements MenuHaver {
   
   public boolean equationNameExists(String name) {
     for (int i = 0; i < listElements.size(); i++) {
-      System.out.println(listElements.get(i).equation.name);
+      //System.out.println(listElements.get(i).equation.name);
       if (listElements.get(i).equation.name.equals(name)) {
         return true;
       }
