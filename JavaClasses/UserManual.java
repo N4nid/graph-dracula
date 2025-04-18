@@ -17,6 +17,7 @@ public class UserManual {
 
     private Stage stage;
     private Pane root;
+    public boolean isClosed = false;
 
     public UserManual(Window parent) {
         root = new Pane();
@@ -31,6 +32,9 @@ public class UserManual {
         stage.initOwner(parent);
         stage.show();
 
+        stage.setOnCloseRequest(e -> {
+            isClosed = true;
+        });
 
         WebView webView = new WebView();
 

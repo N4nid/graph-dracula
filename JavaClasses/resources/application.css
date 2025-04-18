@@ -24,10 +24,6 @@
     -fx-border-color: #E91D61;
 }
 
-.yellow-border {
-    -fx-border-color: #FEC006;
-}
-
 .close-button {
     -fx-background-image: url('closeX.png');
     -fx-background-size: 15px 15px;
@@ -108,11 +104,6 @@
 .no-border {
    -fx-border-width: 0px;
    -fx-border: none;
-}
-
-.solid-bottom-border {
-    -fx-border-style: dashed none dashed none;
-    -fx-border-width: 1px;
 }
 
 

@@ -9,6 +9,7 @@ import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+import javafx.stage.Window;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -248,8 +249,7 @@ public class ApplicationController implements MenuHaver {
         expandMenu.flipVisibility();
       }
       if (closeWindowShortcut.match(e)) {
-        Stage window = (Stage) equationInput.getScene().getWindow();
-        window.close();
+        quit();
       }
       if (enableHighQualityDynamicRenderingShortcut.match(e)) {
         renderer.flipAutoAdjustLOD();
@@ -327,7 +327,7 @@ public class ApplicationController implements MenuHaver {
     });
 
     customVarList = new CustomVarUIList(equationListBackground,this);
-    TopNavBar bar = new TopNavBar(root);
+    TopNavBar bar = new TopNavBar(root,this);
 
     resize();
   }
@@ -505,6 +505,15 @@ public class ApplicationController implements MenuHaver {
         destroyMenu((OverlayMenu) hideOnClick.get(i));
       }
     }
+  }
+
+  public void quit() {
+    Stage window = (Stage) equationInput.getScene().getWindow();
+    window.close();
+  }
+
+  public Window getWindow() {
+    return (Stage) equationInput.getScene().getWindow();
   }
   
   public void destroyMenu(OverlayMenu menu) {
