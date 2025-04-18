@@ -105,9 +105,6 @@ public class ApplicationController implements MenuHaver {
     listElements.add(newElement);
     hideOnClick.add(newElement.colorPicker);
     minEquationListHeight += 100;
-    if (equationList.getPrefHeight() < minEquationListHeight) {
-      equationList.setPrefHeight(minEquationListHeight);
-    }
     anchors.add(new Anchor(newElement.pane, scrollPane, new TwoDVec<Double>(-46.0, 0.0), "scale", false, true));
     anchors.get(anchors.size() - 1).applyAnchor();
     anchors.add(new Anchor(newElement.funcDisplay, newElement.pane, new TwoDVec<Double>(-76.0, 0.0), "scale", false, true));
@@ -400,18 +397,12 @@ public class ApplicationController implements MenuHaver {
       customVarList.updateListTransform();
       scrollPane.setPrefHeight(equationListBackground.getPrefHeight() - 6 -customVarList.backgroundPane.getPrefHeight());
     }
+    Anchor.applyAnchors(anchors);
     if (equationList.getPrefHeight() < minEquationListHeight) {
       equationList.setPrefHeight(minEquationListHeight);
     }
-    
-    if (equationList.getPrefHeight() > minEquationListHeight && equationList.getPrefHeight() > scrollPane.getPrefHeight()) {
-      equationList.setPrefHeight(minEquationListHeight);
-      if (equationList.getPrefHeight() +1 < scrollPane.getPrefHeight()) {
-        equationList.setPrefHeight(scrollPane.getPrefHeight());
-      }
-    }
+
     updateListElementTransform();
-    Anchor.applyAnchors(anchors);
   }
   
   public void updateRenderCanvas() {
