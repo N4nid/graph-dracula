@@ -1,4 +1,6 @@
+import com.jetbrains.cef.JdkEx;
 import javafx.scene.control.Button;
+import javafx.scene.effect.ColorAdjust;
 import javafx.scene.layout.Pane;
 
 public class TopNavBar implements MenuHaver{
@@ -28,7 +30,6 @@ public class TopNavBar implements MenuHaver{
             navButtons[i].setLayoutX(i*buttonWidth+3);
             navButtons[i].setLayoutY(3);
             navButtons[i].setText(navBarOptions[i]);
-            Effects.addDefaultHoverEffect(navButtons[i]);
             background.getChildren().add(navButtons[i]);
         }
         root.getChildren().add(background);
@@ -41,11 +42,17 @@ public class TopNavBar implements MenuHaver{
     }
 
     private void setupInteractivity(Button button, String option) {
+        ColorAdjust brighten = new ColorAdjust();
+        brighten.setBrightness(0.15);
         button.setOnMouseEntered(e -> {
+            button.setEffect(brighten);
             setupOverlayMenu(button,option);
         });
         button.setOnMouseClicked(e -> {
             setupOverlayMenu(button,option);
+        });
+        button.setOnMouseExited(e -> {
+            button.setEffect(null);
         });
     }
 
