@@ -88,6 +88,12 @@
     -fx-font-family: "source code pro";
 }
 
+.nav-button-text {
+    -fx-font-size: 15px;
+    -fx-text-fill: "white";
+    -fx-font-family: "source code pro";
+}
+
 .smallest-text {
     -fx-font-size: 13px;
     -fx-text-fill: "white";

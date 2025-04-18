@@ -9,6 +9,7 @@ import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+import javafx.stage.Window;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -56,11 +57,12 @@ public class ApplicationController implements MenuHaver {
   public static double zoomSensitivity = 0.0015;
   
   private static final KeyCharacterCombination insertFunctionShortcut = new KeyCharacterCombination("f",KeyCharacterCombination.CONTROL_DOWN);
+  private static final KeyCombination enableHighQualityDynamicRenderingShortcut = KeyCombination.keyCombination("CTRL+SHIFT+R");
   private static final KeyCodeCombination goToLineEndShortcut = new KeyCodeCombination(KeyCode.L, KeyCombination.CONTROL_DOWN);
   private static final KeyCharacterCombination expandMenuShortcut = new KeyCharacterCombination("e",KeyCharacterCombination.CONTROL_DOWN);
   private static final KeyCodeCombination closeWindowShortcut = new KeyCodeCombination(KeyCode.W, KeyCombination.CONTROL_DOWN);
   
-  private ArrayList<Anchor> anchors = new ArrayList<Anchor>();
+  public ArrayList<Anchor> anchors = new ArrayList<Anchor>();
   private static TwoDVec<Double> mouseMindpointOffset;
   TwoDVec<Double> clickPos;
   boolean firstDrag = true;
@@ -104,9 +106,6 @@ public class ApplicationController implements MenuHaver {
     listElements.add(newElement);
     hideOnClick.add(newElement.colorPicker);
     minEquationListHeight += 100;
-    if (equationList.getPrefHeight() < minEquationListHeight) {
-      equationList.setPrefHeight(minEquationListHeight);
-    }
     anchors.add(new Anchor(newElement.pane, scrollPane, new TwoDVec<Double>(-46.0, 0.0), "scale", false, true));
     anchors.get(anchors.size() - 1).applyAnchor();
     anchors.add(new Anchor(newElement.funcDisplay, newElement.pane, new TwoDVec<Double>(-76.0, 0.0), "scale", false, true));
@@ -248,8 +247,11 @@ public class ApplicationController implements MenuHaver {
         expandMenu.flipVisibility();
       }
       if (closeWindowShortcut.match(e)) {
-        Stage window = (Stage) equationInput.getScene().getWindow();
-        window.close();
+        quit();
+      }
+      if (enableHighQualityDynamicRenderingShortcut.match(e)) {
+        renderer.flipAutoAdjustLOD();
+        updateRenderCanvas();
       }
     });
     
@@ -321,8 +323,10 @@ public class ApplicationController implements MenuHaver {
     extraInputButton.setOnAction(e->{
       expandMenu.flipVisibility();
     });
-    
+
     customVarList = new CustomVarUIList(equationListBackground,this);
+    TopNavBar bar = new TopNavBar(root,this);
+
     resize();
   }
   
@@ -396,18 +400,12 @@ public class ApplicationController implements MenuHaver {
       customVarList.updateListTransform();
       scrollPane.setPrefHeight(equationListBackground.getPrefHeight() - 6 -customVarList.backgroundPane.getPrefHeight());
     }
+    Anchor.applyAnchors(anchors);
     if (equationList.getPrefHeight() < minEquationListHeight) {
       equationList.setPrefHeight(minEquationListHeight);
     }
-    
-    if (equationList.getPrefHeight() > minEquationListHeight && equationList.getPrefHeight() > scrollPane.getPrefHeight()) {
-      equationList.setPrefHeight(minEquationListHeight);
-      if (equationList.getPrefHeight() +1 < scrollPane.getPrefHeight()) {
-        equationList.setPrefHeight(scrollPane.getPrefHeight());
-      }
-    }
+
     updateListElementTransform();
-    Anchor.applyAnchors(anchors);
   }
   
   public void updateRenderCanvas() {
@@ -501,6 +499,15 @@ public class ApplicationController implements MenuHaver {
         destroyMenu((OverlayMenu) hideOnClick.get(i));
       }
     }
+  }
+
+  public void quit() {
+    Stage window = (Stage) equationInput.getScene().getWindow();
+    window.close();
+  }
+
+  public Window getWindow() {
+    return (Stage) equationInput.getScene().getWindow();
   }
   
   public void destroyMenu(OverlayMenu menu) {

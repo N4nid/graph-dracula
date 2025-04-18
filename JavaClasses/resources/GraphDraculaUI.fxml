@@ -8,7 +8,7 @@
 
 <Pane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1500.0" xmlns="http://javafx.com/javafx/11.0.14-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ApplicationController">
    <children>
-      <Pane fx:id="graphViewPane" layoutX="61.0" layoutY="47.0" prefHeight="820.0" prefWidth="1368.0" styleClass="border">
+      <Pane fx:id="graphViewPane" layoutX="61.0" layoutY="67.0" prefHeight="820.0" prefWidth="1368.0" styleClass="border">
          <children>
             <ImageView fx:id="graphView" fitHeight="814.0" fitWidth="1362.0" layoutX="3.0" layoutY="3.0" pickOnBounds="true">
             </ImageView>
@@ -60,7 +60,7 @@
             <Font name="Source Code Pro" size="10.0" />
          </font>
       </Label>
-      <Pane fx:id="equationListBackground" layoutX="1488.0" layoutY="47.0" prefHeight="820.0" prefWidth="404.0">
+      <Pane fx:id="equationListBackground" layoutX="1488.0" layoutY="67.0" prefHeight="820.0" prefWidth="404.0">
          <styleClass>
             <String fx:value="border" />
             <String fx:value="black" />
