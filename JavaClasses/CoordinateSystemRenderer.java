@@ -59,12 +59,6 @@ public class CoordinateSystemRenderer {
   
   private double fixStepSize(double stepSize, boolean isX){
     double targetAxisSteps = (isX)? (renderValues.resolution.x / (double)74) : (renderValues.resolution.y /  (double)74);
-    /*if (!isX) {
-      targetAxisSteps*=(double) ((double)renderValues.resolution.y/(double)renderValues.resolution.x);
-      if (targetAxisSteps <= 0) {
-        targetAxisSteps = 15;
-      }
-    }*/
     double zoom = (isX) ? renderValues.zoom.x : renderValues.zoom.y;
     double resolution = (isX) ? renderValues.resolution.x : renderValues.resolution.y;
     double realCoordinateResolution = resolution * zoom;
