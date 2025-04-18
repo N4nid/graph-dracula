@@ -64,6 +64,7 @@ public class ApplicationController implements MenuHaver {
   
   public ArrayList<Anchor> anchors = new ArrayList<Anchor>();
   private static TwoDVec<Double> mouseMindpointOffset;
+  TwoDVec<Double> clickPos;
   boolean firstDrag = true;
   
   @FXML
@@ -254,8 +255,9 @@ public class ApplicationController implements MenuHaver {
       }
     });
     
-    scene.setOnMouseClicked(e -> {
+    scene.setOnMouseClicked(e -> {;
       if (e.getButton() == MouseButton.SECONDARY) {
+        clickPos = new TwoDVec<Double>(e.getX()-graphViewPane.getLayoutX(),e.getY()-graphViewPane.getLayoutY());
         if (renderer.mainCanvas.isHover()) {
           TwoDVec<Double> mousePos = new TwoDVec<Double>(e.getX(), e.getY());
           OverlayMenu rightClickMenu = new OverlayMenu(this, "graphView", mousePos, root);
@@ -280,7 +282,6 @@ public class ApplicationController implements MenuHaver {
     scrollPane.setOnScroll(scrollEvent -> updateListElementTransform());
     
     renderer.mainCanvas.setOnScroll(scrollEvent -> {;
-      //System.out.println(scrollEvent.getX());
       double avgZoom = (renderer.renderValues.zoom.x + (renderer.renderValues.zoom.y) / 2);
       renderer.renderValues.zoom.setPos(renderer.renderValues.zoom.x - avgZoom * scrollEvent.getDeltaY() * zoomSensitivity,
       renderer.renderValues.zoom.y - avgZoom * scrollEvent.getDeltaY() * zoomSensitivity);
@@ -357,10 +358,12 @@ public class ApplicationController implements MenuHaver {
       recenterButton.optionPane.setVisible(false);
     }
     if (menuOption.equals("reset zoom")) {
-      renderer.renderValues.zoom.setUniform(0.01);
+      renderer.renderValues.midpoint.x -= (clickPos.x-renderer.renderValues.midpoint.x)*(renderer.renderValues.zoom.x-0.02)/0.02;
+      renderer.renderValues.midpoint.y -= (clickPos.y-renderer.renderValues.midpoint.y)*(renderer.renderValues.zoom.y-0.02)/0.02;
+      renderer.renderValues.zoom.setUniform(0.02);
       updateRenderCanvas();
     }
-  }
+  }              
   
   public void calculateDefaultSizes() {
     defaultGraphViewPaneSize = new TwoDVec<Double>(graphViewPane.getWidth(), graphViewPane.getHeight());
