@@ -45,23 +45,6 @@ public class CoordinateSystemRenderer {
     renderValues.midpoint.setPos((double)(renderValues.resolution.x / 2), (double)(renderValues.resolution.y / 2));
   }
   
-  private double fixUnitDistance(double unitDistance, boolean isX){
-    double axisRes = 1000;
-    while (axisRes / unitDistance < 10) {
-      unitDistance /= 2;
-      if (isX) {
-        axisNumbersDecimalPlaces.x += 1;
-      }
-      else {
-        axisNumbersDecimalPlaces.y += 1;
-      }
-    }
-    while (axisRes / unitDistance > 20) {
-      unitDistance *= 2;
-    }
-    return unitDistance;
-  }
-  
   private double fixStepSize(double stepSize, boolean isX){
     double targetAxisSteps = (isX)? (renderValues.resolution.x / (double)74) : (renderValues.resolution.y /  (double)74);
     double zoom = (isX) ? renderValues.zoom.x : renderValues.zoom.y;
