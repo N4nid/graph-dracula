@@ -69,6 +69,25 @@ public class ApplicationController implements MenuHaver {
   
   @FXML
   protected void onAddButtonClick() {
+    if (equationInput.getText().equals("pepper(x)") && getPepperIndex()==-1) {
+      renderer.setRenderPepper(true);
+      hideRedundantElements();
+      if (editIndex == -1) {
+        addEquation(null,equationInput.getText(),mainColorPicker.colorIndex);
+      }
+      else {
+        listElements.get(editIndex).equation = null;
+        listElements.get(editIndex).setEquationText(equationInput.getText());
+        listElements.get(editIndex).colorPicker.pickColor(mainColorPicker.colorIndex);
+        setEditModeUI(false);
+        editIndex = -1;
+      }
+      equationInput.setText("");
+      mainColorPicker.pickColor(new Random().nextInt(15));
+      updateInputBarColor();
+      return;
+    }
+
     EquationParser.oldVarCache = (ArrayList<CustomVarUIElement>)customVarList.customVars.clone();
     EquationTree inputEquation = EquationParser.parseString(equationInput.getText(),this);
     
@@ -78,7 +97,7 @@ public class ApplicationController implements MenuHaver {
       defaultErrorMessage.displayError("Invalid equation! Please try again.");
       return;
     }
-    if (!inputEquation.name.isBlank() && identifierExists(inputEquation.name) && editIndex==-1 || (editIndex != -1 && !listElements.get(editIndex).equation.name.equals(inputEquation.name) && identifierExists(inputEquation.name))) {
+    if (!inputEquation.name.isBlank() && identifierExists(inputEquation.name) && editIndex==-1 || (editIndex != -1 && listElements.get(editIndex).equation != null && !listElements.get(editIndex).equation.name.equals(inputEquation.name) && identifierExists(inputEquation.name))) {
       customVarList.discardCustomVars(EquationParser.oldVarCache);
       resize();
       defaultErrorMessage.displayError("The name for this function is already in use. Please choose another one!");
@@ -88,6 +107,9 @@ public class ApplicationController implements MenuHaver {
       hideRedundantElements();
       addEquation(inputEquation, equationInput.getText(), mainColorPicker.colorIndex);
     } else {
+      if (editIndex == getPepperIndex()) {
+        renderer.setRenderPepper(false);
+      }
       listElements.get(editIndex).setEquationText(equationInput.getText());
       listElements.get(editIndex).equation = inputEquation;
       listElements.get(editIndex).colorPicker.pickColor(mainColorPicker.colorIndex);
@@ -116,7 +138,7 @@ public class ApplicationController implements MenuHaver {
   public boolean equationNameExists(String name) {
     for (int i = 0; i < listElements.size(); i++) {
       //System.out.println(listElements.get(i).equation.name);
-      if (listElements.get(i).equation.name.equals(name)) {
+      if (listElements.get(i).equation != null && listElements.get(i).equation.name.equals(name)) {
         return true;
       }
     }
@@ -136,7 +158,7 @@ public class ApplicationController implements MenuHaver {
   public EquationTree[] getAllFunctions() {
     ArrayList<EquationTree> allFunctionList = new ArrayList<>();
     for (int i = 0; i < listElements.size(); i++) {
-      if (listElements.get(i).equation.isFunction) {
+      if (listElements.get(i).equation != null && listElements.get(i).equation.isFunction) {
         allFunctionList.add(listElements.get(i).equation);
       }
     }
@@ -267,7 +289,7 @@ public class ApplicationController implements MenuHaver {
           if (hoveringElement != null) {
             TwoDVec<Double> mousePos = new TwoDVec<Double>(e.getX(), e.getY());
             OverlayMenu rightClickMenu;
-            if (hoveringElement.equation.isVisible) {
+            if ((listElements.indexOf(hoveringElement) == getPepperIndex() && renderer.getRenderPepper()) || (hoveringElement.equation != null && hoveringElement.equation.isVisible)) {
               rightClickMenu = new OverlayMenu(hoveringElement, "equationElement", mousePos, root);
             }
             else {
@@ -434,6 +456,9 @@ public class ApplicationController implements MenuHaver {
       equationInput.setText("");
       setEditModeUI(false);
     }
+    if (getPepperIndex() == listElements.indexOf(equation)) {
+      renderer.setRenderPepper(false);
+    }
     listElements.remove(equation);
     minEquationListHeight -= 100;
     resize();
@@ -449,19 +474,41 @@ public class ApplicationController implements MenuHaver {
   }
   
   public void addPreviewEquation() {
+    if (equationInput.getText().equals("pepper(x)")) {
+      listElements.get(editIndex).equation = null;
+      listElements.get(editIndex).colorPicker.pickColor(mainColorPicker.colorIndex);
+      renderer.setRenderPepper(true);
+      updateRenderCanvas();
+      return;
+    }
     EquationTree previewEquation = EquationParser.parseString(equationInput.getText(),this);
     if (previewEquation == null || previewEquation.root == null) {
       defaultErrorMessage.displayError("Invalid equation! Please try again.");
       return;
     }
+    if (editIndex == getPepperIndex()) {
+      renderer.setRenderPepper(false);
+    }
     listElements.get(editIndex).equation = previewEquation;
     listElements.get(editIndex).colorPicker.pickColor(mainColorPicker.colorIndex);
     updateRenderCanvas();
   }
+
+  private int getPepperIndex() {
+    for (int i = 0; i < listElements.size(); i++) {
+      if (listElements.get(i).equationText.equals("pepper(x)")) {
+        return i;
+      }
+    }
+    return -1;
+  }
   
   public void removePreview() {
     listElements.get(editIndex).equation = editOrigonal;
-    listElements.get(editIndex).colorPicker.pickColor(RoundColorPicker.getColorIndex(editOrigonal.graphColor));
+    if (listElements.get(editIndex).equation != null) {
+      listElements.get(editIndex).colorPicker.pickColor(RoundColorPicker.getColorIndex(editOrigonal.graphColor));
+    }
+    renderer.setRenderPepper(editOrigonal == null); //If the original was null, then it was a pepper function
     editIndex = -1;
     setEditModeUI(false);
     equationInput.setText("");

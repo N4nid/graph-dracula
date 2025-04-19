@@ -3,7 +3,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class EquationParser {
-  public static boolean debug = true; // all debugging prints will be removed when there are no issues anymore
+  public static boolean debug = false; // all debugging prints will be removed when there are no issues anymore
   static String name = "";
   static boolean isFunction = false;
   static boolean isParametic = false;
@@ -117,6 +117,23 @@ public class EquationParser {
     return input;
   }
 
+  public static EquationTree parseString(String input, ArrayList<EquationTree> existingFuntions, ArrayList<Variable> customVars) {
+    controller = new ApplicationController();
+    if (existingFuntions != null) {
+      for (int i = 0; i < existingFuntions.size(); i++) {
+        controller.listElements.add(new EquationVisElement(existingFuntions.get(i)));
+      }
+    }
+    controller.customVarList = new CustomVarUIList();
+    if (customVars != null) {
+      for (int i = 0; i < customVars.size(); i++) {
+        controller.customVarList.addCustomVar(customVars.get(i).name);
+        controller.customVarList.setCustomVar(customVars.get(i).name,customVars.get(i).value);
+      }
+    }
+    return parseString(input,controller);
+  }
+
   public static EquationTree parseString(String input, ApplicationController appController) {
     simpleParsing = true;
     controller = appController;
@@ -137,7 +154,7 @@ public class EquationParser {
     }
   }
 
-  public static EquationTree parseParametics(String input) {
+  private static EquationTree parseParametics(String input) {
     // f(t->xy):x=(t);y=(t);for(a<t<b)
     // f(t->xy):x=t;y=t;for(a<t<b)
     simpleParsing = true; // so that i can call parseString without problems
@@ -261,7 +278,7 @@ public class EquationParser {
           lastNode.right = currentNode;
         }
 
-        if (state == 1 && controller.equationNameExists(val.toString())) {
+        if (state == 1 && controller!= null && controller.equationNameExists(val.toString())) {
           discardVars(addedVars);
           return null;
         }

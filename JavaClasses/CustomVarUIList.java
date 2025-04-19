@@ -61,6 +61,8 @@ public class CustomVarUIList {
     
   }
 
+  public CustomVarUIList(){}
+
   
   public void removeCustomVar(String name) {
     for (int i = 0; i < customVars.size(); i++) {
@@ -78,6 +80,15 @@ public class CustomVarUIList {
       return true;
     }
     return false;
+  }
+
+  public void setCustomVar(String name, double value){
+    for (int i = 0; i < customVars.size(); i++) {
+      if(customVars.get(i).name.equals(name)) {
+        customVars.get(i).value = value;
+        return;
+      }
+    }
   }
 
   public Variable[] getAllCustomVars() {
