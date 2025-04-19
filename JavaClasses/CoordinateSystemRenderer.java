@@ -12,6 +12,9 @@ public class CoordinateSystemRenderer {
   private Renderer renderer;
   private double xLabelPadding = 7;
   private double yLabelPadding = 7;
+
+  private boolean xLabelsAtBottom = false;
+  private boolean xLabelsAtTop = false;
   
   public CoordinateSystemRenderer(Renderer renderer) {
     this.renderer = renderer;
@@ -107,6 +110,10 @@ public class CoordinateSystemRenderer {
         displayTextIterator = 0;
         canDrawText = true;
       }
+      xLabelsAtTop = renderValues.midpoint.y < 0;
+      double labelYCoord = (xLabelsAtTop) ? (1.2 * defaultFontSize) : (renderValues.midpoint.y + 1.2 * defaultFontSize);
+      xLabelsAtBottom = renderValues.resolution.y - (1.2 * defaultFontSize) < labelYCoord;
+      labelYCoord = Math.min(labelYCoord,renderValues.resolution.y - (1.2 * defaultFontSize));
       if (iterator != 0) {
         gc.strokeLine(currentX, 0, currentX, renderValues.resolution.y);
         if (canDrawText) {
@@ -115,7 +122,7 @@ public class CoordinateSystemRenderer {
           if (labelString.contains(".")) {
             stringLenght -= 1;
           }
-          gc.fillText(labelString, currentX - 0.28 * defaultFontSize * stringLenght, renderValues.midpoint.y + 1.2 * defaultFontSize);
+          gc.fillText(labelString, currentX - 0.28 * defaultFontSize * stringLenght, labelYCoord);
           displayTextIterator = 0;
         }
       }
@@ -139,7 +146,13 @@ public class CoordinateSystemRenderer {
         
         String labelString = String.format("%." + axisNumbersDecimalPlaces.y + "f", iterator*stepSizeY);
         int stringLenght = labelString.length();
-        gc.fillText(labelString, renderValues.midpoint.x - stringLenght * (defaultFontSize*0.5) - yLabelPadding, currentY + 0.3 * defaultFontSize);
+        double labelXOffset =  -stringLenght * (defaultFontSize*0.5) - yLabelPadding;
+        double labelXCoord = (renderValues.midpoint.x > 0) ? (renderValues.midpoint.x + labelXOffset) : yLabelPadding; //Show label on left side of screen, when x-Axis left of center
+        labelXCoord = Math.min(labelXCoord, renderValues.resolution.x + labelXOffset); //Show label on right side of screen, when x-Axis right of center
+        double labelYCoord = currentY + 0.3 * defaultFontSize;
+        if (((labelYCoord > defaultFontSize*2.2) || !xLabelsAtTop) && (labelYCoord < (renderValues.resolution.y - 2.2 * defaultFontSize) || !xLabelsAtBottom)) {
+          gc.fillText(labelString, labelXCoord, currentY + 0.3 * defaultFontSize);
+        }
       }
       currentY -= stepSizeY/renderValues.zoom.y;
       iterator++;
