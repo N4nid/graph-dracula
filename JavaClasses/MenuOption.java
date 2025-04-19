@@ -13,11 +13,11 @@ public class MenuOption {
   private ImageView icon;
   
   private static final double textOffset = 10;
-  private static final int iconSize = 25;
+  private static final int defaultIconSize = 20;
   private static final double xOffset = 7;
   
   public MenuOption(String optionText, Image icon, MenuHaver menuHaver, TwoDVec<Double> dimensions, TwoDVec<Double> position, Pane parent) {
-    setup(optionText,icon,iconSize,-1,menuHaver,dimensions,position,parent);
+    setup(optionText,icon,defaultIconSize,-1,menuHaver,dimensions,position,parent);
   }
   
   public MenuOption(String optionText, Image icon, int iconSize, int fontSize, MenuHaver menuHaver, TwoDVec<Double> dimensions, TwoDVec<Double> position, Pane parent) {
@@ -42,7 +42,7 @@ public class MenuOption {
     this.optionText.setLayoutX(iconSize + textOffset + xOffset);
     this.optionText.setLayoutY(yOffset - 5);
     this.optionText.setText(optionText);
-    this.optionText.getStyleClass().add("normal-text");
+    this.optionText.getStyleClass().add("small-text");
     this.optionText.setStyle("-fx-text-fill: white");
     if (fontSize != -1) {
       this.optionText.setStyle("-fx-font-size: " + fontSize + "px");
