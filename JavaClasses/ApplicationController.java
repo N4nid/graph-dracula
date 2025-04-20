@@ -9,6 +9,7 @@ import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+import javafx.stage.Window;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -56,16 +57,37 @@ public class ApplicationController implements MenuHaver {
   public static double zoomSensitivity = 0.0015;
   
   private static final KeyCharacterCombination insertFunctionShortcut = new KeyCharacterCombination("f",KeyCharacterCombination.CONTROL_DOWN);
+  private static final KeyCombination enableHighQualityDynamicRenderingShortcut = KeyCombination.keyCombination("CTRL+SHIFT+R");
   private static final KeyCodeCombination goToLineEndShortcut = new KeyCodeCombination(KeyCode.L, KeyCombination.CONTROL_DOWN);
   private static final KeyCharacterCombination expandMenuShortcut = new KeyCharacterCombination("e",KeyCharacterCombination.CONTROL_DOWN);
   private static final KeyCodeCombination closeWindowShortcut = new KeyCodeCombination(KeyCode.W, KeyCombination.CONTROL_DOWN);
   
-  private ArrayList<Anchor> anchors = new ArrayList<Anchor>();
+  public ArrayList<Anchor> anchors = new ArrayList<Anchor>();
   private static TwoDVec<Double> mouseMindpointOffset;
+  TwoDVec<Double> clickPos;
   boolean firstDrag = true;
   
   @FXML
   protected void onAddButtonClick() {
+    if (equationInput.getText().equals("pepper(x)") && getPepperIndex()==-1) {
+      renderer.setRenderPepper(true);
+      hideRedundantElements();
+      if (editIndex == -1) {
+        addEquation(null,equationInput.getText(),mainColorPicker.colorIndex);
+      }
+      else {
+        listElements.get(editIndex).equation = null;
+        listElements.get(editIndex).setEquationText(equationInput.getText());
+        listElements.get(editIndex).colorPicker.pickColor(mainColorPicker.colorIndex);
+        setEditModeUI(false);
+        editIndex = -1;
+      }
+      equationInput.setText("");
+      mainColorPicker.pickColor(new Random().nextInt(15));
+      updateInputBarColor();
+      return;
+    }
+
     EquationParser.oldVarCache = (ArrayList<CustomVarUIElement>)customVarList.customVars.clone();
     EquationTree inputEquation = EquationParser.parseString(equationInput.getText(),this);
     
@@ -75,7 +97,7 @@ public class ApplicationController implements MenuHaver {
       defaultErrorMessage.displayError("Invalid equation! Please try again.");
       return;
     }
-    if (!inputEquation.name.isBlank() && identifierExists(inputEquation.name) && editIndex==-1 || (editIndex != -1 && !listElements.get(editIndex).equation.name.equals(inputEquation.name) && identifierExists(inputEquation.name))) {
+    if (!inputEquation.name.isBlank() && identifierExists(inputEquation.name) && editIndex==-1 || (editIndex != -1 && listElements.get(editIndex).equation != null && !listElements.get(editIndex).equation.name.equals(inputEquation.name) && identifierExists(inputEquation.name))) {
       customVarList.discardCustomVars(EquationParser.oldVarCache);
       resize();
       defaultErrorMessage.displayError("The name for this function is already in use. Please choose another one!");
@@ -85,6 +107,9 @@ public class ApplicationController implements MenuHaver {
       hideRedundantElements();
       addEquation(inputEquation, equationInput.getText(), mainColorPicker.colorIndex);
     } else {
+      if (editIndex == getPepperIndex()) {
+        renderer.setRenderPepper(false);
+      }
       listElements.get(editIndex).setEquationText(equationInput.getText());
       listElements.get(editIndex).equation = inputEquation;
       listElements.get(editIndex).colorPicker.pickColor(mainColorPicker.colorIndex);
@@ -103,9 +128,6 @@ public class ApplicationController implements MenuHaver {
     listElements.add(newElement);
     hideOnClick.add(newElement.colorPicker);
     minEquationListHeight += 100;
-    if (equationList.getPrefHeight() < minEquationListHeight) {
-      equationList.setPrefHeight(minEquationListHeight);
-    }
     anchors.add(new Anchor(newElement.pane, scrollPane, new TwoDVec<Double>(-46.0, 0.0), "scale", false, true));
     anchors.get(anchors.size() - 1).applyAnchor();
     anchors.add(new Anchor(newElement.funcDisplay, newElement.pane, new TwoDVec<Double>(-76.0, 0.0), "scale", false, true));
@@ -116,7 +138,7 @@ public class ApplicationController implements MenuHaver {
   public boolean equationNameExists(String name) {
     for (int i = 0; i < listElements.size(); i++) {
       //System.out.println(listElements.get(i).equation.name);
-      if (listElements.get(i).equation.name.equals(name)) {
+      if (listElements.get(i).equation != null && listElements.get(i).equation.name.equals(name)) {
         return true;
       }
     }
@@ -136,7 +158,7 @@ public class ApplicationController implements MenuHaver {
   public EquationTree[] getAllFunctions() {
     ArrayList<EquationTree> allFunctionList = new ArrayList<>();
     for (int i = 0; i < listElements.size(); i++) {
-      if (listElements.get(i).equation.isFunction) {
+      if (listElements.get(i).equation != null && listElements.get(i).equation.isFunction) {
         allFunctionList.add(listElements.get(i).equation);
       }
     }
@@ -247,13 +269,17 @@ public class ApplicationController implements MenuHaver {
         expandMenu.flipVisibility();
       }
       if (closeWindowShortcut.match(e)) {
-        Stage window = (Stage) equationInput.getScene().getWindow();
-        window.close();
+        quit();
+      }
+      if (enableHighQualityDynamicRenderingShortcut.match(e)) {
+        renderer.flipAutoAdjustLOD();
+        updateRenderCanvas();
       }
     });
     
-    scene.setOnMouseClicked(e -> {
+    scene.setOnMouseClicked(e -> {;
       if (e.getButton() == MouseButton.SECONDARY) {
+        clickPos = new TwoDVec<Double>(e.getX()-graphViewPane.getLayoutX(),e.getY()-graphViewPane.getLayoutY());
         if (renderer.mainCanvas.isHover()) {
           TwoDVec<Double> mousePos = new TwoDVec<Double>(e.getX(), e.getY());
           OverlayMenu rightClickMenu = new OverlayMenu(this, "graphView", mousePos, root);
@@ -263,7 +289,7 @@ public class ApplicationController implements MenuHaver {
           if (hoveringElement != null) {
             TwoDVec<Double> mousePos = new TwoDVec<Double>(e.getX(), e.getY());
             OverlayMenu rightClickMenu;
-            if (hoveringElement.equation.isVisible) {
+            if ((listElements.indexOf(hoveringElement) == getPepperIndex() && renderer.getRenderPepper()) || (hoveringElement.equation != null && hoveringElement.equation.isVisible)) {
               rightClickMenu = new OverlayMenu(hoveringElement, "equationElement", mousePos, root);
             }
             else {
@@ -278,7 +304,6 @@ public class ApplicationController implements MenuHaver {
     scrollPane.setOnScroll(scrollEvent -> updateListElementTransform());
     
     renderer.mainCanvas.setOnScroll(scrollEvent -> {;
-      //System.out.println(scrollEvent.getX());
       double avgZoom = (renderer.renderValues.zoom.x + (renderer.renderValues.zoom.y) / 2);
       renderer.renderValues.zoom.setPos(renderer.renderValues.zoom.x - avgZoom * scrollEvent.getDeltaY() * zoomSensitivity,
       renderer.renderValues.zoom.y - avgZoom * scrollEvent.getDeltaY() * zoomSensitivity);
@@ -320,8 +345,10 @@ public class ApplicationController implements MenuHaver {
     extraInputButton.setOnAction(e->{
       expandMenu.flipVisibility();
     });
-    
+
     customVarList = new CustomVarUIList(equationListBackground,this);
+    TopNavBar bar = new TopNavBar(root,this);
+
     resize();
   }
   
@@ -353,10 +380,12 @@ public class ApplicationController implements MenuHaver {
       recenterButton.optionPane.setVisible(false);
     }
     if (menuOption.equals("reset zoom")) {
-      renderer.renderValues.zoom.setUniform(0.01);
+      renderer.renderValues.midpoint.x -= (clickPos.x-renderer.renderValues.midpoint.x)*(renderer.renderValues.zoom.x-0.02)/0.02;
+      renderer.renderValues.midpoint.y -= (clickPos.y-renderer.renderValues.midpoint.y)*(renderer.renderValues.zoom.y-0.02)/0.02;
+      renderer.renderValues.zoom.setUniform(0.02);
       updateRenderCanvas();
     }
-  }
+  }              
   
   public void calculateDefaultSizes() {
     defaultGraphViewPaneSize = new TwoDVec<Double>(graphViewPane.getWidth(), graphViewPane.getHeight());
@@ -393,18 +422,12 @@ public class ApplicationController implements MenuHaver {
       customVarList.updateListTransform();
       scrollPane.setPrefHeight(equationListBackground.getPrefHeight() - 6 -customVarList.backgroundPane.getPrefHeight());
     }
+    Anchor.applyAnchors(anchors);
     if (equationList.getPrefHeight() < minEquationListHeight) {
       equationList.setPrefHeight(minEquationListHeight);
     }
-    
-    if (equationList.getPrefHeight() > minEquationListHeight && equationList.getPrefHeight() > scrollPane.getPrefHeight()) {
-      equationList.setPrefHeight(minEquationListHeight);
-      if (equationList.getPrefHeight() +1 < scrollPane.getPrefHeight()) {
-        equationList.setPrefHeight(scrollPane.getPrefHeight());
-      }
-    }
+
     updateListElementTransform();
-    Anchor.applyAnchors(anchors);
   }
   
   public void updateRenderCanvas() {
@@ -433,6 +456,9 @@ public class ApplicationController implements MenuHaver {
       equationInput.setText("");
       setEditModeUI(false);
     }
+    if (getPepperIndex() == listElements.indexOf(equation)) {
+      renderer.setRenderPepper(false);
+    }
     listElements.remove(equation);
     minEquationListHeight -= 100;
     resize();
@@ -448,19 +474,41 @@ public class ApplicationController implements MenuHaver {
   }
   
   public void addPreviewEquation() {
+    if (equationInput.getText().equals("pepper(x)")) {
+      listElements.get(editIndex).equation = null;
+      listElements.get(editIndex).colorPicker.pickColor(mainColorPicker.colorIndex);
+      renderer.setRenderPepper(true);
+      updateRenderCanvas();
+      return;
+    }
     EquationTree previewEquation = EquationParser.parseString(equationInput.getText(),this);
     if (previewEquation == null || previewEquation.root == null) {
       defaultErrorMessage.displayError("Invalid equation! Please try again.");
       return;
     }
+    if (editIndex == getPepperIndex()) {
+      renderer.setRenderPepper(false);
+    }
     listElements.get(editIndex).equation = previewEquation;
     listElements.get(editIndex).colorPicker.pickColor(mainColorPicker.colorIndex);
     updateRenderCanvas();
   }
+
+  private int getPepperIndex() {
+    for (int i = 0; i < listElements.size(); i++) {
+      if (listElements.get(i).equationText.equals("pepper(x)")) {
+        return i;
+      }
+    }
+    return -1;
+  }
   
   public void removePreview() {
     listElements.get(editIndex).equation = editOrigonal;
-    listElements.get(editIndex).colorPicker.pickColor(RoundColorPicker.getColorIndex(editOrigonal.graphColor));
+    if (listElements.get(editIndex).equation != null) {
+      listElements.get(editIndex).colorPicker.pickColor(RoundColorPicker.getColorIndex(editOrigonal.graphColor));
+    }
+    renderer.setRenderPepper(editOrigonal == null); //If the original was null, then it was a pepper function
     editIndex = -1;
     setEditModeUI(false);
     equationInput.setText("");
@@ -498,6 +546,15 @@ public class ApplicationController implements MenuHaver {
         destroyMenu((OverlayMenu) hideOnClick.get(i));
       }
     }
+  }
+
+  public void quit() {
+    Stage window = (Stage) equationInput.getScene().getWindow();
+    window.close();
+  }
+
+  public Window getWindow() {
+    return (Stage) equationInput.getScene().getWindow();
   }
   
   public void destroyMenu(OverlayMenu menu) {

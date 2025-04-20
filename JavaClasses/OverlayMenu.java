@@ -6,6 +6,7 @@ public class OverlayMenu implements Hideble, MenuHaver{
     public Pane window;
     private MenuHaver menuHaver;
     private TwoDVec<Double> optionDimentions;
+    private double standardMenuOptionHeight = 33;
 
     @Override
     public boolean hide() {
@@ -33,7 +34,7 @@ public class OverlayMenu implements Hideble, MenuHaver{
     private void setMenuPreset(String menuPreset) {
         Image deleteIcon = new Image("/resources/trashBin.png");
         if (menuPreset.equals("equationElement") || menuPreset.equals("hiddenEquationElement")) {
-            this.optionDimentions = new TwoDVec<Double>(150.0,43.0);
+            this.optionDimentions = new TwoDVec<Double>(150.0,standardMenuOptionHeight);
             options =  new MenuOption[3];
             Image editIcon = new Image("/resources/editButton.png");
             Image hideIcon = new Image("/resources/hide.png");
@@ -48,17 +49,31 @@ public class OverlayMenu implements Hideble, MenuHaver{
             options[2] = new MenuOption("delete",deleteIcon,this,optionDimentions,new TwoDVec<Double>(0.0,optionDimentions.y*2 - 3*2),window);
         }
         if (menuPreset.equals("customVarElement")) {
-            this.optionDimentions = new TwoDVec<Double>(150.0,43.0);
+            this.optionDimentions = new TwoDVec<Double>(150.0,standardMenuOptionHeight);
             options = new MenuOption[1];
             options[0] = new MenuOption("delete",deleteIcon,this,optionDimentions,new TwoDVec<Double>(0.0,0.0),window);
         }
         if (menuPreset.equals("graphView")) {
-            this.optionDimentions = new TwoDVec<Double>(180.0,35.0);
+            this.optionDimentions = new TwoDVec<Double>(180.0,standardMenuOptionHeight);
             options =  new MenuOption[2];
             Image recenterIcon = new Image("/resources/recenter.png");
             Image resetZoomIcon = new Image("/resources/resetZoomIcon.png");
             options[0] = new MenuOption("recenter",recenterIcon,18,22,this,optionDimentions,new TwoDVec<Double>(0.0,0.0),window);
             options[1] = new MenuOption("reset zoom",resetZoomIcon,18,22,this,optionDimentions,new TwoDVec<Double>(0.0,optionDimentions.y -3),window);
+        }
+        if (menuPreset.equals("file")) {
+            this.optionDimentions = new TwoDVec<Double>(120.0,standardMenuOptionHeight);
+            options = new MenuOption[1];
+            Image closeXIncon = new Image("/resources/closeX.png");
+            options[0] = new MenuOption("quit",closeXIncon,this,optionDimentions,new TwoDVec<Double>(0.0,0.0),window);
+        }
+        if (menuPreset.equals("help")) {
+            this.optionDimentions = new TwoDVec<Double>(200.0,standardMenuOptionHeight);
+            options = new MenuOption[2];
+            Image userManualIcon = new Image("/resources/userManual.png");
+            Image aboutIcon = new Image("/resources/about.png");
+            options[0] = new MenuOption("user manual",userManualIcon,this,optionDimentions,new TwoDVec<Double>(0.0,0.0),window);
+            options[1] = new MenuOption("about",aboutIcon,this,optionDimentions,new TwoDVec<Double>(0.0,optionDimentions.y -3),window);
         }
         window.setPrefWidth(optionDimentions.x);
         window.setPrefHeight(optionDimentions.y * options.length);

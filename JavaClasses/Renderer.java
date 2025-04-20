@@ -9,15 +9,17 @@ public class Renderer {
   public RenderValues renderValues;
   private ApplicationController controller;
   CoordinateSystemRenderer coordinateSystemRenderer;
-  private FunctionRenderer funcDrawer;
+  private FunctionRenderer funtionRenderer;
   private EquationRenderer equationRenderer;
   private ParametricsRenderer parametricsRenderer;
-  
-  
+
   ArrayList<EquationTree> allEquations = new ArrayList<EquationTree>();
   ArrayList<EquationTree> equations = new ArrayList<EquationTree>();
   ArrayList<EquationTree> functions = new ArrayList<EquationTree>();
   ArrayList<EquationTree> parametrics = new ArrayList<EquationTree>();
+
+  private ArrayList<EquationTree> pepperFunctions;
+  private boolean renderPepper;
   
   ArrayList<ArrayList<TwoDVec<TwoDVec<Double>>>> equationLines;
   
@@ -26,7 +28,7 @@ public class Renderer {
     this.controller = controller;
     renderValues = new RenderValues(new TwoDVec<Integer>(1050, 573),new TwoDVec<Double>(0.02, 0.02),new TwoDVec<Double>((double)(1050/2),(double)(573/2)));
     coordinateSystemRenderer = new CoordinateSystemRenderer(this);
-    funcDrawer = new FunctionRenderer(renderValues);
+    funtionRenderer = new FunctionRenderer(renderValues);
     equationRenderer = new EquationRenderer(renderValues,this);
     parametricsRenderer = new ParametricsRenderer(renderValues,controller);
   }
@@ -88,7 +90,7 @@ public class Renderer {
     mainCanvas.getGraphicsContext2D().clearRect(0, 0, mainCanvas.getWidth(), mainCanvas.getHeight());
     coordinateSystemRenderer.drawCoordinateSystem();
     if (functions.size() > 0) {
-      ArrayList<ArrayList<TwoDVec<TwoDVec<Double>>>> functionsLines = funcDrawer.calculateFunctionsLines(functions,customVariables,existingFunctions);
+      ArrayList<ArrayList<TwoDVec<TwoDVec<Double>>>> functionsLines = funtionRenderer.calculateFunctionsLines(functions,customVariables,existingFunctions);
       for (int i = 0; i < functionsLines.size(); i++) {  
         if (functions.get(i).rangeCondition != null) {
           fixLinesRange(functionsLines.get(i),functions.get(i).rangeCondition,customVariables,existingFunctions);
@@ -117,6 +119,17 @@ public class Renderer {
         renderLines(parametrics.get(i).graphColor, parametricsLines.get(i));
       }
     } // end of if
+
+    if (renderPepper) {
+      EquationTree[] pepperFuncArray = pepperFunctions.toArray(new EquationTree[pepperFunctions.size()]);
+      ArrayList<ArrayList<TwoDVec<TwoDVec<Double>>>> pepperLines = funtionRenderer.calculateFunctionsLines(pepperFunctions,null,pepperFuncArray);
+      for (int i = 0; i < pepperLines.size(); i++) {
+        if (pepperFunctions.get(i).rangeCondition != null) {
+          fixLinesRange(pepperLines.get(i),pepperFunctions.get(i).rangeCondition,null,pepperFuncArray);
+        }
+        renderLines(pepperFunctions.get(i).graphColor, pepperLines.get(i));
+      }
+    }
   }
   
   private void fixLinesRange(ArrayList<TwoDVec<TwoDVec<Double>>> lines, ConditionTree rangeCondition, Variable[] customVariables, EquationTree[] existingFunctions) {
@@ -137,7 +150,7 @@ public class Renderer {
     functions = new ArrayList<EquationTree>();
     parametrics = new ArrayList<EquationTree>();
     for (int i = 0; i < listElements.size(); i++) {
-      if (listElements.get(i).equation.isVisible) {
+      if (listElements.get(i).equation != null && listElements.get(i).equation.isVisible) {
         allEquations.add(listElements.get(i).equation);
         allEquations.get(allEquations.size() - 1).graphColor = listElements.get(i).colorPicker.colorValue;
       }
@@ -175,9 +188,6 @@ public class Renderer {
         if (renderValues.zoom.x < 0.02) {
           midpointY *= (renderValues.zoom.x / 0.02);
         }
-        //System.out.println(midpointY);
-        //System.out.println(renderValues.screenCoordDoubleToRealCoord(lines.get(i).y).x);
-        //System.out.println(currentSlope);
         if (midpointY < 1.7 * renderValues.resolution.y && midpointY > -1.7 * renderValues.resolution.y) { //If you go off too far up or down, the valid slopes will be too steep, and I don't wanna invalidate them
           lines.set(i,null);
         }
@@ -191,23 +201,49 @@ public class Renderer {
     double maxY = (-renderValues.midpoint.y + (renderValues.resolution.y / 2));
     return (y < maxY && y > minY);
   }
-  
-  
-  private boolean checkLineValidity(TwoDVec<TwoDVec<Double>> prevLine,TwoDVec<TwoDVec<Double>> currentLine, TwoDVec<TwoDVec<Double>> nextLine) {
-    double slope = Math.abs(currentLine.x.y - currentLine.y.y);
-    if (slope > 3 || Double.isNaN(slope) || Double.isInfinite(slope)) {
-      //if (slope>600){return false;}
-      double prevSlope = prevLine.y.y - prevLine.x.y;
-      double nextSlope = nextLine.y.y - nextLine.x.y;
-      if (prevSlope > 0 && nextSlope < 0) {return false;}
-      if (prevSlope < 0 && nextSlope > 0) {return false;}
-      //System.out.println(currentLine.x.x + " : " + slope + " , " + prevSlope + " , " + nextSlope);
-    }
-    return true;
-  }
+
   
   public void centerCoordinateSystem() {
     coordinateSystemRenderer.centerCoordinateSystem();
+  }
+
+  public void flipAutoAdjustLOD() {
+    funtionRenderer.autoAdjustLOD = !funtionRenderer.autoAdjustLOD;
+  }
+
+  public void setRenderPepper(boolean renderPepper){
+    this.renderPepper = renderPepper;
+    if (renderPepper && pepperFunctions == null) {
+      parsePepper();
+    }
+  }
+
+  public boolean getRenderPepper() {
+    return renderPepper;
+  }
+
+  private void parsePepper() {
+    //Initialize funtions without conditions
+    pepperFunctions = new ArrayList<>();
+    pepperFunctions.add(EquationParser.parseString("g(x)=(x/3)^4-2(x/3)^2-5",controller));
+    pepperFunctions.add(EquationParser.parseString("h(x)=1.6*sin(0.1x^2)+5",controller));
+    pepperFunctions.add(EquationParser.parseString("i(x)=1.9x+7",controller));
+    pepperFunctions.add(EquationParser.parseString("j(x)=1.9*x+4.1",controller));
+    pepperFunctions.add(EquationParser.parseString("k(x)=(-1/1.9)x+9",controller));
+
+    //Now, I can add the conditions (because they are dependent on the other functions already existing
+    pepperFunctions.set(0,EquationParser.parseString("g(x)=(x/3)^4-2(x/3)^2-5 if(y<h(x))",pepperFunctions,null));
+    pepperFunctions.set(1,EquationParser.parseString("h(x)=1.6*sin(0.1x^2)+5 if(y>g(x))",pepperFunctions,null));
+    pepperFunctions.set(2,EquationParser.parseString("i(x)=1.9x+7 if(y>h(x)&y<k(x))",pepperFunctions,null));
+    pepperFunctions.set(3,EquationParser.parseString("j(x)=1.9*x+4.1 if(y>h(x) & y<k(x))",pepperFunctions,null));
+    pepperFunctions.set(4,EquationParser.parseString("k(x)=(-1/1.9)x+9 if(y<i(x)&y>j(x))",pepperFunctions,null));
+
+    //setup Colors
+    pepperFunctions.get(0).graphColor = RoundColorPicker.getColorFromIndex(1);
+    pepperFunctions.get(1).graphColor = RoundColorPicker.getColorFromIndex(1);
+    pepperFunctions.get(2).graphColor = RoundColorPicker.getColorFromIndex(8);
+    pepperFunctions.get(3).graphColor = RoundColorPicker.getColorFromIndex(8);
+    pepperFunctions.get(4).graphColor = RoundColorPicker.getColorFromIndex(8);
   }
   
 }
