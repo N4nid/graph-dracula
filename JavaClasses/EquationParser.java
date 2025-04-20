@@ -133,6 +133,23 @@ public class EquationParser {
     return input;
   }
 
+  public static EquationTree parseString(String input, ArrayList<EquationTree> existingFuntions, ArrayList<Variable> customVars) {
+    controller = new ApplicationController();
+    if (existingFuntions != null) {
+      for (int i = 0; i < existingFuntions.size(); i++) {
+        controller.listElements.add(new EquationVisElement(existingFuntions.get(i)));
+      }
+    }
+    controller.customVarList = new CustomVarUIList();
+    if (customVars != null) {
+      for (int i = 0; i < customVars.size(); i++) {
+        controller.customVarList.addCustomVar(customVars.get(i).name);
+        controller.customVarList.setCustomVar(customVars.get(i).name,customVars.get(i).value);
+      }
+    }
+    return parseString(input,controller);
+  }
+
   public static EquationTree parseString(String input, ApplicationController appController) {
     controller = appController;
 
