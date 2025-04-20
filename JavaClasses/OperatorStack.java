@@ -3,7 +3,6 @@ public class OperatorStack {
   public boolean debug = false;
 
   public OperatorStackElement getLast(int depth, int lvl) {
-    debug = true;
     cleanUp(depth);
     if (top == null) {
       return null;
@@ -26,10 +25,10 @@ public class OperatorStack {
     boolean hasFoundPotentialOption = false;
     while (looker != null) { // only lvl 0 and 1 get here
       // the or is for in brackets
-      System.out.println(" --- " + looker.elem.value + " | " +looker.elem.opLevel);
+      //System.out.println(" --- " + looker.elem.value + " | " +looker.elem.opLevel);
       if (looker.elem.bracketDepth == depth) {
         int lookerLvl = looker.elem.opLevel;
-        System.out.println(" --- right depth");
+        //System.out.println(" --- right depth");
         if (lookerLvl == 0) {
           if (debug) {
             System.out.println("FOUND last: " + looker.elem.value);
@@ -68,21 +67,6 @@ public class OperatorStack {
       System.out.println("--- bottom");
     }
 
-  }
-
-  public EquationNode getAbove(int depth) { // above in the tree, below in the stack
-    // important for cases like 5*(2^3+8)
-    // the + in brackets needs to add above the ^
-    // But also "link" back to the *
-    OperatorStackElement looker = top;
-    while (looker != null) {
-      if (looker.elem.bracketDepth < depth) {
-        return looker.elem;
-      }
-      looker = looker.next;
-    }
-
-    return null;
   }
 
   public void add(EquationNode elem, int depth) {
