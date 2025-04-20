@@ -73,9 +73,9 @@ public class EquationParser {
     }
 
     // Transform for different equation types
-    if (!parseBetweenBrackets) { // so that parsing log(2,x) 
+    if (!parseBetweenBrackets) { // when parsing log(2,x)
                                  // the stuff between brackets "(2,x)"
-                                 // will not be parsed as 2-y and x-y
+                                 // cant/shouldnt be a function -> skip this
       name = "";
       int equalSignPos = input.indexOf('=');
       if (equalSignPos == -1 && !input.contains("y")) { // is a simple term fe. 3x+1
@@ -85,7 +85,7 @@ public class EquationParser {
           System.out.println("a function");
         }
       } else if (checkIfFunction(input)) { // is a function fe. f(x)=x or y=x
-        input = input.split("=")[1] + "-y";
+        input = input.split("=")[1];
         if (debug)
           System.out.println("is a function");
       } else if (equalSignPos != -1) { // is a equation containing y fe. x^2-y^2=9
