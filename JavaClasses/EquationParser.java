@@ -1,5 +1,4 @@
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.Set;
 
 public class EquationParser {
@@ -155,7 +154,7 @@ public class EquationParser {
 
     //transform string to move a condition standing at the beginning to the back
     //so that the string can still be detected as a parametric
-    parseBetweenBrackets = true; // so it will not add "-y"
+    parseBetweenBrackets = true; // to skip some transforming
     input = transformString(input);
     parseBetweenBrackets = false;
 
@@ -193,7 +192,7 @@ public class EquationParser {
 
     // remove unecessary parts
     // turn: "f(t->xy):x=(t);y=(2t);for(a<t<b)"
-    // into: {"(t)", "(2t)", "(a<t<v)"}
+    // into: {"(t)", "(2t)", "(a<t<b)"}
     String[] toRemove = {"(t->xy):x=","y=","for"};
     int[] removeTillIndex = {11,2,3};
     for (int i = 0; i < removeTillIndex.length; i++) {
@@ -616,6 +615,7 @@ public class EquationParser {
 
     return false;
   }
+
   public static String getBetweenBrackets(StringBuffer input) {
     // To get the string between brackets 
     // fe. if(1<x<pi) -> "1<x<pi"
@@ -879,13 +879,13 @@ public class EquationParser {
     String brackets = "()";
 
     if (nums.contains(info)) {
-      return 0;
+      return numID;
     } else if (brackets.contains(info)) {
-      return -1;
+      return bracketID;
     } else if (operators.contains(info)) {
-      return 2;
+      return operatorID;
     } else {
-      return 1; // could be variable or special function
+      return varID; // could be variable or special function
     }
   }
 

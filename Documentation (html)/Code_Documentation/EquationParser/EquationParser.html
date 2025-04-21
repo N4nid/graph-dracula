@@ -1,0 +1,359 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+  <head>
+    <!-- 2025-04-21 Mo 11:24 -->
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>EquationParser</title>
+    <meta name="generator" content="Org Mode" />
+  </head>
+  <body>
+    <div id="content" class="content">
+      <h1 class="title">EquationParser</h1>
+      <div id="outline-container-org8648093" class="outline-2">
+        <h2 id="org8648093">Variables</h2>
+        <div class="outline-text-2" id="text-org8648093">
+        </div>
+        <div id="outline-container-orga8ada89" class="outline-3">
+          <h3 id="orga8ada89">debug:</h3>
+          <div class="outline-text-3" id="text-orga8ada89">
+            <p>
+              Toggles all the debug prints.
+            </p>
+          </div>
+        </div>
+        <div id="outline-container-orgf1feb26" class="outline-3">
+          <h3 id="orgf1feb26">name:</h3>
+          <div class="outline-text-3" id="text-orgf1feb26">
+            <p>
+              The name of the function.
+            </p>
+          </div>
+        </div>
+        <div id="outline-container-orgc040d91" class="outline-3">
+          <h3 id="orgc040d91">isFunction:</h3>
+          <div class="outline-text-3" id="text-orgc040d91">
+            <p>
+              Whether it is a function or not.
+              If it is a function it will be rendered by the FunctionRenderer.
+            </p>
+          </div>
+        </div>
+        <div id="outline-container-org82d01b5" class="outline-3">
+          <h3 id="org82d01b5">isParametic:</h3>
+          <div class="outline-text-3" id="text-org82d01b5">
+            <p>
+              Whether it is parametric or not.
+              If it is a parametric function it will be rendered by the ParametricRenderer.
+            </p>
+          </div>
+        </div>
+        <div id="outline-container-orgfe77b3f" class="outline-3">
+          <h3 id="orgfe77b3f">parametricParsing:</h3>
+          <div class="outline-text-3" id="text-orgfe77b3f">
+            <p>
+              Flag used when parsing parametric functions to enable different handeling of things.
+              <b>For example:</b> When enabled a variable with the name &ldquo;t&rdquo; will not be added to the variable list.
+            </p>
+          </div>
+        </div>
+        <div id="outline-container-orgf010e8b" class="outline-3">
+          <h3 id="orgf010e8b">parseBetweenBrackets:</h3>
+          <div class="outline-text-3" id="text-orgf010e8b">
+            <p>
+              Flag used when parsing between brackets to skip some of the transforming in <a href="#org34c7759">transformString():</a>.
+            </p>
+          </div>
+        </div>
+        <div id="outline-container-orgd5c597f" class="outline-3">
+          <h3 id="orgd5c597f">controller:</h3>
+          <div class="outline-text-3" id="text-orgd5c597f">
+            <p>
+              The ApplicationController used by many methods.
+              Mainly for handeling variables but also for parsing ConditionNodes.
+            </p>
+          </div>
+        </div>
+        <div id="outline-container-org320be8a" class="outline-3">
+          <h3 id="org320be8a">oldVarCache:</h3>
+          <div class="outline-text-3" id="text-org320be8a">
+            <p>
+              Serves as a backup of the variable list.
+              With this it is possible to revert to the state before adding variables through invalid input.
+              See <a href="#org04fe756">discardVars():</a> for more detail.
+            </p>
+          </div>
+        </div>
+        <div id="outline-container-orge2ab258" class="outline-3">
+          <h3 id="orge2ab258">bracketID</h3>
+          <div class="outline-text-3" id="text-orge2ab258">
+            <p>
+              The magic number representing the state for said element.
+            </p>
+          </div>
+        </div>
+        <div id="outline-container-orgb744da5" class="outline-3">
+          <h3 id="orgb744da5">numID</h3>
+          <div class="outline-text-3" id="text-orgb744da5">
+            <p>
+              The magic number representing the state for said element.
+            </p>
+          </div>
+        </div>
+        <div id="outline-container-org22c818b" class="outline-3">
+          <h3 id="org22c818b">varID</h3>
+          <div class="outline-text-3" id="text-org22c818b">
+            <p>
+              The magic number representing the state for said element.
+            </p>
+          </div>
+        </div>
+        <div id="outline-container-org94994fe" class="outline-3">
+          <h3 id="org94994fe">operatorID</h3>
+          <div class="outline-text-3" id="text-org94994fe">
+            <p>
+              The magic number representing the state for said element.
+            </p>
+          </div>
+        </div>
+        <div id="outline-container-org9352240" class="outline-3">
+          <h3 id="org9352240">specialFuncID</h3>
+          <div class="outline-text-3" id="text-org9352240">
+            <p>
+              The magic number representing the state for said element.
+            </p>
+          </div>
+        </div>
+        <div id="outline-container-org6b7796d" class="outline-3">
+          <h3 id="org6b7796d">functionID</h3>
+          <div class="outline-text-3" id="text-org6b7796d">
+            <p>
+              The magic number representing the state for said element.
+            </p>
+          </div>
+        </div>
+        <div id="outline-container-orge019237" class="outline-3">
+          <h3 id="orge019237">parametricID</h3>
+          <div class="outline-text-3" id="text-orge019237">
+            <p>
+              The magic number representing the state for said element.
+            </p>
+          </div>
+        </div>
+        <div id="outline-container-org830dfb8" class="outline-3">
+          <h3 id="org830dfb8">specialOpID</h3>
+          <div class="outline-text-3" id="text-org830dfb8">
+            <p>
+              The magic number representing the state for said element.
+            </p>
+          </div>
+        </div>
+        <div id="outline-container-org5f1d97e" class="outline-3">
+          <h3 id="org5f1d97e">conditionID</h3>
+          <div class="outline-text-3" id="text-org5f1d97e">
+            <p>
+              The magic number representing the state for said element.
+            </p>
+            <hr />
+          </div>
+        </div>
+      </div>
+      <div id="outline-container-orgb101635" class="outline-2">
+        <h2 id="orgb101635">Methods</h2>
+        <div class="outline-text-2" id="text-orgb101635">
+        </div>
+        <div id="outline-container-org34c7759" class="outline-3">
+          <h3 id="org34c7759">transformString():</h3>
+          <div class="outline-text-3" id="text-org34c7759">
+            <p>
+              Method for the following things:
+            </p>
+            <ul class="org-ul">
+              <li>sanitizing the string.</li>
+              <li>replacing all constants with their number.</li>
+              <li>adding the unwritten multiplikation between brackets
+                for example: &ldquo;(2x)(x-1)&rdquo; -&gt; &ldquo;(2x)*(x-1)&rdquo;</li>
+              <li>moving the condition to the back
+                for example: &ldquo;if(x&lt;0) x<sup>2</sup>&rdquo; -&gt; &ldquo;x<sup>2</sup> if(x&lt;0)&rdquo;</li>
+              <li>transforming for the different equation types and setting <a href="#orgc040d91">isFunction:</a> and <a href="#orgf1feb26">name:</a></li>
+            </ul>
+
+            <p>
+              <b>Examples:</b>
+            </p>
+            <ul class="org-ul">
+              <li>f(x)=x<sup>2</sup> -&gt; x<sup>2</sup></li>
+              <li>y=2x -&gt; 2x</li>
+              <li>x<sup>2</sup>-y<sup>2</sup>=9 -&gt; 9-(x<sup>2</sup>-y<sup>2</sup>)</li>
+              <li>sin(2e) + 2 -&gt; sin(2(1.6180339887498948))+2</li>
+            </ul>
+          </div>
+        </div>
+        <div id="outline-container-org0c1d064" class="outline-3">
+          <h3 id="org0c1d064">replaceConstants():</h3>
+          <div class="outline-text-3" id="text-org0c1d064">
+            <p>
+              Method for replacing constants in a string with their number counterpart.
+            </p>
+          </div>
+        </div>
+        <div id="outline-container-orgca38a97" class="outline-3">
+          <h3 id="orgca38a97">parseString():</h3>
+          <div class="outline-text-3" id="text-orgca38a97">
+            <p>
+              Given a string it will decide wheter to call <a href="#org44ba2c3">parseEquation():</a> or <a href="#org601ce71">parseParametics():</a>
+            </p>
+
+            <p>
+              There also is another overloaded version which handles given functions.
+            </p>
+          </div>
+        </div>
+        <div id="outline-container-org601ce71" class="outline-3">
+          <h3 id="org601ce71">parseParametics():</h3>
+          <div class="outline-text-3" id="text-org601ce71">
+            <p>
+              Method for parsing parametric functions.
+              They have the following form: &ldquo;f(t-&gt;xy):x=(t);y=(t);for(a&lt;t&lt;b)&rdquo;.
+            </p>
+
+            <p>
+              The correct <a href="./../EquationTree/EquationTree.html">EquationTree</a> for parametric functions have the x definition in the left subtree and the y definition in the right subtree.
+              The interval is saved in the root node.
+            </p>
+
+            <p>
+              To parse parametric function the unnecessary stuff is first removed:
+            </p>
+
+            <p>
+              Turn &ldquo;f(t-&gt;xy):x=(t);y=(2t);for(a&lt;t&lt;b)&rdquo; into {&ldquo;(t)&rdquo;, &ldquo;(2t)&rdquo;, &ldquo;(a&lt;t&lt;b)&rdquo;}
+            </p>
+
+            <p>
+              Now the x and y definitions can be parsed by <a href="#org44ba2c3">parseEquation():</a>.
+            </p>
+
+            <p>
+              To parse the interval it first has to be &ldquo;extracted&rdquo; with <a href="#orgd17b599">getBetweenBrackets():</a> and split by &ldquo;&lt;t&lt;&rdquo;.
+            </p>
+
+            <p>
+              To turn &ldquo;(a&lt;t&lt;b)&rdquo; into {&ldquo;a&rdquo; &ldquo;b&rdquo;}
+            </p>
+
+            <p>
+              Which then can be parsed by <a href="#org44ba2c3">parseEquation():</a>.
+            </p>
+          </div>
+        </div>
+        <div id="outline-container-org44ba2c3" class="outline-3">
+          <h3 id="org44ba2c3">parseEquation():</h3>
+        </div>
+        <div id="outline-container-org04fe756" class="outline-3">
+          <h3 id="org04fe756">discardVars():</h3>
+        </div>
+        <div id="outline-container-orgbf29a51" class="outline-3">
+          <h3 id="orgbf29a51">handleAdvancedInput():</h3>
+        </div>
+        <div id="outline-container-org850188a" class="outline-3">
+          <h3 id="org850188a">checkIfFunction():</h3>
+          <div class="outline-text-3" id="text-org850188a">
+            <p>
+              Method to check wheter a given string is a function or not.
+              It also sets the name if it is in the form of &ldquo;*(x)&rdquo;.
+            </p>
+
+            <p>
+              <b>For example:</b>
+            </p>
+            <ul class="org-ul">
+              <li>y=x -&gt; is a function</li>
+            </ul>
+          </div>
+        </div>
+        <div id="outline-container-orgd17b599" class="outline-3">
+          <h3 id="orgd17b599">getBetweenBrackets():</h3>
+          <div class="outline-text-3" id="text-orgd17b599">
+            <p>
+              Method for getting the string between brackets.
+            </p>
+
+            <p>
+              <b>For example:</b>
+              &ldquo;(sin(x)+2)&rdquo; -&gt; &ldquo;sin(x)+2&rdquo;
+            </p>
+          </div>
+        </div>
+        <div id="outline-container-org6b838ae" class="outline-3">
+          <h3 id="org6b838ae">getValuesInBrackets():</h3>
+          <div class="outline-text-3" id="text-org6b838ae">
+            <p>
+              Method for getting the values seperated by comma between brackets.
+              Used for special Operators (log, root)
+            </p>
+
+            <p>
+              <b>For example:</b>
+              &ldquo;root(2,root(2,x))&rdquo; -&gt; {&ldquo;2&rdquo;,&ldquo;root(2,x)&rdquo;}
+            </p>
+          </div>
+        </div>
+        <div id="outline-container-orgdd8b5e0" class="outline-3">
+          <h3 id="orgdd8b5e0">addBelow():</h3>
+        </div>
+        <div id="outline-container-org6806a56" class="outline-3">
+          <h3 id="org6806a56">getNextNode():</h3>
+        </div>
+        <div id="outline-container-org30f1b0c" class="outline-3">
+          <h3 id="org30f1b0c">getOpLevel():</h3>
+          <div class="outline-text-3" id="text-org30f1b0c">
+            <p>
+              Method for getting the operator level for a given string.
+            </p>
+
+            <p>
+              The level determines the order of operators.
+              If the operator will get added above or below another one
+              See <a href="#org44ba2c3">parseEquation():</a> for detail on the tree building
+            </p>
+          </div>
+        </div>
+        <div id="outline-container-org4d99829" class="outline-3">
+          <h3 id="org4d99829">getState():</h3>
+          <div class="outline-text-3" id="text-org4d99829">
+            <p>
+              Method for getting the state of a given character.
+              The state represents what type it is.
+            </p>
+            <ul class="org-ul">
+              <li>&ldquo;.0123456789&rdquo; -&gt; number</li>
+              <li>&ldquo;+-*/^&rdquo; -&gt; operator</li>
+              <li>&ldquo;()&rdquo; -&gt; bracket</li>
+              <li>otherwise it could be a variable or specialFunction</li>
+            </ul>
+          </div>
+        </div>
+        <div id="outline-container-org84582c2" class="outline-3">
+          <h3 id="org84582c2">testParser():</h3>
+          <div class="outline-text-3" id="text-org84582c2">
+            <p>
+              Debug method for testing a lot of inputs.
+            </p>
+
+            <p>
+              It has 2 arrays. One with the input and one for the value which should be the result of the calculation.
+              It parses all of the inputs and calculates their result. If the result matches the result it should have it passes the test.
+            </p>
+
+            <p>
+              This is obviously not 100% representative for correct parsing, but it serves as a quick way of testing if things work at least at a fundamental level.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
