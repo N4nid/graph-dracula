@@ -786,7 +786,6 @@ public class EquationParser {
     }
 
     if (state == varID) {
-      // TODO Handle mod: amod
       if (debug) {
         System.out.println("is: " + value);
       }

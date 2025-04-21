@@ -23,24 +23,23 @@ Mainly for handeling variables but also for parsing ConditionNodes.
 ** oldVarCache:
 Serves as a backup of the variable list.
 With this it is possible to revert to the state before adding variables through invalid input.
-See [[discardVars():]] for more detail.
-** bracketID
+** bracketID:
 The magic number representing the state for said element.
-** numID
+** numID:
 The magic number representing the state for said element.
-** varID
+** varID:
 The magic number representing the state for said element.
-** operatorID
+** operatorID:
 The magic number representing the state for said element.
-** specialFuncID
+** specialFuncID:
 The magic number representing the state for said element.
-** functionID
+** functionID:
 The magic number representing the state for said element.
-** parametricID
+** parametricID:
 The magic number representing the state for said element.
-** specialOpID
+** specialOpID:
 The magic number representing the state for said element.
-** conditionID
+** conditionID:
 The magic number representing the state for said element.
 -----
 * Methods
@@ -70,30 +69,32 @@ There also is another overloaded version which handles given functions.
 Method for parsing parametric functions.
 They have the following form: "f(t->xy):x=(t);y=(t);for(a<t<b)".
 
-The correct [[./../EquationTree/EquationTree.html][EquationTree]] for parametric functions have the x definition in the left subtree and the y definition in the right subtree.
-The interval is saved in the root node.
-
-To parse parametric function the unnecessary stuff is first removed:
-
-Turn "f(t->xy):x=(t);y=(2t);for(a<t<b)" into {"(t)", "(2t)", "(a<t<b)"}
-
-Now the x and y definitions can be parsed by [[parseEquation():]].
-
-To parse the interval it first has to be "extracted" with [[getBetweenBrackets():]] and split by "<t<".
-
-To turn "(a<t<b)" into {"a" "b"}
-
-Which then can be parsed by [[parseEquation():]].
-
 ** parseEquation():
+Given a string and ApplicationController it builds the [[./../EquationTree/EquationTree.html][EquationTree]] by adding the nodes extracted by [[getNextNode():]].
+
 ** discardVars():
+Method for removing all the variables added by invalid input.
+
+Since when parsing it is only checked at the end if the resulting [[./../EquationTree/EquationTree.html][EquationTree]] is valid.
+And it would be annoying if one would have to manually remove all the variables added in this process.
+
 ** handleAdvancedInput():
+To handle unwritten multiplikation and to the power of negativ numbers.
+
+*For example:*
+- 2(x^2) -> 2*(x^2)
+- 3x -> 3*x
+- xsin(x) -> x*sin(x)
+- x^-2 -> x^(-2)
+
 ** checkIfFunction():
 Method to check wheter a given string is a function or not.
 It also sets the name if it is in the form of "*(x)".
 
 *For example:*
 - y=x -> is a function
+- z(x)=x^2 is a function (name: z)
+- wow(x)=x is not a function
 
 ** getBetweenBrackets():
 Method for getting the string between brackets.
@@ -109,7 +110,13 @@ Used for special Operators (log, root)
 "root(2,root(2,x))" -> {"2","root(2,x)"}
 
 ** addBelow():
+Given two nodes, add the one right below the other.
 ** getNextNode():
+This method can be seen as the one doing the parsing.
+
+Given a StringBuffer it returns either the next node or null if no valid node could be found.
+The advantage of using a StringBuffer is, that it can be manipulated by reference, so that the used part can be removed as it should not be parsed again.
+
 ** getOpLevel():
 Method for getting the operator level for a given string.
 
