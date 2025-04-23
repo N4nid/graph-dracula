@@ -73,9 +73,9 @@ public class ConditionParser {
     }
 
     private EquationNode parseEquation(String equationString, ApplicationController controller) {
-        EquationParser.simpleParsing = true;
+        EquationParser.parametricParsing = true;
         EquationTree currentEquation = EquationParser.parseEquation(equationString,controller);
-        EquationParser.simpleParsing = false;
+        EquationParser.parametricParsing= false;
         if (currentEquation != null && currentEquation.root != null) {
             return currentEquation.root;
         }

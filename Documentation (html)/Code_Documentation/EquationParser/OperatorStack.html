@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+  <head>
+    <!-- 2025-04-21 Mo 21:40 -->
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>OperatorStack</title>
+    <meta name="generator" content="Org Mode" />
+  </head>
+  <body>
+    <div id="content" class="content">
+      <h1 class="title">OperatorStack</h1>
+      <div id="table-of-contents" role="doc-toc">
+        <h2>Table of Contents</h2>
+        <div id="text-table-of-contents" role="doc-toc">
+          <ul>
+            <li><a href="#orgaa6c5b8">Variables</a>
+              <ul>
+                <li><a href="#org96b7ae8">top:</a></li>
+                <li><a href="#org20817cb">debug:</a></li>
+              </ul>
+            </li>
+            <li><a href="#org65dcee8">Methods</a>
+              <ul>
+                <li><a href="#org67783e7">add():</a></li>
+                <li><a href="#orge1bfc3f">pop():</a></li>
+                <li><a href="#orgabc8a11">cleanUp():</a></li>
+                <li><a href="#orgcd5b087">getLast():</a></li>
+                <li><a href="#orgf374baf">printStack():</a></li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div id="outline-container-orgaa6c5b8" class="outline-2">
+        <h2 id="orgaa6c5b8">Variables</h2>
+        <div class="outline-text-2" id="text-orgaa6c5b8">
+        </div>
+        <div id="outline-container-org96b7ae8" class="outline-3">
+          <h3 id="org96b7ae8">top:</h3>
+          <div class="outline-text-3" id="text-org96b7ae8">
+            <p>
+              Points to the top of the stack.
+            </p>
+          </div>
+        </div>
+        <div id="outline-container-org20817cb" class="outline-3">
+          <h3 id="org20817cb">debug:</h3>
+          <div class="outline-text-3" id="text-org20817cb">
+            <p>
+              Toggles the debug prints.
+            </p>
+            <hr />
+          </div>
+        </div>
+      </div>
+      <div id="outline-container-org65dcee8" class="outline-2">
+        <h2 id="org65dcee8">Methods</h2>
+        <div class="outline-text-2" id="text-org65dcee8">
+        </div>
+        <div id="outline-container-org67783e7" class="outline-3">
+          <h3 id="org67783e7">add():</h3>
+          <div class="outline-text-3" id="text-org67783e7">
+            <p>
+              Adds an <a href="./OperatorStackElement.html">OperatorStackElement</a> on top of the stack.
+            </p>
+          </div>
+        </div>
+        <div id="outline-container-orge1bfc3f" class="outline-3">
+          <h3 id="orge1bfc3f">pop():</h3>
+          <div class="outline-text-3" id="text-orge1bfc3f">
+            <p>
+              Removes one <a href="./OperatorStackElement.html">OperatorStackElement</a> from the stack.
+            </p>
+          </div>
+        </div>
+        <div id="outline-container-orgabc8a11" class="outline-3">
+          <h3 id="orgabc8a11">cleanUp():</h3>
+          <div class="outline-text-3" id="text-orgabc8a11">
+            <p>
+              Removes all <a href="./OperatorStackElement.html">stack elements</a> that have a <a href="./../EquationTree/EquationNode.html">EquationNode</a> with a higher bracketDepth than the value passed to this method.
+              This is necessary since these elements are in enclosed brackets, which means that they are &ldquo;done&rdquo;.
+            </p>
+
+            <p>
+              <b>For example:</b>
+              Given the following input &ldquo;3*(1/3)+1&rdquo; and assuming it has already been parsed up to the &ldquo;)&rdquo;.
+              When returning a <a href="./OperatorStackElement.html">stack element</a> in <a href="#orgcd5b087">getLast():</a> for the operator &ldquo;+&rdquo; in this case, it must search for operators on the same bracketDepth.
+              That is why <a href="#orgabc8a11">cleanUp():</a> is called at the beginning of <a href="#orgcd5b087">getLast():</a>.
+            </p>
+          </div>
+        </div>
+        <div id="outline-container-orgcd5b087" class="outline-3">
+          <h3 id="orgcd5b087">getLast():</h3>
+          <div class="outline-text-3" id="text-orgcd5b087">
+            <p>
+              This method returns the right operator given a bracketDepth and operator level. The operator level indicates the order of operators.
+            </p>
+
+            <table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+              <colgroup>
+                <col  class="org-right" />
+
+                <col  class="org-left" />
+              </colgroup>
+              <tbody>
+                <tr>
+                  <td class="org-right">level</td>
+                  <td class="org-left">operators</td>
+                </tr>
+
+                <tr>
+                  <td class="org-right">0</td>
+                  <td class="org-left">+-</td>
+                </tr>
+
+                <tr>
+                  <td class="org-right">1</td>
+                  <td class="org-left">*/</td>
+                </tr>
+
+                <tr>
+                  <td class="org-right">2</td>
+                  <td class="org-left">^</td>
+                </tr>
+
+                <tr>
+                  <td class="org-right">3</td>
+                  <td class="org-left">specialFunctions</td>
+                </tr>
+              </tbody>
+            </table>
+
+            <p>
+              In order to build a correct <a href="./../EquationTree/EquationTree.html">EquationTree</a> in the <a href="./EquationParser.html">EquationParser</a> it has to work the following way:
+            </p>
+
+            <p>
+              If the given level is greater than 1 it has to return the top element.
+            </p>
+
+            <p>
+              Otherwise we search for a &ldquo;better&rdquo; option (level 0).
+              If it is not found, we return either the first elment containing a <a href="./../EquationTree/EquationNode.html">EquationNode</a> with the level 1 or the top element.
+            </p>
+          </div>
+        </div>
+        <div id="outline-container-orgf374baf" class="outline-3">
+          <h3 id="orgf374baf">printStack():</h3>
+          <div class="outline-text-3" id="text-orgf374baf">
+            <p>
+              A debug method for printing the stack.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

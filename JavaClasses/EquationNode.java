@@ -158,7 +158,6 @@ public class EquationNode {
         if (!invalid)
           return result;
       } else {
-        // System.out.println("WHY NOT WORKING -- Function calculate :c");
         invalid = true;
       }
     }
@@ -169,6 +168,7 @@ public class EquationNode {
 
     if (invalid) {
       realCoord.setUniform(-1.0); // so that i can catch an invalid EquationTree
+                                  // see EquationParser.parseEquation for more detail (or the documetation)
     }
 
     return 0.0;
