@@ -10,7 +10,21 @@
     <h1>Text Input</h1>
     <fieldset>
       <legend>//text-input-manual</legend>
-      <h2>General </h2>
+      <h2>Base types</h2>
+      In general, graph_dracula uses 3 different renderers to display different<br> tpyes of equations.<br>
+      - The fuction renderer renders functions, where for each point on the x-axis<br>
+      &nbsp; there is a maximum  of 1 corresponding point on the y-axis.<br>
+      - The equation renderer renders equations, that are not functions, like y^2+x^2=9<br>
+      - The parametrics renderer renders functions, that are based on the parameter t<br>
+      &nbsp; and have a given range like f(t->xy):x=(cos(t));y=(sin(t));for(0&lt;t&lt;2*π)</p>
+      <h3>Functions</h3>
+      - Functions should generally inputted with the formatting name(x)=function body.<br>
+      - The names can only be a single character long and they can't reuse chartacters,<br>
+      &nbsp; that are already interpreted in a different way, like e (which is a constant)<br>
+      &nbsp; round brackets or the names of pre-existing functions or custom variables.<br>
+      - You can also use the altrnative formatting or either just inputting the body (like sin(x))<br>
+      &nbsp; or write y = body. That means the function of x² could be expressed as<br>
+      &nbsp; f(x)=x^2, x^2 or y = x^2.
     </fieldset>
     <main></main>
     <footer></footer>
