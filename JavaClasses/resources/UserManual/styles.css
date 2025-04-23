@@ -12,8 +12,12 @@ fieldset {
     font: 20px source code;
     -webkit-text-fill-color: white;
     border: 3px dashed white;
+    margin-bottom: 30px;
 }
 
+li::marker {
+    color: white;
+}
 
 fieldset legend {
     background-color: #242424;
