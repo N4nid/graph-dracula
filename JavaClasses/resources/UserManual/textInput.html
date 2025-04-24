@@ -11,6 +11,7 @@
     <fieldset>
       <legend>//text-input-manual</legend>
       <h2>Base types</h2>
+      <p>
       In general, graph_dracula uses 3 different renderers to display different<br> tpyes of equations.<br>
       - The fuction renderer renders functions, where for each point on the x-axis<br>
       &nbsp; there is a maximum  of 1 corresponding point on the y-axis.<br>
@@ -18,6 +19,7 @@
       - The parametrics renderer renders functions, that are based on the parameter t<br>
       &nbsp; and have a given range like f(t->xy):x=(cos(t));y=(sin(t));for(0&lt;t&lt;2*π)</p>
       <h3>Functions</h3>
+      <p>
       - Functions should generally inputted with the formatting name(x)=function body.<br>
       - The names can only be a single character long and they can't reuse chartacters<br>
       &nbsp; that are already interpreted in a different way, like e (which is a constant)<br>
@@ -25,10 +27,13 @@
       - You can also use the altrnative formatting or either just inputting the body (like sin(x))<br>
       &nbsp; or write y = body. That means the function of x² could be expressed as<br>
       &nbsp; f(x)=x^2, x^2 or y=x^2.
+      </p>
       <h3>Equations</h3>
+      <p>
       Equations don't need special formatting, they are just written in the form of body=body.<br>
-      Equations also don't have a name, so they are not "reusable".
+      Equations also don't have a name, so they are not "reusable".</p>
       <h3>Parametric functions</h3>
+      <p>
       - Parametric functions are based on the parameter t and are generally formatted like this:<br>
       &nbsp; name(t->xy):x=(bodyX);y=(bodyY)for(minimum-t&ltt&ltmaximum-t)<br>
       - The body for x and y can't be based on either x or y or pre-existing functions, but only t<br>
@@ -38,7 +43,17 @@
       - The names for parametric functions can only be a single character long and they can't reuse<br>
       &nbsp; chartacters, that are already interpreted in a different way, like e (which is a constant)<br>
       &nbsp; round brackets or the names of pre-existing functions or custom variables.<br>
-
+      </p>
+      <h3>If Conditions</h3>
+      <p>If conditions are like an "addon" to any of the above mentioned types of equations.<br>
+      They can be used to determine, what parts of an equation are shown. They can be used to define<br>
+      a single range, in which an equation is shown, multiple ranges or even infinitely repeating<br>
+      ranges (like with if(sin(x)&lt0)).<br>
+      - Their formatting is generally: ;if(if-body)<br>
+      - They have to be at the end of the equation and are seperated from the rest of the<br>
+      &nbsp; equation with a ;<br>
+      </p>
+      
     </fieldset>
     <main></main>
     <footer></footer>
