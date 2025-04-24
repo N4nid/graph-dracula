@@ -2,7 +2,7 @@ import java.util.ArrayList;
 import java.util.Set;
 
 public class EquationParser {
-  public static boolean debug = true; // all debugging prints will be removed when there are no issues anymore
+  public static boolean debug = false; // all debugging prints will be removed when there are no issues anymore
   static String name = "";
   static boolean isFunction = false;
   static boolean isParametic = false;
@@ -314,10 +314,11 @@ public class EquationParser {
       currentNode.bracketDepth = bracketDepth;
 
       if (state == conditionID) {
-        if(val instanceof ConditionTree){
+        if(val != null && val instanceof ConditionTree){
           result.rangeCondition = (ConditionTree) val;
         }else{
-          if(debug) System.out.println("Invalid condition! not instanceof ConditionTree");
+          System.out.println("Invalid condition! not instanceof ConditionTree");
+          return null;
         }
         currentNode = getNextNode(in);
         continue;
