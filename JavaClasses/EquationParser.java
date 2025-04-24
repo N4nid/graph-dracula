@@ -341,17 +341,6 @@ public class EquationParser {
       Byte opLevel = currentNode.opLevel;
       currentNode.bracketDepth = bracketDepth;
 
-      if (state == conditionID) {
-        if(val != null && val instanceof ConditionTree){
-          result.rangeCondition = (ConditionTree) val;
-        }else{
-          System.out.println("Invalid condition! not instanceof ConditionTree");
-          return null;
-        }
-        currentNode = getNextNode(in);
-        continue;
-      }
-
       // handle invisible multiplikation fe. 2x -> 2*x
       if (handleAdvancedInput(currentNode, lastNode, in)) { // the StringBuffer has been modified -> update values
         bracketDepth = currentNode.bracketDepth; // since it could have been updated
