@@ -56,11 +56,11 @@ public class EquationParser {
 
     // handle case in which the condition is in the beginning -> move it to the back
     // Fe. if(x<1) x^2
-    if (input.length() > 4) { // so its not just "if"
-      String sub = input.substring(0, 2);
-      if (sub.equals("if")) {
+    if (input.length() > 5) { // so its not just "if"
+      String sub = input.substring(0, 3);
+      if (sub.equals(";if")) {
         StringBuffer in = new StringBuffer(input);
-        in.delete(0,2);
+        in.delete(0,3);
         String betweenBrackets = getBetweenBrackets(in);
         if(betweenBrackets == null){
           if(debug) System.out.println("Invalid condition at start");
@@ -763,7 +763,7 @@ public class EquationParser {
     // fe. "sin(x)+2" -> "(x)+2"
     input = input.delete(0, index);
 
-    if (value.equals("if")) { // edgecase for conditionNodes; if(y<9)
+    if (value.equals(";if")) { // edgecase for conditionNodes; if(y<9)
       String betweenBrackets = getBetweenBrackets(input);
       if(betweenBrackets == null || betweenBrackets.isBlank()){
         if(debug) System.out.println("Invalid condition");
