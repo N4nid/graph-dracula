@@ -190,6 +190,10 @@ public class EquationRenderer {
         this.lastPos = new TwoDVec<Double>((double)renderValues.midpoint.x, (double)renderValues.midpoint.y);
         calculateNewEquations(equations);
       } // end of if
+      if (equations.size() != equationLineCacheSize) {
+        this.equations = equations;
+        calculateNewEquations(equations);
+      }
     } else {
       if (equations.size() < equationLineCacheSize) {            //Equation gelöscht
         for (int i = 0; i < equations.size(); i++) {
