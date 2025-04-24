@@ -7,6 +7,7 @@ public class EquationParser {
   static boolean isFunction = false;
   static boolean isParametic = false;
   static boolean parametricParsing = false;
+  static boolean parametricIntervalParsing= false;
   private static boolean parseBetweenBrackets = false;
   public static ApplicationController controller;
   public static ArrayList<CustomVarUIElement> oldVarCache;
@@ -27,6 +28,9 @@ public class EquationParser {
   private static byte conditionID = 42;
 
   private static String transformString(String input) {
+    if(input == null){
+      return null;
+    }
     // Sanitize and Transform string
     // remove all spaces
     if (debug) System.out.println(input);
@@ -55,8 +59,8 @@ public class EquationParser {
 
 
     // handle case in which the condition is in the beginning -> move it to the back
-    // Fe. if(x<1) x^2
-    if (input.length() > 5) { // so its not just "if"
+    // Fe. ;if(x<1) x^2
+    if (input.length() > 5) { // so its not just ";if"
       String sub = input.substring(0, 3);
       if (sub.equals(";if")) {
         StringBuffer in = new StringBuffer(input);
@@ -151,6 +155,9 @@ public class EquationParser {
 
   public static EquationTree parseString(String input, ApplicationController appController) {
     controller = appController;
+    if(controller == null){
+      return null;
+    }
 
     //transform string to move a condition standing at the beginning to the back
     //so that the string can still be detected as a parametric
@@ -238,30 +245,47 @@ public class EquationParser {
 
     if (intervalString.length == 2) {
       //parse left part of interval
-      EquationNode intervalNode = parseEquation(intervalString[0], controller).root;
-      if (intervalNode == null)
+      EquationNode intervalNode = parseParametricInterval(intervalString[0], controller);
+      if(intervalNode == null)
         return null;
       result.intervalStart = intervalNode;
 
       //parse right part of interval
-      intervalNode = parseEquation(intervalString[1], controller).root;
-      if (intervalNode == null)
+      intervalNode = parseParametricInterval(intervalString[1], controller);
+      if(intervalNode == null)
         return null;
       result.intervalEnd = intervalNode;
 
       result.isParametric = true;
-      parametricParsing = false;
+      parametricParsing = false; // reset parametric parsing so other input wont be affected by this flag
       result.name = "" + input.charAt(0);
       return result;
     }
 
-    parametricParsing = false; // reset parametric parsing
+    parametricParsing = false;
     return null;
+  }
+
+  private static EquationNode parseParametricInterval(String input, ApplicationController controller){
+    if(input == null|| controller == null){
+      return null;
+    }
+
+    parametricIntervalParsing = true; // so the interval cannot be dependend on "t"
+
+    EquationTree intervalTree = parseEquation(input, controller);
+
+    if (intervalTree == null || intervalTree.root == null){
+      parametricIntervalParsing = false;
+      return null;
+    }
+    parametricIntervalParsing = false;
+    return intervalTree.root;
   }
 
   public static EquationTree parseEquation(String input, ApplicationController appController) {
     input = transformString(input);
-    if (input == null) {
+    if (input == null|| controller == null) {
       return null;
     }
     if (debug && input.contains("bug")) {
@@ -310,6 +334,12 @@ public class EquationParser {
         if (debug) {
           System.out.println("NUMORVAR: " + val + "| " + lastNode.value + " " + lastNode.bracketDepth);
         }
+        if(state == varID && val.equals("t") && parametricIntervalParsing){ 
+          // since the interval of parametrics must not contain "t" 
+          // but since other valid strings exists also containig "t" it has to be checked here
+          // fe. "root(2,64)" is a valid interval but contains "t"
+          return null;
+        }
 
         // check if lastnode is some kind of operator and adds itself below
         if (lastNode.state >= operatorID) {
@@ -325,7 +355,7 @@ public class EquationParser {
         }
 
         if (state == varID && !(val.equals("y") || val.equals("x"))) { // handle variables
-          if (!(parametricParsing && val.equals("t"))) { // since t should not be added when parsing parametics
+          if (!(parametricParsing && val.equals("t"))) { // since t should not be added as a variable when parsing parametics
             boolean didntExistBefore = controller.customVarList.addCustomVar(val.toString());
             if (didntExistBefore) {
               addedVars.add(val.toString());
