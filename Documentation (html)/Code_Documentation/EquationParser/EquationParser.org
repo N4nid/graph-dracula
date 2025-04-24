@@ -39,8 +39,6 @@ The magic number representing the state for said element.
 The magic number representing the state for said element.
 ** specialOpID:
 The magic number representing the state for said element.
-** conditionID:
-The magic number representing the state for said element.
 -----
 * Methods
 ** transformString():
