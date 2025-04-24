@@ -25,7 +25,6 @@ public class EquationParser {
   private static byte functionID = 4;
   private static byte parametricID = 5;
   private static byte specialOpID = 6;
-  private static byte conditionID = 42;
 
   private static String transformString(String input) {
     if(input == null){
@@ -57,44 +56,37 @@ public class EquationParser {
     // replace ")(" with ")*(" so something like (2+1)(x-1) works
     input = input.replaceAll("\\)\\(", ")*(");
 
-
-    // handle case in which the condition is in the beginning -> move it to the back
-    // Fe. ;if(x<1) x^2
-    if (input.length() > 5) { // so its not just ";if"
-      String sub = input.substring(0, 3);
-      if (sub.equals(";if")) {
-        StringBuffer in = new StringBuffer(input);
-        in.delete(0,3);
-        String betweenBrackets = getBetweenBrackets(in);
-        if(betweenBrackets == null){
-          if(debug) System.out.println("Invalid condition at start");
-          return null;
-        }
-        input = in.toString();
-        input += "if("+betweenBrackets+")";
-      }
-    }
-
     // Transform for different equation types
     if (!parseBetweenBrackets) { // when parsing log(2,x)
                                  // the stuff between brackets "(2,x)"
                                  // cant/shouldnt be a function -> skip this
+
+      String inputToCheck;
+      String splitInput[] = null;
+      if(input.contains(";")){ // input contains a condition
+        splitInput = input.split(";");
+        inputToCheck = splitInput[0]; // split input because conditon could contain "y"
+                                            // which would mess with the below logic
+      }else{
+        inputToCheck = input;
+      }
+
       name = "";
-      int equalSignPos = input.indexOf('=');
-      if (equalSignPos == -1 && !input.contains("y")) { // is a simple term fe. 3x+1
+      int equalSignPos = inputToCheck.indexOf('=');
+      if (equalSignPos == -1 && !inputToCheck.contains("y")) { // is a simple term fe. 3x+1
         isFunction = true;
         name = "";
         if (debug) {
           System.out.println("a function");
         }
-      } else if (checkIfFunction(input)) { // is a function fe. f(x)=x or y=x
-        input = input.split("=")[1];
+      } else if (checkIfFunction(inputToCheck)) { // is a function fe. f(x)=x or y=x
+        inputToCheck = inputToCheck.split("=")[1];
         if (debug)
           System.out.println("is a function");
       } else if (equalSignPos != -1) { // is a equation containing y fe. x^2-y^2=9
-        String[] split = input.split("=");
+        String[] split = inputToCheck.split("=");
         if (split.length == 2) {
-          input = split[1] + "-(" + split[0] + ")"; // bring one side to the other
+          inputToCheck = split[1] + "-(" + split[0] + ")"; // bring one side to the other
           isFunction = false;
           if (debug) {
             System.out.println("is not a function");
@@ -107,6 +99,11 @@ public class EquationParser {
         if (debug) {
           System.out.println("not a function");
         }
+      }
+
+      input = inputToCheck;
+      if(splitInput != null && splitInput.length >= 2){
+        input += ";"+splitInput[1]; // since only one condition is allowed
       }
     }
 
@@ -239,7 +236,7 @@ public class EquationParser {
     EquationTree result = new EquationTree(root, name, false);
 
     //parse interval
-    parts[2] = getBetweenBrackets(new StringBuffer(parts[2]));
+    parts[2] = getBetweenBrackets(parts[2]);
     if(parts[2] == null) return null;
     String[] intervalString = parts[2].split("<t<");
 
@@ -294,6 +291,37 @@ public class EquationParser {
     }
 
     EquationTree result = new EquationTree();
+
+    if(input.contains(";if")){ // input contains a condition -> set result.rangeCondition
+      String[] split = input.split(";if");
+      if(split.length <= 1) return null; // to catch if there is nothing before or after ";if"
+
+      String conditionString = split[1];
+      if(debug)System.out.println("CONDITION: "+conditionString);
+
+      String betweenBrackets = getBetweenBrackets(conditionString);
+      if(betweenBrackets == null || betweenBrackets.isBlank()){
+        if(debug) System.out.println("Invalid condition");
+        return null;
+      }
+      String backupName = name; // would otherwise be reset by parsing the condition
+      boolean backupIsFunction = isFunction;
+
+      ConditionParser conditionParser = new ConditionParser();
+      ConditionTree condition = conditionParser.parseCondition(betweenBrackets, controller);
+      if(condition == null){
+        if(debug) System.out.println("invalid condition");
+        return null;
+      }
+      result.rangeCondition = condition;
+
+      // reset values back to their original value
+      isFunction = backupIsFunction; 
+      name = backupName;
+
+      input = split[0];// input without condition
+    }
+
     ArrayList<String> addedVars = new ArrayList<String>();
 
     if (debug) {
@@ -312,16 +340,6 @@ public class EquationParser {
       Byte state = currentNode.state;
       Byte opLevel = currentNode.opLevel;
       currentNode.bracketDepth = bracketDepth;
-
-      if (state == conditionID) {
-        if(val instanceof ConditionTree){
-          result.rangeCondition = (ConditionTree) val;
-        }else{
-          if(debug) System.out.println("Invalid condition! not instanceof ConditionTree");
-        }
-        currentNode = getNextNode(in);
-        continue;
-      }
 
       // handle invisible multiplikation fe. 2x -> 2*x
       if (handleAdvancedInput(currentNode, lastNode, in)) { // the StringBuffer has been modified -> update values
@@ -646,7 +664,7 @@ public class EquationParser {
     return false;
   }
 
-  public static String getBetweenBrackets(StringBuffer input) {
+  public static String getBetweenBrackets(String input) {
     // To get the string between brackets 
     // fe. if(1<x<pi) -> "1<x<pi"
     if (debug) {
@@ -665,10 +683,6 @@ public class EquationParser {
       }
 
       if (depth == 0) { // the matching bracket has been found
-        input = input.delete(0, i + 1);
-        if (debug) {
-          System.out.println("inp without brackets: " + input);
-        }
         return between;
       }
       between += Character.toString(current);
@@ -793,27 +807,6 @@ public class EquationParser {
     // fe. "sin(x)+2" -> "(x)+2"
     input = input.delete(0, index);
 
-    if (value.equals(";if")) { // edgecase for conditionNodes; if(y<9)
-      String betweenBrackets = getBetweenBrackets(input);
-      if(betweenBrackets == null || betweenBrackets.isBlank()){
-        if(debug) System.out.println("Invalid condition");
-        return null;
-      }
-      String backupName = name; // would otherwise be reset by parsing the condition
-      boolean backupIsFunction = isFunction;
-
-      ConditionParser conditionParser = new ConditionParser();
-      ConditionTree condition = conditionParser.parseCondition(betweenBrackets, controller);
-
-      // reset values back to their original value
-      isFunction = backupIsFunction; 
-      name = backupName;
-
-      state = conditionID;
-      result.value = condition;
-      result.state = conditionID;
-      return result;
-    }
 
     if (state == varID) {
       if (debug) {
@@ -871,9 +864,7 @@ public class EquationParser {
         return null;
       }
     } else {
-      if (state != conditionID) { // is not a conditionNode since they have the condition as value
-        result.value = value;
-      }
+      result.value = value;
     }
     result.opLevel = opLevel;
     result.state = state;
