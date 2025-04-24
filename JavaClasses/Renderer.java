@@ -203,11 +203,11 @@ public class Renderer {
     pepperFunctions.add(EquationParser.parseString("k(x)=(-1/1.9)x+9",controller));
 
     //Now, I can add the conditions (because they are dependent on the other functions already existing
-    pepperFunctions.set(0,EquationParser.parseString("g(x)=(x/3)^4-2(x/3)^2-5 if(y<h(x))",pepperFunctions,null));
-    pepperFunctions.set(1,EquationParser.parseString("h(x)=1.6*sin(0.1x^2)+5 if(y>g(x))",pepperFunctions,null));
-    pepperFunctions.set(2,EquationParser.parseString("i(x)=1.9x+7 if(y>h(x)&y<k(x))",pepperFunctions,null));
-    pepperFunctions.set(3,EquationParser.parseString("j(x)=1.9*x+4.1 if(y>h(x) & y<k(x))",pepperFunctions,null));
-    pepperFunctions.set(4,EquationParser.parseString("k(x)=(-1/1.9)x+9 if(y<i(x)&y>j(x))",pepperFunctions,null));
+    pepperFunctions.set(0,EquationParser.parseString("g(x)=(x/3)^4-2(x/3)^2-5;if(y<h(x))",pepperFunctions,null));
+    pepperFunctions.set(1,EquationParser.parseString("h(x)=1.6*sin(0.1x^2)+5;if(y>g(x))",pepperFunctions,null));
+    pepperFunctions.set(2,EquationParser.parseString("i(x)=1.9x+7;if(y>h(x)&y<k(x))",pepperFunctions,null));
+    pepperFunctions.set(3,EquationParser.parseString("j(x)=1.9*x+4.1;if(y>h(x) & y<k(x))",pepperFunctions,null));
+    pepperFunctions.set(4,EquationParser.parseString("k(x)=(-1/1.9)x+9;if(y<i(x)&y>j(x))",pepperFunctions,null));
 
     //setup Colors
     pepperFunctions.get(0).graphColor = RoundColorPicker.getColorFromIndex(1);
