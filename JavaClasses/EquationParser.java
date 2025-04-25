@@ -13,7 +13,7 @@ public class EquationParser {
   public static ArrayList<CustomVarUIElement> oldVarCache;
   
   private static Set<String> specialFunctions = Set.of("abs", "sin", "cos", "tan", "ln", "sqrt"); // sets because they dont have to be modified
-  private static Set<String> specialOperators = Set.of("root", "log");                            // and the order does not matter
+  private static Set<String> specialOperators = Set.of("root", "log");                            // and the order does not matter; also O(1) access time is nice
   private static Set<String> allSpecials = Set.of("root", "log","abs", "sin", "cos", "tan", "ln", "sqrt", "mod");
 
   //magic nums for the different states
@@ -284,7 +284,11 @@ public class EquationParser {
     input = transformString(input);
     if (input == null|| controller == null) {
       return null;
+    }else if(input.contains("(t->xy):x")){ // happens when something is infront of the parametric; fe. phi
+      if(debug)System.out.println("[!] parametric in equation");
+      return null;
     }
+
     if (debug && input.contains("bug")) {
       // to quickly test a lot of different inputs
       testParser(appController);
