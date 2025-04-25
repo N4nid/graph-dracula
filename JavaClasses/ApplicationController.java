@@ -137,7 +137,6 @@ public class ApplicationController implements MenuHaver {
   
   public boolean equationNameExists(String name) {
     for (int i = 0; i < listElements.size(); i++) {
-      //System.out.println(listElements.get(i).equation.name);
       if (listElements.get(i).equation != null && listElements.get(i).equation.name.equals(name)) {
         return true;
       }

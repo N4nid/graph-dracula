@@ -2,8 +2,6 @@ import javafx.scene.control.Button;
 import javafx.scene.effect.ColorAdjust;
 import javafx.scene.layout.Pane;
 
-import javax.swing.text.html.HTML;
-
 public class TopNavBar implements MenuHaver{
     private Pane background;
     private Button[] navButtons;
