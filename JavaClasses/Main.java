@@ -3,6 +3,7 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 import java.util.Scanner;
@@ -16,7 +17,6 @@ public class Main extends Application {
   public void start(Stage stage) throws IOException {
     FXMLLoader loader = new FXMLLoader(getClass().getResource("/resources/GraphDraculaUI.fxml"));
     Parent root = loader.load();
-    // Scene scene = new Scene(fxmlLoader.load(), 1920, 1080);
     controller = loader.getController();
     Scene scene = new Scene(root);
     String css = this.getClass().getResource("/resources/application.css").toExternalForm();
@@ -29,11 +29,12 @@ public class Main extends Application {
       }
     });
 
-    stage.setTitle("Graph Dracula");
+    stage.setTitle("graph_dracula");
     stage.setScene(scene);
     stage.show();
     stage.setMinWidth(800);
     stage.setMinHeight(420);
+    stage.getIcons().add(new Image("/resources/graph_dracula_logo_v11.png"));
     controller.setup();
   }
 
@@ -104,29 +105,6 @@ public class Main extends Application {
     root.right.right.left.right = new EquationNode((byte) 1, "t");
     root.right.left.right.left = new EquationNode((byte) 1, "t");
     return new EquationTree(root);
-  }
-
-  public static void interactiveDemo() { // sadly obsolete
-    String inp = "";
-    Scanner scanner = new Scanner(System.in);
-    System.out.println("Welcome to the StringParser. Available commads:");
-    System.out.println("exit, clear");
-
-    while (!inp.contains("exit")) {
-      System.out.println("Enter equation: ");
-      inp = scanner.nextLine();
-      if (inp.contains("clear")) {
-        System.out.print("\033\143");
-      } else if (!inp.contains("exit")) {
-        try {
-          EquationParser.parseString(inp, controller);
-        } catch (Exception e) {
-          System.out.println("whopsies: " + e);
-        }
-      } else {
-        break;
-      }
-    }
   }
 
   public static EquationTree buildTestParameterFunction() { // 0 = ax^2 - y
