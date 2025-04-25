@@ -304,6 +304,13 @@ public class EquationParser {
         if(debug) System.out.println("Invalid condition");
         return null;
       }
+
+      if(conditionString.length() > betweenBrackets.length()+2){ 
+        // there is something after the condition -> invalid input
+        // fe. "x^2;if(y<2)2x" would be one such case
+        return null;
+      }
+
       String backupName = name; // would otherwise be reset by parsing the condition
       boolean backupIsFunction = isFunction;
 
