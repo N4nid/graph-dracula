@@ -10,35 +10,96 @@
     <h1>Text Input</h1>
     <fieldset>
       <legend>//text-input-manual</legend>
-      <h2>Base types</h2>
-      In general, graph_dracula uses 3 different renderers to display different<br> tpyes of equations.<br>
-      - The fuction renderer renders functions, where for each point on the x-axis<br>
+      <h2>1. Base types</h2>
+      <p>
+      In general, graph_dracula uses 3 different renderers to display different<br> 
+      types of equations.<br>
+      - The function renderer renders functions, where for each point on the x-axis,<br>
       &nbsp; there is a maximum  of 1 corresponding point on the y-axis.<br>
-      - The equation renderer renders equations, that are not functions, like y^2+x^2=9<br>
-      - The parametrics renderer renders functions, that are based on the parameter t<br>
+      - The equation renderer renders equations that are not functions, like y^2+x^2=9<br>
+      - The parametric renderer renders functions that are based on the parameter t,<br>
       &nbsp; and have a given range like f(t->xy):x=(cos(t));y=(sin(t));for(0&lt;t&lt;2*π)</p>
-      <h3>Functions</h3>
-      - Functions should generally inputted with the formatting name(x)=function body.<br>
-      - The names can only be a single character long and they can't reuse chartacters<br>
-      &nbsp; that are already interpreted in a different way, like e (which is a constant)<br>
+      <h2>1.1 Functions</h2>
+      <p>
+      - Functions should generally be inputted with the formatting name(x)=function body.<br>
+      - The names can only be a single character long, and they can't reuse characters<br>
+      &nbsp; that are already interpreted in a different way, like e (which is a constant),<br>
       &nbsp; round brackets or the names of pre-existing functions or custom variables.<br>
-      - You can also use the altrnative formatting or either just inputting the body (like sin(x))<br>
+      - You can also use the alternative formatting of either just inputting the body (like sin(x))<br>
       &nbsp; or write y = body. That means the function of x² could be expressed as<br>
-      &nbsp; f(x)=x^2, x^2 or y=x^2.
-      <h3>Equations</h3>
-      Equations don't need special formatting, they are just written in the form of body=body.<br>
-      Equations also don't have a name, so they are not "reusable".
-      <h3>Parametric functions</h3>
+      &nbsp; f(x)=x^2, x^2, or y=x^2.
+      </p>
+      <h2>1.2 Equations</h2>
+      <p>
+      Equations don't need special formatting; they are just written in the form of body=body.<br>
+      Equations also don't have a name, so they are not "reusable."</p>
+      <h2>1.3 Parametric functions</h2>
+      <p>
       - Parametric functions are based on the parameter t and are generally formatted like this:<br>
-      &nbsp; name(t->xy):x=(bodyX);y=(bodyY)for(minimum-t&ltt&ltmaximum-t)<br>
-      - The body for x and y can't be based on either x or y or pre-existing functions, but only t<br>
+      &nbsp; name(t->xy):x=(bodyX);y=(bodyY)for(minimum-t&ltt&ltmaximum-t).<br>
+      - The body for x and y can't be based on either x or y or pre-existing functions, but only t,<br>
       &nbsp; and custom variables.<br>
-      - The minimum and maximum body can't be based on x,y,pre-existing functions or t<br>
+      - The minimum and maximum body can't be based on x, y, pre-existing functions or t,<br>
       &nbsp; but every combination of values and custom variables (like 0.5*sin(b)&ltt&lt(b-0.5))<br>
-      - The names for parametric functions can only be a single character long and they can't reuse<br>
-      &nbsp; chartacters, that are already interpreted in a different way, like e (which is a constant)<br>
+      - The names for parametric functions can only be a single character long, and they can't reuse<br>
+      &nbsp; characters that are already interpreted in a different way, like e (which is a constant),<br>
       &nbsp; round brackets or the names of pre-existing functions or custom variables.<br>
-
+      </p>
+      <h2>1.4 If Conditions</h2>
+      <p>If conditions are like an "add-on" to any of the above-mentioned types of equations.<br>
+      They can be used to determine what parts of an equation are shown. They can be used to define<br>
+      a single range, in which an equation is shown, multiple ranges or even infinitely repeating<br>
+      ranges (like with if(sin(x)&lt0)).<br>
+      - Their formatting is generally: equation;if(if-body); example: y^2;if(y>2)<br>
+      - They have to be at the end of the equation and are separated from the rest of the<br>
+      &nbsp; equation with a ";"<br>
+      </p>
+      <h2>2. Body Syntax</h2>
+      <p>This section explains how to write the body of either an equation (which in this case includes<br>
+      functions and parametric functions) or an if-condition. The body includes things like<br>
+      operators, special functions, variables, etc.</p>
+      <h2>2.1 Equations</h2>
+      <p>Everything mentioned here can be used in the body of any type of equation, range for a<br>
+      parametric function or as a part of an if condition. Bodies are calculated following<br>
+      the general mathematical order of operations. The use of round brackets to alter the order<br>
+      in which an equation is calculated is allowed. There are a total of 6 possible<br>
+      "components", you can build an equation body out of:<br>
+      1.Simple numbers. To write commas, you use a "."<br>
+      2.Predefined variables (like x and y for functions or equations or<br>
+      &nbsp; t for parametric functions).<br>
+      3.Custom variables (like a, etc.). A custom variable has a single-letter name and can be used<br>
+      &nbsp; across multiple different bodies and equations. If the application recognizes a custom<br>
+      &nbsp;  variable it is automatically added to the <a href = "userInterface.html">UI</a> and you can edit it.<br>
+      &nbsp; Note that if a custom variable name is already the name of a function at the time of input<br>
+      &nbsp; it will be interpreted as a function.<br>
+      4.Operators, which include: +,-,*,/,^ and mod. They are written like: "body operator body". <br>
+      &nbsp; (for example: "2+2"), but there are two exceptions: root and log, which are written as either<br>
+      &nbsp; root(n,x) (to get the square root of x, you would write root(2,x)) and log(n,x) <br>
+      &nbsp; (to get log10 of x, you would write log(10,x)).<br>
+      5.Special functions, which are defined as "predefined mathematical functions with one input<br>
+      &nbsp; and one output". Their general formatting is specialFunctionName(body); example: sin(x).<br>
+      &nbsp; They include: sin(),cos(),tan(),ln(),abs()(=absolute value of), sqrt(=square root of)b.<br>
+      6.Functions that you have inputted before can be reused by just typing name(x). They can<br>
+      &nbsp; be fully modified, so if you want to reuse a function f, you could type something, like<br>
+      &nbsp; 3*f(x), f(3x) or even something like f(sin(x)) etc. Note that custom variables can't have<br>
+      &nbsp; the same name as other functions, and functions can't have the same name as a<br>
+      &nbsp; custom variable.<br></p>
+      <h2>2.2 If Conditions</h2>
+      <p>The body of an if condition is generally interpreted from left to right, so general boolean<br>
+      order of operations is ignored. You can however modify the order of operations with<br>
+      round brackets. Their syntax, for example for a simple range would be (equation-node = en,<br>
+      comparison-operator = cp, boolean-operator = boo) "en cp en boo en cp en"<br>
+      for example: if (3&ltx&x&lt5) for an x-range between 3 and 5.<br>
+      The body of an if condition is built from 3 different kinds of "components":</p>
+      1.Equation-Nodes, which could be a number, custom variable or some equation based on x or y.<br>
+      &nbsp; This allows anything that is possible to do with equation bodies to be used as a <br>
+      &nbsp; value input for a comparison. Example: if(y*sin(10x)>0)<br>
+      2.Comparison-Operators allow you to compare two values (in this case, equation nodes)<br>
+      &nbsp; They include: &lt(smaller),>(bigger),&lt=(smaller or equal to),>=(bigger or equal to),<br>
+      &nbsp; ==(is equal to) and !=(is not equal to). Note that they can only compare two values<br>
+      &nbsp; and can't be chained together (like x>y>3).<br>
+      3.Boolean-Operators allow you to chain together different comparisons. They include:<br>
+      &nbsp; &(=AND),or,!&(=NAND),!or(=NOR),^or(=XOR).
     </fieldset>
     <main></main>
     <footer></footer>

@@ -40,8 +40,6 @@ public class ConditionNode {
         if (type.equals(Type.COMPARE) && left != null && right != null && left.type.equals(Type.EQUATIONNODE) && right.type.equals(Type.EQUATIONNODE)) {
             double leftValue = left.calculateValue(realCoord,customVars,existingFunctions);
             double rightValue = right.calculateValue(realCoord,customVars,existingFunctions);
-            //System.out.println("Left: " + leftValue);
-            //System.out.println("Right: " + rightValue);
             switch (value) {
                 case "<":
                     return leftValue < rightValue;
@@ -75,6 +73,8 @@ public class ConditionNode {
                     return !(leftValue && rightValue);
                 case "!or":
                     return !(leftValue || rightValue);
+                case "^or":
+                    return ((leftValue&&!rightValue)||(!leftValue&&rightValue));
             }
         }
         doError(realCoord);
