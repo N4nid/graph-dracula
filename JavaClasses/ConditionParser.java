@@ -4,7 +4,7 @@ import java.util.List;
 
 public class ConditionParser {
     private static List<String> comparisonOperators = Arrays.asList("<",">","<=",">=","==","!=");
-    private static List<String> booleanOperators = Arrays.asList("&","or","!&","!or");
+    private static List<String> booleanOperators = Arrays.asList("&","or","!&","!or","^or");
     private ConditionNode root = null;
     private ConditionNode workOnNode = root;
 
