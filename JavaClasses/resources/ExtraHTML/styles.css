@@ -43,6 +43,13 @@ a {
     width: 100%;
     max-width: 950px;
 }
+.small-centered-img {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 50%;
+    max-width: 100px;
+}
 
 a:hover {
     text-decoration-color: #FEC006;

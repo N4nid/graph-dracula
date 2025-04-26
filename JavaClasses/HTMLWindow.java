@@ -3,7 +3,6 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 import javafx.scene.web.WebView;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.stage.Window;
@@ -11,7 +10,7 @@ import javafx.stage.Window;
 import java.net.URL;
 import java.util.Set;
 
-public class UserManual {
+public class HTMLWindow {
     private static final double defaultWindowWidth = 1200;
     private static final double defaultWindowHeight = 800;
 
@@ -19,7 +18,7 @@ public class UserManual {
     private Pane root;
     public boolean isClosed = false;
 
-    public UserManual(Window parent) {
+    public HTMLWindow(Window parent, String pathToHtml) {
         root = new Pane();
         root.setPrefWidth(defaultWindowWidth);
         root.setPrefHeight(defaultWindowHeight);
@@ -55,7 +54,7 @@ public class UserManual {
         root.heightProperty().addListener((obs, oldVal, newVal) -> {
             webView.setPrefHeight(root.getHeight());
         });
-        URL indexURL = this.getClass().getResource("/resources/UserManual/index.html");
+        URL indexURL = this.getClass().getResource(pathToHtml);
         webView.getEngine().load(indexURL.toString());
     }
 }

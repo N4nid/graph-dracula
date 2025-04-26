@@ -61,7 +61,6 @@ public class ConditionParser {
             }
         }
         if (!currentEquation.isEmpty()) {
-            //System.out.println("Adding value node " + currentEquation);
             if(!addEquation(currentEquation,controller)){return null;}
         }
 
@@ -102,9 +101,6 @@ public class ConditionParser {
         return false;
     }
     private boolean addNode(ConditionNode node) {
-        /*if (root != null) {
-            root.recursivePrint("Conditon Tree: ");
-        }*/
         if (root == null) {
             root = node;
             workOnNode = root;
@@ -195,9 +191,7 @@ public class ConditionParser {
     }
 
     private void addAbove(ConditionNode node , ConditionNode addToNode) {
-        //System.out.println("Adding above " + addNode.type);
         if (addToNode.aboveElement != null) {
-            //System.out.println("Adding on top of " + addToNode.type);
             boolean aboveElementHasChildren = false;
             if (addToNode.aboveElement.left != null && addToNode.aboveElement.left.equals(addToNode)) {
                 aboveElementHasChildren = true;
@@ -222,7 +216,6 @@ public class ConditionParser {
             node.aboveElement = addToNode.aboveElement;
         }
         else {
-            //System.out.println("Adding on top of root " + root.type);
             if (!addBelow(root,node)) {
                 System.out.println("Error: Can't add above this element!");
                 return;

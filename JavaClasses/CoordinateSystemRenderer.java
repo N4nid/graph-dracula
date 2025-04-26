@@ -118,8 +118,6 @@ public class CoordinateSystemRenderer {
   private void drawYCoords(GraphicsContext gc, double stepSizeY) {
     double startNumb = Math.round((renderValues.midpoint.y-renderValues.resolution.y)* renderValues.zoom.y / stepSizeY) - 1;
     double endNumb = Math.round(startNumb + renderValues.resolution.y* renderValues.zoom.y / stepSizeY)  + 1;
-    //System.out.println(startNumb);
-    //System.out.println(endNumb);
     double currentY = renderValues.realCoordToScreenCoord(new TwoDVec<Double>(0.0,(double)startNumb*stepSizeY)).y;
     double iterator = startNumb;
     gc.setFill(Color.WHITE);
