@@ -15,6 +15,9 @@ If it is a parametric function it will be rendered by the ParametricRenderer.
 ** parametricParsing:
 Flag used when parsing parametric functions to enable different handeling of things.
 *For example:* When enabled a variable with the name "t" will not be added to the variable list.
+** parametricIntervalParsing:
+Flag used when [[parseParametricInterval():][parsing the interval]] of parametric functions, so that the interval cannot depend on "t".
+
 ** parseBetweenBrackets:
 Flag used when parsing between brackets to skip some of the transforming in [[transformString():]].
 ** controller:
@@ -67,8 +70,25 @@ There also is another overloaded version which handles given functions.
 Method for parsing parametric functions.
 They have the following form: "f(t->xy):x=(t);y=(t);for(a<t<b)".
 
+*Examples:*
+- "f(t->xy):x=(t^2);y=(t/2);for(a<t<b)"
+#+attr_html: :width 450px
+[[./media/parametricEquationTree.jpg]]
+
+** parseParametricInterval():
+Method that parses a given String, which is part of an parametric interval, and returns the resulting EquationNode.
+
 ** parseEquation():
 Given a string and ApplicationController it builds the [[./../EquationTree/EquationTree.html][EquationTree]] by adding the nodes extracted by [[getNextNode():]].
+
+*Examples:*
+- "2x^2+(1/2)"
+#+attr_html: :width 250px
+[[./media/equationTree1.jpg]]
+
+- "x^2+y^2=9"
+#+attr_html: :width 250px
+[[./media/equationTree2.jpg]]
 
 ** discardVars():
 Method for removing all the variables added by invalid input.
