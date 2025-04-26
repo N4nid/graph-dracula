@@ -78,6 +78,9 @@ They have the following form: "f(t->xy):x=(t);y=(t);for(a<t<b)".
 ** parseParametricInterval():
 Method that parses a given String, which is part of an parametric interval, and returns the resulting EquationNode.
 
+** parseConditionString():
+Wrapper for the ConditionParser, since there have to be additional null checks and some values have to be reset.
+
 ** parseEquation():
 Given a string and ApplicationController it builds the [[./../EquationTree/EquationTree.html][EquationTree]] by adding the nodes extracted by [[getNextNode():]].
 
