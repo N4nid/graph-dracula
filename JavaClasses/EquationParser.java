@@ -1,6 +1,7 @@
 import java.util.ArrayList;
 import java.util.Set;
 
+
 public class EquationParser {
   public static boolean debug = false; // all debugging prints will be removed when there are no issues anymore
   static String name = "";
@@ -13,7 +14,7 @@ public class EquationParser {
   public static ArrayList<CustomVarUIElement> oldVarCache;
   
   private static Set<String> specialFunctions = Set.of("abs", "sin", "cos", "tan", "ln", "sqrt"); // sets because they dont have to be modified
-  private static Set<String> specialOperators = Set.of("root", "log");                            // and the order does not matter
+  private static Set<String> specialOperators = Set.of("root", "log");                            // and the order does not matter; also O(1) access time is nice
   private static Set<String> allSpecials = Set.of("root", "log","abs", "sin", "cos", "tan", "ln", "sqrt", "mod");
 
   //magic nums for the different states
@@ -184,15 +185,15 @@ public class EquationParser {
       return null;
     }
 
-    parametricParsing = true; // so that i can call parseString without problems
 
     // check if input is valid
     String parts[] = input.split(";"); // part 0 and 1 are the equations; part 2 the interval
                                        // part 0 -> x defintion and part 1 -> y defintion
-    if (!input.contains(";") || parts.length != 3 || input.length() < 26) {
+    if (!input.contains(";") || parts.length < 3 || parts.length > 4 || input.length() < 26) {
       System.out.println("invalid parametric input");
       return null;
     }
+
 
     // remove unecessary parts
     // turn: "f(t->xy):x=(t);y=(2t);for(a<t<b)"
@@ -201,7 +202,7 @@ public class EquationParser {
     int[] removeTillIndex = {11,2,3};
     for (int i = 0; i < removeTillIndex.length; i++) {
       if(parts[i].length() < removeTillIndex[i]){
-        System.out.println("invalid parametric input");
+        System.out.println("invalid parametric input!");
         return null;
       }
 
@@ -221,6 +222,27 @@ public class EquationParser {
 
 
     EquationNode root = new EquationNode(parametricID, "");
+    EquationTree result = new EquationTree(root, name, false);
+
+    //parse possible condition
+    if(parts.length == 4){ // there is a condition at the end (presumably)
+      String[] split = parts[3].split("if");
+      if(split.length != 2){ // there is no condition
+        if(debug)System.out.println("Invalid condition!!");
+        return null;
+      }
+      if(debug)System.out.println("CONDITION: "+split[1]); // split[1] is the part with the condition; (y<2)
+      ConditionTree condition = parseCondtionString(split[1]);
+
+      if(condition == null){
+        if(debug)System.out.println("Invalid condition!");
+        return null;
+      }
+
+      result.rangeCondition = condition;
+    }
+
+    parametricParsing = true; // so that i can call parseString without problems
 
     //parse x part
     EquationTree left = parseEquation(parts[0], controller);
@@ -233,7 +255,6 @@ public class EquationParser {
 
     root.left = left.root;
     root.right = right.root;
-    EquationTree result = new EquationTree(root, name, false);
 
     //parse interval
     parts[2] = getBetweenBrackets(parts[2]);
@@ -253,6 +274,7 @@ public class EquationParser {
         return null;
       result.intervalEnd = intervalNode;
 
+      result.isFunction = false;
       result.isParametric = true;
       parametricParsing = false; // reset parametric parsing so other input wont be affected by this flag
       result.name = "" + input.charAt(0);
@@ -280,11 +302,47 @@ public class EquationParser {
     return intervalTree.root;
   }
 
+  private static ConditionTree parseCondtionString(String conditionString){
+    String betweenBrackets = getBetweenBrackets(conditionString); // (x<9) -> x<9
+    if(betweenBrackets == null || betweenBrackets.isBlank()){
+      if(debug) System.out.println("Invalid condition");
+      return null;
+    }
+
+    if(conditionString.length() > betweenBrackets.length()+2){ 
+      // there is something after the condition -> invalid input
+      // fe. "x^2;if(y<2)2x" would be one such case
+      return null;
+    }
+
+    String backupName = name; // would otherwise be set to another value by parsing the condition
+    boolean backupIsFunction = isFunction;
+    boolean backupIsParametric = isParametic;
+
+    ConditionParser conditionParser = new ConditionParser();
+    ConditionTree condition = conditionParser.parseCondition(betweenBrackets, controller);
+
+    // reset values back to their original value
+    isFunction = backupIsFunction;
+    isParametic = backupIsParametric;
+    name = backupName;
+
+    if(condition == null){
+      if(debug) System.out.println("invalid condition");
+      return null;
+    }
+    return condition;
+  }
+
   public static EquationTree parseEquation(String input, ApplicationController appController) {
     input = transformString(input);
     if (input == null|| controller == null) {
       return null;
+    }else if(input.contains("(t->xy):x")){ // happens when something is infront of the parametric; fe. phi
+      if(debug)System.out.println("[!] parametric in equation");
+      return null;
     }
+
     if (debug && input.contains("bug")) {
       // to quickly test a lot of different inputs
       testParser(appController);
@@ -298,33 +356,14 @@ public class EquationParser {
 
       String conditionString = split[1];
       if(debug)System.out.println("CONDITION: "+conditionString);
+      ConditionTree condition = parseCondtionString(conditionString);
 
-      String betweenBrackets = getBetweenBrackets(conditionString);
-      if(betweenBrackets == null || betweenBrackets.isBlank()){
-        if(debug) System.out.println("Invalid condition");
-        return null;
-      }
-
-      if(conditionString.length() > betweenBrackets.length()+2){ 
-        // there is something after the condition -> invalid input
-        // fe. "x^2;if(y<2)2x" would be one such case
-        return null;
-      }
-
-      String backupName = name; // would otherwise be reset by parsing the condition
-      boolean backupIsFunction = isFunction;
-
-      ConditionParser conditionParser = new ConditionParser();
-      ConditionTree condition = conditionParser.parseCondition(betweenBrackets, controller);
       if(condition == null){
-        if(debug) System.out.println("invalid condition");
+        if(debug)System.out.println("invalid condition!");
         return null;
       }
-      result.rangeCondition = condition;
 
-      // reset values back to their original value
-      isFunction = backupIsFunction; 
-      name = backupName;
+      result.rangeCondition = condition;
 
       input = split[0];// input without condition
     }

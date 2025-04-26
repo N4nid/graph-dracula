@@ -1,6 +1,6 @@
 public class OperatorStack { // see documetation for details
   public OperatorStackElement top = null;
-  public boolean debug = true;
+  public boolean debug = false;
 
   public OperatorStackElement getLast(int depth, int lvl) {
     cleanUp(depth); // to remove the operators that are in a deeper bracket depth
