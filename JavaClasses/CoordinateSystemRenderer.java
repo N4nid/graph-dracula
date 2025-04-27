@@ -10,6 +10,11 @@ public class CoordinateSystemRenderer {
   private static final double defaultFontSize = 17;
   private GraphicsContext gc;
   private Renderer renderer;
+  private double xLabelPadding = 7;
+  private double yLabelPadding = 7;
+
+  private boolean xLabelsAtBottom = false;
+  private boolean xLabelsAtTop = false;
   
   public CoordinateSystemRenderer(Renderer renderer) {
     this.renderer = renderer;
@@ -38,23 +43,6 @@ public class CoordinateSystemRenderer {
   
   public void centerCoordinateSystem() {
     renderValues.midpoint.setPos((double)(renderValues.resolution.x / 2), (double)(renderValues.resolution.y / 2));
-  }
-  
-  private double fixUnitDistance(double unitDistance, boolean isX){
-    double axisRes = 1000;
-    while (axisRes / unitDistance < 10) {
-      unitDistance /= 2;
-      if (isX) {
-        axisNumbersDecimalPlaces.x += 1;
-      }
-      else {
-        axisNumbersDecimalPlaces.y += 1;
-      }
-    }
-    while (axisRes / unitDistance > 20) {
-      unitDistance *= 2;
-    }
-    return unitDistance;
   }
   
   private double fixStepSize(double stepSize, boolean isX){
@@ -86,32 +74,50 @@ public class CoordinateSystemRenderer {
   }
   
   private void drawXCoords(GraphicsContext gc, double stepSizeX) {
-    double startNumb = Math.round((- renderValues.midpoint.x)* renderValues.zoom.x / stepSizeX) - 1;
-    double endNumb = Math.round(startNumb + renderValues.resolution.x* renderValues.zoom.x / stepSizeX)  + 1;
-    //System.out.println(startNumb);
-    //System.out.println(endNumb);
+    double startNumb = Math.round((- renderValues.midpoint.x)* renderValues.zoom.x / stepSizeX) - 2;
+    double endNumb = Math.round(startNumb + renderValues.resolution.x* renderValues.zoom.x / stepSizeX)  + 2;
     double currentX = renderValues.realCoordToScreenCoord(new TwoDVec<Double>((double)startNumb*stepSizeX,0.0)).x;
     double iterator = startNumb;
     gc.setFill(Color.WHITE);
-    
+
+    //This code block ensures, that if number Strings are too long, not every step is labeled, so the labels don't overlap
+    double pixelStepSizeX = stepSizeX / renderValues.zoom.x;
+    String lastLabelString = String.format("%." + axisNumbersDecimalPlaces.x + "f", endNumb*stepSizeX);
+    double lastLabelPixelLength = lastLabelString.length() * (defaultFontSize*0.5);
+    int displayOnlyNthStep = (int)((lastLabelPixelLength + xLabelPadding)/pixelStepSizeX) + 1;
+    int displayTextIterator = (int)(startNumb) % displayOnlyNthStep;
+
     while (iterator <= endNumb) {
+      boolean canDrawText = false;
+      if (displayTextIterator >= displayOnlyNthStep) {
+        displayTextIterator = 0;
+        canDrawText = true;
+      }
+      xLabelsAtTop = renderValues.midpoint.y < 0;
+      double labelYCoord = (xLabelsAtTop) ? (1.2 * defaultFontSize) : (renderValues.midpoint.y + 1.2 * defaultFontSize);
+      xLabelsAtBottom = renderValues.resolution.y - (1.2 * defaultFontSize) < labelYCoord;
+      labelYCoord = Math.min(labelYCoord,renderValues.resolution.y - (1.2 * defaultFontSize));
       if (iterator != 0) {
         gc.strokeLine(currentX, 0, currentX, renderValues.resolution.y);
-        
-        String labelString = String.format("%." + axisNumbersDecimalPlaces.x + "f", iterator*stepSizeX);
-        int stringLenght = labelString.length();
-        gc.fillText(labelString, currentX - 0.3 * defaultFontSize * stringLenght, renderValues.midpoint.y + 1.2 * defaultFontSize);
+        if (canDrawText) {
+          String labelString = String.format("%." + axisNumbersDecimalPlaces.x + "f", iterator*stepSizeX);
+          int stringLenght = labelString.length();
+          if (labelString.contains(".")) {
+            stringLenght -= 1;
+          }
+          gc.fillText(labelString, currentX - 0.28 * defaultFontSize * stringLenght, labelYCoord);
+          displayTextIterator = 0;
+        }
       }
       currentX += stepSizeX/renderValues.zoom.x;
       iterator++;
+      displayTextIterator++;
     }
   }
   
   private void drawYCoords(GraphicsContext gc, double stepSizeY) {
     double startNumb = Math.round((renderValues.midpoint.y-renderValues.resolution.y)* renderValues.zoom.y / stepSizeY) - 1;
     double endNumb = Math.round(startNumb + renderValues.resolution.y* renderValues.zoom.y / stepSizeY)  + 1;
-    //System.out.println(startNumb);
-    //System.out.println(endNumb);
     double currentY = renderValues.realCoordToScreenCoord(new TwoDVec<Double>(0.0,(double)startNumb*stepSizeY)).y;
     double iterator = startNumb;
     gc.setFill(Color.WHITE);
@@ -121,7 +127,13 @@ public class CoordinateSystemRenderer {
         
         String labelString = String.format("%." + axisNumbersDecimalPlaces.y + "f", iterator*stepSizeY);
         int stringLenght = labelString.length();
-        gc.fillText(labelString, renderValues.midpoint.x - (0.8 * stringLenght) * defaultFontSize, currentY + 0.3 * defaultFontSize);
+        double labelXOffset =  -stringLenght * (defaultFontSize*0.5) - yLabelPadding;
+        double labelXCoord = (renderValues.midpoint.x > 0) ? (renderValues.midpoint.x + labelXOffset) : yLabelPadding; //Show label on left side of screen, when x-Axis left of center
+        labelXCoord = Math.min(labelXCoord, renderValues.resolution.x + labelXOffset); //Show label on right side of screen, when x-Axis right of center
+        double labelYCoord = currentY + 0.3 * defaultFontSize;
+        if (((labelYCoord > defaultFontSize*2.2) || !xLabelsAtTop) && (labelYCoord < (renderValues.resolution.y - 2.2 * defaultFontSize) || !xLabelsAtBottom)) {
+          gc.fillText(labelString, labelXCoord, currentY + 0.3 * defaultFontSize);
+        }
       }
       currentY -= stepSizeY/renderValues.zoom.y;
       iterator++;

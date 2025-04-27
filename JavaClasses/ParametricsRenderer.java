@@ -1,4 +1,3 @@
-import javafx.scene.*;
 import java.util.ArrayList;
 
 public class ParametricsRenderer {

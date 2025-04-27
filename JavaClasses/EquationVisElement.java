@@ -50,7 +50,9 @@ public class EquationVisElement implements MenuHaver{
     
     pane.getChildren().add(funcDisplay);
     colorPicker = new RoundColorPicker(colorX,colorY,yPos, defaultColor, false,root,controller);
-    this.equation.graphColor = colorPicker.colorValue;
+    if (this.equation != null) {
+      this.equation.graphColor = colorPicker.colorValue;
+    }
     pane.getChildren().add(colorPicker.displayButton);
     parent.getChildren().add(pane);
     
@@ -59,6 +61,10 @@ public class EquationVisElement implements MenuHaver{
         controller.editEquation(this);
       }
     });
+  }
+
+  public EquationVisElement(EquationTree equation) {
+    this.equation = equation;
   }
   
   public void updateTransform() {
@@ -86,7 +92,12 @@ public class EquationVisElement implements MenuHaver{
   }
 
   public void setVisible(boolean visible){
-    equation.isVisible = visible;
+    if (equation != null) {
+      equation.isVisible = visible;
+    }
+    else {
+      controller.renderer.setRenderPepper(visible);
+    }
     funcDisplay.setTextFill((visible) ? Color.WHITE : Color.web("#a6a6a6"));
   }
 }

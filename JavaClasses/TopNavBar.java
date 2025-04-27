@@ -1,4 +1,3 @@
-import com.jetbrains.cef.JdkEx;
 import javafx.scene.control.Button;
 import javafx.scene.effect.ColorAdjust;
 import javafx.scene.layout.Pane;
@@ -7,7 +6,8 @@ public class TopNavBar implements MenuHaver{
     private Pane background;
     private Button[] navButtons;
     private ApplicationController controller;
-    private UserManual currentManual;
+    private HTMLWindow currentManual;
+    private HTMLWindow currentAboutWindow;
 
     private static final double navBarHeight = 37;
     private static final double buttonWidth = 100;
@@ -68,11 +68,13 @@ public class TopNavBar implements MenuHaver{
             controller.quit();
         }
         if (option.equals("about")) {
-            System.out.println("about stuff");
+            if (currentAboutWindow == null || currentAboutWindow.isClosed) {
+                currentAboutWindow = new HTMLWindow(controller.getWindow(),"/resources/ExtraHTML/about.html");
+            }
         }
         if (option.equals("user manual")) {
             if (currentManual == null || currentManual.isClosed) {
-                currentManual = new UserManual(controller.getWindow());
+                currentManual = new HTMLWindow(controller.getWindow(),"/resources/ExtraHTML/index.html");
             }
         }
     }

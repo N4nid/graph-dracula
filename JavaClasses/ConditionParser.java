@@ -4,7 +4,7 @@ import java.util.List;
 
 public class ConditionParser {
     private static List<String> comparisonOperators = Arrays.asList("<",">","<=",">=","==","!=");
-    private static List<String> booleanOperators = Arrays.asList("&","or","!&","!or");
+    private static List<String> booleanOperators = Arrays.asList("&","or","!&","!or","^or");
     private ConditionNode root = null;
     private ConditionNode workOnNode = root;
 
@@ -21,20 +21,22 @@ public class ConditionParser {
             if ((potComparisonOperators.size() == 1 || (potComparisonOperators.size() > 1 && !canCheckComparrissonFurther)) && potComparisonOperators.get(0).equals(currentValue)) {
                 if (!currentEquation.isEmpty()) {
                     //System.out.println("Adding value node " + currentEquation);
-                    addEquation(currentEquation, controller);
+                    if (!addEquation(currentEquation, controller)) {
+                        return null;
+                    }
                     currentEquation = "";
                 }
                 ConditionNode comparisonOperator = new ConditionNode(ConditionNode.Type.COMPARE,currentValue);
-                addNode(comparisonOperator);
+                if(!addNode(comparisonOperator)){return null;}
                 currentValue = "";
             } else if ((potBooleanOperators.size() == 1 || (potBooleanOperators.size() > 1 && !canCheckBooleanOperatorFurther)) && potBooleanOperators.get(0).equals(currentValue)) {
                 if (!currentEquation.isEmpty()) {
                     //System.out.println("Adding value node " + currentEquation);
-                    addEquation(currentEquation, controller);
+                    if(!addEquation(currentEquation, controller)){return null;}
                     currentEquation = "";
                 }
                 ConditionNode booleanOperator = new ConditionNode(ConditionNode.Type.BOOLOPERATION, currentValue);
-                addNode(booleanOperator);
+                if(!addNode(booleanOperator)) {return null;}
                 currentValue = "";
 
                 if (i < conditionString.length() - 2 && conditionString.charAt(i+1) == '(') {
@@ -50,7 +52,7 @@ public class ConditionParser {
                         return null;
                     }
                     //bracketNode.recursivePrint("BracketNode: ");
-                    addBelow(bracketNode,workOnNode);
+                    if(!addBelow(bracketNode,workOnNode)){return null;}
                     i+=bracketContent.length()+2;
                 }
             } else if (potComparisonOperators.size() == 0 && potBooleanOperators.size() == 0) {
@@ -59,8 +61,7 @@ public class ConditionParser {
             }
         }
         if (!currentEquation.isEmpty()) {
-            //System.out.println("Adding value node " + currentEquation);
-            addEquation(currentEquation,controller);
+            if(!addEquation(currentEquation,controller)){return null;}
         }
 
         TwoDVec<Double> testCoord = new TwoDVec<>(0.0,0.0);
@@ -68,14 +69,13 @@ public class ConditionParser {
         if(testCoord.x == -1.0) {
             return null;
         }
-
         return new ConditionTree(root);
     }
 
     private EquationNode parseEquation(String equationString, ApplicationController controller) {
-        EquationParser.simpleParsing = true;
+        EquationParser.parametricParsing = true;
         EquationTree currentEquation = EquationParser.parseEquation(equationString,controller);
-        EquationParser.simpleParsing = false;
+        EquationParser.parametricParsing= false;
         if (currentEquation != null && currentEquation.root != null) {
             return currentEquation.root;
         }
@@ -92,65 +92,66 @@ public class ConditionParser {
         return retList;
     }
 
-    private void addEquation(String currentEquation, ApplicationController controller) {
+    private boolean addEquation(String currentEquation, ApplicationController controller) {
         EquationNode equation = parseEquation(currentEquation,controller);
         ConditionNode euqationConditionNode = new ConditionNode(equation);
         if (equation != null) {
-            addNode(euqationConditionNode);
+            return addNode(euqationConditionNode);
         }
+        return false;
     }
-    private void addNode(ConditionNode node) {
-        /*if (root != null) {
-            root.recursivePrint("Conditon Tree: ");
-        }*/
+    private boolean addNode(ConditionNode node) {
         if (root == null) {
             root = node;
             workOnNode = root;
-            return;
+            return true;
         }
         if (workOnNode.type.equals(ConditionNode.Type.COMPARE)) {
             if (node.type.equals(ConditionNode.Type.EQUATIONNODE)) {
                 if (!addBelow(node, workOnNode)) {
                     System.out.println("Error: cannot compare 3 values!");
+                    return false;
                 }
-                return;
+                return true;
             }
             if (node.type.equals(ConditionNode.Type.BOOLOPERATION)) {
                 addAbove(node, root);
-                return;
+                return true;
             }
             System.out.println("Error: Invalid compare!");
+            return false;
         }
         if (workOnNode.type.equals(ConditionNode.Type.EQUATIONNODE)) {
             addAbove(node, workOnNode);
-            return;
+            return true;
         }
         if (workOnNode.type.equals(ConditionNode.Type.BOOLOPERATION)) {
             if (node.type.equals(ConditionNode.Type.COMPARE)) {
-                if (workOnNode.left.type.equals(ConditionNode.Type.EQUATIONNODE)) {
+                if (workOnNode.left != null && workOnNode.left.type.equals(ConditionNode.Type.EQUATIONNODE)) {
                     node.left = workOnNode.left;
                     workOnNode.left = null;
                 }
-                if (workOnNode.right.type.equals(ConditionNode.Type.EQUATIONNODE)) {
+                if (workOnNode.right != null && workOnNode.right.type.equals(ConditionNode.Type.EQUATIONNODE)) {
                     node.left = workOnNode.right;
                     workOnNode.right = null;
                 }
 
                 if (!addBelow(node, workOnNode)) {
                     System.out.println("Error: cannot do a boolean operation with 3 values!");
-                    return;
+                    return false;
                 }
                 workOnNode = node;
-                return;
+                return true;
             }
             if (node.type.equals(ConditionNode.Type.BOOLOPERATION)) {
                 addAbove(node, workOnNode);
-                return;
+                return true;
             }
             if (node.type.equals(ConditionNode.Type.EQUATIONNODE)) {
                 addBelow(node,workOnNode);
             }
         }
+        return true;
     }
 
     private String getBracketContent(String entireString, int BracketPos) {
@@ -190,9 +191,7 @@ public class ConditionParser {
     }
 
     private void addAbove(ConditionNode node , ConditionNode addToNode) {
-        //System.out.println("Adding above " + addNode.type);
         if (addToNode.aboveElement != null) {
-            //System.out.println("Adding on top of " + addToNode.type);
             boolean aboveElementHasChildren = false;
             if (addToNode.aboveElement.left != null && addToNode.aboveElement.left.equals(addToNode)) {
                 aboveElementHasChildren = true;
@@ -217,7 +216,6 @@ public class ConditionParser {
             node.aboveElement = addToNode.aboveElement;
         }
         else {
-            //System.out.println("Adding on top of root " + root.type);
             if (!addBelow(root,node)) {
                 System.out.println("Error: Can't add above this element!");
                 return;

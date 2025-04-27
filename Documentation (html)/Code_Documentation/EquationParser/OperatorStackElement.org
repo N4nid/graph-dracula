@@ -1,0 +1,13 @@
+#+title: OperatorStackElement
+#+date: [2025-04-21 Mo]
+
+
+* Variables
+** elem:
+This variable holds the [[./../EquationTree/EquationNode.html][EquationNode]]
+** next:
+Points to the next stack element.
+-----
+* Methods
+** printStack():
+A debug method for printing the [[./OperatorStack.html][stack]].

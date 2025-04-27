@@ -1,5 +1,5 @@
 public class EquationNode {
-  public byte state; // 0:IsNumber, 1:IsVariable, 2:IsOperator, 3:IsSpecialFunc, 4:IsEquation,
+  public byte state; // 0:IsNumber, 1:IsVariable, 2:IsOperator, 3:IsSpecialFunc, 4:IsFunction,
                      // 5:RootOfParametric
   public Object value;
   public EquationNode left;
@@ -158,7 +158,6 @@ public class EquationNode {
         if (!invalid)
           return result;
       } else {
-        // System.out.println("WHY NOT WORKING -- Function calculate :c");
         invalid = true;
       }
     }
@@ -169,6 +168,7 @@ public class EquationNode {
 
     if (invalid) {
       realCoord.setUniform(-1.0); // so that i can catch an invalid EquationTree
+                                  // see EquationParser.parseEquation for more detail (or the documetation)
     }
 
     return 0.0;
