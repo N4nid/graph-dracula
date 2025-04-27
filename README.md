@@ -28,10 +28,14 @@ And run it with the following:
 If you so happen to use the javaeditor (from javaeditor.org) these instructions are for you.
 
 1. Clone this repository.
-2. Open the configuration window. 
+2. Open the configuration window.
+
 ![](./instruction-screenshot1.jpg)
-3. Add **"javafx.fxml"** to the JavaFX parameters, and save. 
+
+3. Add **"javafx.fxml"** to the JavaFX parameters, and save.
+   
 ![](./instruction-screenshot2.jpg)
+
 4. Open all the .java filese located under C:\path\to\repository\JavaClasses. And compile everything.
 5. You should now be able to run the program.
 
