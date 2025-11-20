@@ -44,7 +44,7 @@ public class EquationNode {
         return readVar(vars, varName);
       }
     }
-    return handleHigherStates(realCoord,vars,existingFunctions,false,0);
+    return handleHigherStates(realCoord, vars, existingFunctions, false, 0);
   }
 
   public double calculateParametric(double t, Variable[] vars, EquationTree[] existingFunctions) {
@@ -59,9 +59,8 @@ public class EquationNode {
         return readVar(vars, varName);
       }
     }
-    return handleHigherStates(null,vars,existingFunctions,true,t);
+    return handleHigherStates(null, vars, existingFunctions, true, t);
   }
-
 
   private static double readVar(Variable[] vars, String varName) {
     if (vars == null) {
@@ -75,15 +74,15 @@ public class EquationNode {
     return 0;
   }
 
-  private double handleHigherStates(TwoDVec<Double> realCoord, Variable[] vars, EquationTree[] existingFunctions, boolean isParametric, double t) {
+  private double handleHigherStates(TwoDVec<Double> realCoord, Variable[] vars, EquationTree[] existingFunctions,
+      boolean isParametric, double t) {
     if (state == 2 && left != null && right != null) {
       double part1;
       double part2;
       if (isParametric) {
         part1 = left.calculateParametric(t, vars, existingFunctions);
         part2 = right.calculateParametric(t, vars, existingFunctions);
-      }
-      else {
+      } else {
         part1 = left.calculate(realCoord, vars, existingFunctions);
         part2 = right.calculate(realCoord, vars, existingFunctions);
       }
@@ -112,9 +111,8 @@ public class EquationNode {
       String op = (String) value;
       double calVal;
       if (isParametric) {
-        calVal = right.calculateParametric(t,vars,existingFunctions);
-      }
-      else {
+        calVal = right.calculateParametric(t, vars, existingFunctions);
+      } else {
         calVal = right.calculate(realCoord, vars, existingFunctions);
       }
       if (op.equals("sin")) {
@@ -123,6 +121,12 @@ public class EquationNode {
         return Math.cos(calVal);
       } else if (op.equals("tan")) {
         return Math.tan(calVal);
+      } else if (op.equals("asin")) {
+        return Math.asin(calVal);
+      } else if (op.equals("acos")) {
+        return Math.acos(calVal);
+      } else if (op.equals("atan")) {
+        return Math.atan(calVal);
       } else if (op.equals("ln")) {
         return Math.log(calVal);
       } else if (op.equals("abs")) {
@@ -160,8 +164,7 @@ public class EquationNode {
       } else {
         invalid = true;
       }
-    }
-    else {
+    } else {
       System.out.println("Invalid Node! " + value + " state:" + state);
       invalid = true;
     }
